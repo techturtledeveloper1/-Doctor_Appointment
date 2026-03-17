@@ -1,0 +1,78 @@
+name: doctor_appointment
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  firebase_core: ^4.1.0
+  firebase_messaging: ^16.0.1
+  path_provider: ^2.1.5
+  shared_preferences: ^2.5.3
+  device_info_plus: ^11.5.0
+  flutter_local_notifications: ^19.4.1
+  provider: ^6.1.5+1
+  flutter_inner_drawer: ^1.0.0+1
+  image_picker: ^1.2.0
+  flutter_advanced_drawer: ^1.5.0
+  circle_nav_bar: ^2.2.0
+  cached_network_image: ^3.4.1
+  flutter_svg: ^2.2.1
+  table_calendar: ^3.2.0
+  intl: ^0.20.2
+  pin_code_fields: ^8.0.1
+  file_picker: ^10.3.2
+  pdfx: ^2.9.2
+  syncfusion_flutter_pdf: ^31.1.18
+  file_selector: ^1.0.3
+  carousel_slider: ^5.1.1
+  firebase_auth: ^6.0.2
+  flutter_launcher_icons: ^0.14.4
+
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo/app_logo.png"
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/medicine_image/
+    - assets/logo/
+
+  fonts:
+    - family: HK Bold
+      fonts:
+        - asset: fonts/HKGrotesk-Bold.ttf
+    - family: HK Medium
+      fonts:
+        - asset: fonts/HKGrotesk-Medium.ttf
+    - family: HK Regular
+      fonts:
+        - asset: fonts/HKGrotesk-Regular.ttf
+    - family: HK SemiBold
+      fonts:
+        - asset: fonts/HKGrotesk-SemiBold.ttf
+    - family: Pacifico Regular
+      fonts:
+        - asset: fonts/Pacifico-Regular.ttf
