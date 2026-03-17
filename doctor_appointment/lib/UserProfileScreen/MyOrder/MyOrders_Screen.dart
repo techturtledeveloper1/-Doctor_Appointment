@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import '../../Utils/ColorConstant.dart';
+
+class MyOrdersScreen extends StatelessWidget {
+  const MyOrdersScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: ColorConstant.colorWhite,
+      appBar: AppBar(
+        title: Text("My Orders", style: TextStyle(color: ColorConstant.colorIntroBG)),
+        backgroundColor: ColorConstant.colorWhite,
+      ),
+      body: ListView.builder(
+        padding: EdgeInsets.all(16),
+        itemCount: 3, // dummy count
+        itemBuilder: (context, index) {
+          return Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 3,
+            margin: EdgeInsets.only(bottom: 12),
+            child: ListTile(
+              leading: Icon(Icons.local_shipping, color: ColorConstant.colorIntroBG),
+              title: Text("Order #${1001 + index}"),
+              subtitle: Text("Status: Delivered"),
+              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              onTap: () {
+                // Navigate to order details
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
