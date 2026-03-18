@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:doctor_appointment/ReusableWidget/app_string.dart';
 import 'package:doctor_appointment/Utils/app_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class ApiService {
-
   //chasemind local anjan
   // static var baseurl ="http://192.168.1.5:3014/v1/";
   // static var termsofUrl ="http://192.168.1.5:3014/terms-of-use";
@@ -20,7 +20,6 @@ class ApiService {
   // static var baseurl ="http://192.168.1.3:5050/v1/";
   // static var termsofUrl ="http://192.168.1.3:5050/terms-of-use";
   // static var privacyPolicyUrl ="http://192.168.1.3:5050/privacy-notice";
-
 
   //chasemind local anjan new
   // static var baseurl ="http://192.168.1.50:3014/v1/";
@@ -32,20 +31,19 @@ class ApiService {
   // static var termsofUrl = "http://122.170.0.3:5050/terms-of-use";
   // static var privacyPolicyUrl = "http://122.170.0.3:5050/privacy-notice";
 
-
-
   // Production URL
   // static var baseurl = "https://api.tendfriendapp.com/v1/";
   // static var termsofUrl = "https://admin.tendfriendapp.com/terms-of-use";
   // static var privacyPolicyUrl = "https://admin.tendfriendapp.com/privacy-notice";
-  static var imageurlForFeatureIcon = "https://api.tendfriendapp.com/uploads/photos/admin/";
+  static var imageurlForFeatureIcon =
+      "https://api.tendfriendapp.com/uploads/photos/admin/";
   static String imageurl = "https://tendfriend.s3.us-east-2.amazonaws.com/";
 
-
-  static var baseurl = "https://doctor-appointment-booking-backend-9iif.onrender.com/api/";
+  static var baseurl =
+      "https://doctor-appointment-booking-backend-9iif.onrender.com/api/";
 
   // static String My_Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mzk5NTUxM2E0M2MwYTFkODRlY2U2YTEiLCJ1c2VyTmFtZSI6ImZmZ3kiLCJmaXJzdE5hbWUiOiJ0ZXN0IiwibGFzdE5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJmZ3JAbWFpbGluYXRvci5jb20iLCJtb2JpbGUiOjg4NTU2NjY1ODgsImFjY291bnRUeXBlIjoxLCJyZWdpc3RlclN0YXR1cyI6MSwic3RhdHVzIjoxLCJpc3VzZXJ2ZXJpZmllZCI6ZmFsc2UsInByb2ZpbGVfaW1hZ2UiOiJuby11c2VyLnBuZyIsImp0aSI6IjYzOTk1NTEzYTQzYzBhMWQ4NGVjZTZhMV8wNDk4ODQiLCJpYXQiOjE2NzA5OTMxNzEsImV4cCI6MTY3MzU4NTE3MX0.mFtaQXY0y2Ty2TnPD2N3TWdNoVZBWxIf9mI3R5RlWRY";
-  final String My_Token = AppColor.token;
+  final String My_Token = AppStrings.token;
   Map<String, String> HeaderNoToken = {'Content-Type': 'application/json'};
 
   //For Login APi
@@ -118,8 +116,6 @@ class ApiService {
     }
   }
 
-
-
   //callHomeScreen
 
   Future<dynamic> callGetHomeScreenList() async {
@@ -181,9 +177,15 @@ class ApiService {
     };
 
     try {
-      print(baseurl + "patient/specialzationIdByDoctor?specializationId=$specializationId");
+      print(
+        baseurl +
+            "patient/specialzationIdByDoctor?specializationId=$specializationId",
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl + "patient/specialzationIdByDoctor?specializationId=$specializationId"),
+        Uri.parse(
+          baseurl +
+              "patient/specialzationIdByDoctor?specializationId=$specializationId",
+        ),
         headers: headers,
       );
       print("Home Response: ${response.body}");
@@ -218,7 +220,9 @@ class ApiService {
     };
 
     try {
-      final url = Uri.parse("${baseurl}patient/view-doctor-details?id=$doctorId");
+      final url = Uri.parse(
+        "${baseurl}patient/view-doctor-details?id=$doctorId",
+      );
       print("📤 Request URL: $url");
 
       final response = await http.get(url, headers: headers);
@@ -238,7 +242,7 @@ class ApiService {
   }
 
   // ✅ BOOK APPOINTMENT API
-// ✅ BOOK APPOINTMENT API
+  // ✅ BOOK APPOINTMENT API
   Future<dynamic> callBookAppointmentApi(Map<String, dynamic> body) async {
     var responseData;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -254,7 +258,11 @@ class ApiService {
         'Authorization': 'Bearer $myToken',
       };
 
-      final response = await http.post(url, headers: headers, body: jsonEncode(body));
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
       print("📥 Book Appointment Response: ${response.body}");
 
       // ✅ Handle both 200 and 201 status codes as success
@@ -340,10 +348,10 @@ class ApiService {
   }
 
   Future<dynamic> callUpdateProfileApi(
-      Map<String, dynamic> body,
-      File? image,
-      String token
-      ) async {
+    Map<String, dynamic> body,
+    File? image,
+    String token,
+  ) async {
     try {
       var request = http.MultipartRequest(
         'PUT', // ✅ CHANGED FROM POST TO PUT
@@ -362,10 +370,12 @@ class ApiService {
 
       // Add image file if available - field name should be 'profile_photo' based on Postman
       if (image != null) {
-        request.files.add(await http.MultipartFile.fromPath(
-          'profile_photo', // This must match the Postman field name
-          image.path,
-        ));
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'profile_photo', // This must match the Postman field name
+            image.path,
+          ),
+        );
       }
 
       print("📤 Sending PUT request to: ${baseurl}patient/update");
@@ -385,7 +395,7 @@ class ApiService {
         return {
           "success": false,
           "message": "Failed to update profile: ${response.statusCode}",
-          "body": resBody
+          "body": resBody,
         };
       }
     } catch (e) {
@@ -395,9 +405,9 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> callChangedPassword(
-      Map<String, dynamic> body,
-      String token,
-      ) async {
+    Map<String, dynamic> body,
+    String token,
+  ) async {
     try {
       var request = http.MultipartRequest(
         'PUT',
@@ -433,13 +443,13 @@ class ApiService {
             return {
               "success": true,
               "message": "Password changed successfully",
-              "data": data
+              "data": data,
             };
           }
         } catch (e) {
           return {
             "success": true,
-            "message": "Password changed successfully (no JSON)"
+            "message": "Password changed successfully (no JSON)",
           };
         }
       } else {
@@ -447,7 +457,7 @@ class ApiService {
           "success": false,
           "message": "Failed to change password",
           "status": response.statusCode,
-          "body": resBody
+          "body": resBody,
         };
       }
     } catch (e) {
@@ -455,7 +465,6 @@ class ApiService {
       return {"success": false, "message": e.toString()};
     }
   }
-
 
   Future<dynamic> callMedicineActivecategory() async {
     var responseData;
@@ -509,7 +518,9 @@ class ApiService {
       'Authorization': 'Bearer $myToken',
     };
 
-    String url = "$baseurl" "medicienCategory/subcategoryIdByMedicines?subcatId=$categoryId";
+    String url =
+        "$baseurl"
+        "medicienCategory/subcategoryIdByMedicines?subcatId=$categoryId";
     debugPrint("🌐 URL: $url");
 
     try {
@@ -550,7 +561,9 @@ class ApiService {
       'Authorization': 'Bearer $myToken',
     };
 
-    String url = "$baseurl" "medicien/display-medicein?id=$id";
+    String url =
+        "$baseurl"
+        "medicien/display-medicein?id=$id";
     debugPrint("🌐 URL: $url");
 
     try {
@@ -589,7 +602,11 @@ class ApiService {
         'Authorization': 'Bearer $myToken',
       };
 
-      final response = await http.post(url, headers: headers, body: jsonEncode(body));
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
       print("📥 Book Appointment Response: ${response.body}");
 
       // ✅ Handle both 200 and 201 status codes as success
@@ -644,10 +661,10 @@ class ApiService {
   // ✅ ✅ UPDATE CART
   // ✅ Update Cart Item
   Future<Map<String, dynamic>> callUpdateCartItemApi(
-      String medicineId,
-      int quantity,
-      String token,
-      ) async {
+    String medicineId,
+    int quantity,
+    String token,
+  ) async {
     try {
       final response = await http.put(
         Uri.parse('${baseurl}cart/update'),
@@ -676,14 +693,11 @@ class ApiService {
     }
   }
 
-
-
-
   // ✅ Remove Cart Item
   Future<Map<String, dynamic>> callRemoveCartItemApi(
-      String medicineId,
-      String token,
-      ) async {
+    String medicineId,
+    String token,
+  ) async {
     try {
       var response = await http.delete(
         Uri.parse('${baseurl}cart/remove'),
@@ -711,9 +725,7 @@ class ApiService {
   }
 
   // ✅ Clear Entire Cart
-  Future<Map<String, dynamic>> callClearCartApi(
-      String token,
-      ) async {
+  Future<Map<String, dynamic>> callClearCartApi(String token) async {
     try {
       var response = await http.delete(
         Uri.parse('${baseurl}cart/clear'),
@@ -738,9 +750,9 @@ class ApiService {
 
   // ✅ Alternative: Clear Cart with user ID (if needed)
   Future<Map<String, dynamic>> callClearCartByUserIdApi(
-      String userId,
-      String token,
-      ) async {
+    String userId,
+    String token,
+  ) async {
     try {
       var response = await http.delete(
         Uri.parse('${baseurl}cart/clear/$userId'),
@@ -762,7 +774,6 @@ class ApiService {
       return {"success": false, "message": e.toString()};
     }
   }
-
 
   Future<dynamic> callViewAddressDetailsApi() async {
     var responseData;
@@ -814,7 +825,11 @@ class ApiService {
         'Authorization': 'Bearer $myToken',
       };
 
-      final response = await http.post(url, headers: headers, body: jsonEncode(body));
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
       print("📥 Book Appointment Response: ${response.body}");
 
       // ✅ Handle both 200 and 201 status codes as success
@@ -831,12 +846,12 @@ class ApiService {
     return responseData;
   }
 
-// ✅ Update Address - CORRECTED
+  // ✅ Update Address - CORRECTED
   Future<Map<String, dynamic>> callUpdateAddressApi(
-      String addressId,
-      Map<String, dynamic> body,
-      String token,
-      ) async {
+    String addressId,
+    Map<String, dynamic> body,
+    String token,
+  ) async {
     try {
       final response = await http.put(
         Uri.parse('${baseurl}patientAddress/update?addressId=$addressId'),
@@ -864,9 +879,9 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> callRemoveAddressApi(
-      String addressId,
-      String token,
-      ) async {
+    String addressId,
+    String token,
+  ) async {
     try {
       var response = await http.delete(
         Uri.parse('${baseurl}patientAddress/delete?addressId=$addressId'),
@@ -928,7 +943,6 @@ class ApiService {
     return null;
   }
 
-
   Future<dynamic> callViewPrescriptionDetailsApi(String id) async {
     var responseData;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -972,7 +986,6 @@ class ApiService {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
   //For Forgot Pass APi
   Future callForgotPassApi(Map<String, dynamic> loginJson) async {
     var responseData;
@@ -983,9 +996,10 @@ class ApiService {
     try {
       print(baseurl + "user/forgotPassworFor-User");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/forgotPassworFor-User"),
-          headers: HeaderNoToken,
-          body: msg);
+        Uri.parse(baseurl + "user/forgotPassworFor-User"),
+        headers: HeaderNoToken,
+        body: msg,
+      );
       print("Login Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1007,9 +1021,10 @@ class ApiService {
     try {
       print(baseurl + "user/passwordResetForUser");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/passwordResetForUser"),
-          headers: HeaderNoToken,
-          body: msg);
+        Uri.parse(baseurl + "user/passwordResetForUser"),
+        headers: HeaderNoToken,
+        body: msg,
+      );
       print("Reset pass  Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1029,9 +1044,9 @@ class ApiService {
     try {
       print(baseurl + "user/user-create");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/user-create"),
-          headers: HeaderNoToken,
-          body: msg
+        Uri.parse(baseurl + "user/user-create"),
+        headers: HeaderNoToken,
+        body: msg,
       );
       print("callUserRegistrationApi Success" + response.body);
       if (response.statusCode == 200) {
@@ -1046,7 +1061,8 @@ class ApiService {
 
   //For OTP After Registration
   Future callOTPVerificationAfterRegistration(
-      Map<String, dynamic> otpJson) async {
+    Map<String, dynamic> otpJson,
+  ) async {
     var responseData;
     String msg = json.encode(otpJson);
 
@@ -1055,9 +1071,10 @@ class ApiService {
     try {
       print(baseurl + "user/checkOtpVerificationForUserRegister");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/checkOtpVerificationForUserRegister"),
-          headers: HeaderNoToken,
-          body: msg);
+        Uri.parse(baseurl + "user/checkOtpVerificationForUserRegister"),
+        headers: HeaderNoToken,
+        body: msg,
+      );
       print("callOTPVerificationAfterRegistration Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1071,7 +1088,8 @@ class ApiService {
 
   //For OTP After Forgot
   Future callOTPVerificationAfterForgotPass(
-      Map<String, dynamic> otpJson) async {
+    Map<String, dynamic> otpJson,
+  ) async {
     var responseData;
     String msg = json.encode(otpJson);
 
@@ -1080,10 +1098,10 @@ class ApiService {
     try {
       print(baseurl + "user/checkOtpVerificationFor-User-Forgotpassword");
       http.Response response = await http.post(
-          Uri.parse(
-              baseurl + "user/checkOtpVerificationFor-User-Forgotpassword"),
-          headers: HeaderNoToken,
-          body: msg);
+        Uri.parse(baseurl + "user/checkOtpVerificationFor-User-Forgotpassword"),
+        headers: HeaderNoToken,
+        body: msg,
+      );
       print("callOTPVerificationAfterForgot Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1105,9 +1123,10 @@ class ApiService {
     try {
       print(baseurl + "user/resendOTPForUsersAll");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/resendOTPForUsersAll"),
-          headers: HeaderNoToken,
-          body: msg);
+        Uri.parse(baseurl + "user/resendOTPForUsersAll"),
+        headers: HeaderNoToken,
+        body: msg,
+      );
       print("callResendOTPApi Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1126,14 +1145,16 @@ class ApiService {
     print("Api service");
 
     try {
-      String url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyA76B_O-7asDg9vyyyrhu8EXKd3bVbq2RU&input=$input";
+      String url =
+          "https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyA76B_O-7asDg9vyyyrhu8EXKd3bVbq2RU&input=$input";
       if (type.isNotEmpty) {
         url += "&types=$type";
       }
       print(url);
       http.Response response = await http.get(
-          Uri.parse(url),
-          headers: HeaderNoToken);
+        Uri.parse(url),
+        headers: HeaderNoToken,
+      );
       print("call Places Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1146,12 +1167,13 @@ class ApiService {
   }
 
   Future callbasicdetailupdate(
-      File? imagefile,
-      List<XFile> imagesList,
-      List hashTagList,
-      List? hoursList,
-      String? brief,
-      String? userId) async {
+    File? imagefile,
+    List<XFile> imagesList,
+    List hashTagList,
+    List? hoursList,
+    String? brief,
+    String? userId,
+  ) async {
     var responseData;
 
     print("inside");
@@ -1180,23 +1202,32 @@ class ApiService {
         request.files.add(multipartfile);
       }
 
-
-
       print("requests  1" + request.files.toString());
-      List<http.MultipartFile> newList=[];
-      try{
+      List<http.MultipartFile> newList = [];
+      try {
         if (imagesList != null) {
           for (int i = 0; i <= imagesList.length; i++) {
-            var stream = new http.ByteStream(imagesList.elementAt(i).openRead());
+            var stream = new http.ByteStream(
+              imagesList.elementAt(i).openRead(),
+            );
             var length = await imagesList.elementAt(i).length();
-            print("list $i" + imagesList.elementAt(i).path.toString()+"\n list 2" + imagesList.length.toString());
-            var multipartFile = new http.MultipartFile("photos", stream, length,
-                filename: path.basename(imagesList.elementAt(i).path));
+            print(
+              "list $i" +
+                  imagesList.elementAt(i).path.toString() +
+                  "\n list 2" +
+                  imagesList.length.toString(),
+            );
+            var multipartFile = new http.MultipartFile(
+              "photos",
+              stream,
+              length,
+              filename: path.basename(imagesList.elementAt(i).path),
+            );
             newList.add(multipartFile);
           }
         }
-      }catch(e){
-        print("list error"+e.toString());
+      } catch (e) {
+        print("list error" + e.toString());
       }
 
       request.files.addAll(newList!);
@@ -1204,12 +1235,13 @@ class ApiService {
       request.fields["userId"] = userId!;
       request.fields["featuresId"] = hashTagList!.join(',');
       request.fields["briefDescription"] = brief!;
-      request.fields['timetable'] =
-      hoursList!.length > 0 ? json.encode(hoursList) : "";
+      request.fields['timetable'] = hoursList!.length > 0
+          ? json.encode(hoursList)
+          : "";
       print("Update user responce :" + request.fields.toString());
 
       var response = await request.send().timeout(
-          const Duration(minutes: 10)
+        const Duration(minutes: 10),
         // onTimeout: () {
         //   // Time has run out, do what you wanted to do.
         //   print("Fail"); // Request Timeout response status code
@@ -1233,13 +1265,16 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "user/businessUserListForSerach?searchKey=$searchkey" +
-          "\n header\n" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "user/businessUserListForSerach?searchKey=$searchkey" +
+            "\n header\n" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(
-            baseurl + "user/businessUserListForSerach?searchKey=$searchkey"),
+          baseurl + "user/businessUserListForSerach?searchKey=$searchkey",
+        ),
         headers: HeaderWithToken,
       );
       print("call Search Api Success" + response.body);
@@ -1266,9 +1301,10 @@ class ApiService {
     try {
       print(baseurl + "user/addfavoriteUser");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/addfavoriteUser"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "user/addfavoriteUser"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("call Add To favourite Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1293,12 +1329,15 @@ class ApiService {
     try {
       print(baseurl + "user/removefavoriteUser");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/removefavoriteUser"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "user/removefavoriteUser"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("call Remove To favourite Success" + response.body);
       if (response.statusCode == 200) {
-        responseData = JSON.jsonDecode(response.body); ///**************************
+        responseData = JSON.jsonDecode(response.body);
+
+        ///**************************
 
         return responseData;
       }
@@ -1307,8 +1346,13 @@ class ApiService {
     }
   }
 
-  Future callPersonalAccounUpdate(File imagefile, List hashTagList,
-      List<String> hoursList, String brief, String userId) async {
+  Future callPersonalAccounUpdate(
+    File imagefile,
+    List hashTagList,
+    List<String> hoursList,
+    String brief,
+    String userId,
+  ) async {
     var responseData;
     print("insdie call update personal");
 
@@ -1381,15 +1425,15 @@ class ApiService {
   }
 
   Future callCreatePostApi(
-      String userID,
-      List imagesList,
-      double lat,
-      double long,
-      String locationName,
-      String content,
-      int pricavyStatus,
-      List selectedFeatureListId,
-      ) async {
+    String userID,
+    List imagesList,
+    double lat,
+    double long,
+    String locationName,
+    String content,
+    int pricavyStatus,
+    List selectedFeatureListId,
+  ) async {
     var responseData;
 
     try {
@@ -1402,13 +1446,17 @@ class ApiService {
 
       request.headers.addAll(HeaderWithToken);
 
-      List<http.MultipartFile> newList=[] ;
+      List<http.MultipartFile> newList = [];
       if (imagesList != null) {
         for (int i = 0; i < imagesList.length; i++) {
           var stream = new http.ByteStream(imagesList.elementAt(i).openRead());
           var length = await imagesList.elementAt(i).length();
-          var multipartFile = new http.MultipartFile("photos", stream, length,
-              filename: path.basename(imagesList.elementAt(i).path));
+          var multipartFile = new http.MultipartFile(
+            "photos",
+            stream,
+            length,
+            filename: path.basename(imagesList.elementAt(i).path),
+          );
           newList.add(multipartFile);
         }
       }
@@ -1442,17 +1490,17 @@ class ApiService {
   }
 
   Future callEditPostApi(
-      String userID,
-      List imagesList,
-      double? lat,
-      double? long,
-      String locationName,
-      String content,
-      int pricavyStatus,
-      List deletedMedialist,
-      String postId,
-      List selectedFeatureListId,
-      ) async {
+    String userID,
+    List imagesList,
+    double? lat,
+    double? long,
+    String locationName,
+    String content,
+    int pricavyStatus,
+    List deletedMedialist,
+    String postId,
+    List selectedFeatureListId,
+  ) async {
     var responseData;
 
     try {
@@ -1464,17 +1512,20 @@ class ApiService {
       };
       var request = http.MultipartRequest("POST", uri);
 
-
       // print("Create post request" + request.fields.toString());
       request.headers.addAll(HeaderWithToken);
 
-      List<http.MultipartFile> newList=[];
+      List<http.MultipartFile> newList = [];
       if (imagesList != null) {
         for (int i = 0; i < imagesList.length; i++) {
           var stream = new http.ByteStream(imagesList.elementAt(i).openRead());
           var length = await imagesList.elementAt(i).length();
-          var multipartFile = new http.MultipartFile("photos", stream, length,
-              filename: path.basename(imagesList.elementAt(i).path));
+          var multipartFile = new http.MultipartFile(
+            "photos",
+            stream,
+            length,
+            filename: path.basename(imagesList.elementAt(i).path),
+          );
           newList!.add(multipartFile);
         }
       }
@@ -1492,8 +1543,6 @@ class ApiService {
       request.fields["deletedPhotos"] = deletedMedialist.join(', ');
       request.fields["featuresId"] = selectedFeatureListId.join(',');
       print("Edit post request harsh " + request.fields.toString());
-
-
 
       print("Edit post request" + request.fields.toString());
       var response = await request.send();
@@ -1517,12 +1566,15 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "friends/getFriendSuggestionList?searchKey=$searchkey" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "friends/getFriendSuggestionList?searchKey=$searchkey" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(
-            baseurl + "friends/getFriendSuggestionList?searchKey=$searchkey"),
+          baseurl + "friends/getFriendSuggestionList?searchKey=$searchkey",
+        ),
         headers: HeaderWithToken,
       );
       print("call SuggestionList Api Success" + response.body);
@@ -1543,9 +1595,9 @@ class ApiService {
     try {
       print(baseurl + "adminUser/contactUsForm");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "adminUser/contactUsForm"),
-          headers: HeaderNoToken,
-          body: msg
+        Uri.parse(baseurl + "adminUser/contactUsForm"),
+        headers: HeaderNoToken,
+        body: msg,
       );
       print("callSubmitAnIssueApi Success" + response.body);
       if (response.statusCode == 200) {
@@ -1567,9 +1619,11 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "post/get-PostFeed-List?pageNumber=$pageNumber" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "post/get-PostFeed-List?pageNumber=$pageNumber" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(baseurl + "post/get-PostFeed-List?pageNumber=$pageNumber"),
         headers: HeaderWithToken,
@@ -1585,7 +1639,6 @@ class ApiService {
     }
   }
 
-
   //NearestBar List Api
 
   Future callGetNearestBarList(double? lat, double? long) async {
@@ -1598,19 +1651,13 @@ class ApiService {
     try {
       // Construct the URL with lat and long as query parameters
       final url = Uri.parse(baseurl + "user/nearestBarDetails").replace(
-        queryParameters: {
-          'lat': lat.toString(),
-          'long': long.toString(),
-        },
+        queryParameters: {'lat': lat.toString(), 'long': long.toString()},
       );
 
       print("API URL: $url");
       print("Headers: $HeaderWithToken");
 
-      http.Response response = await http.get(
-        url,
-        headers: HeaderWithToken,
-      );
+      http.Response response = await http.get(url, headers: HeaderWithToken);
 
       print("call Get Nearest Bar List API Success: ${response.body}");
       if (response.statusCode == 200) {
@@ -1624,22 +1671,24 @@ class ApiService {
     return null;
   }
 
-
   //pagenationapi call
   Future callpagenationapi(int _page) async {
     var responseData;
     Map<String, String> Header = {
       'Content-Type': 'application/json',
       'Authorization':
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOjEsInJlZ2lzdGVyU3RhdHVzIjozLCJpc2RlbGV0ZWQiOmZhbHNlLCJlbWFpbCI6ImRpeWFudGVjaG5vbG9naWVzNjE2QGdtYWlsLmNvbSIsInVzZXJJZCI6IjYxNDQyNDYxYmRlOWY0MDlhODdlOGYyYSIsInByaXZhY3lTdGF0dXMiOjAsInN0YXR1c1R5cGUiOjEsImZpcnN0TmFtZSI6IloiLCJ1c2VyTmFtZSI6ImRoeWFudGVjaG5vbG9neSIsImxhc3ROYW1lIjoiUGF0ZWwiLCJwcm9maWxlVXJsIjoiVXNlci9JbWFnZXMvVXNlci9JbWFnZXMvcHJvZmlsZV9pbWFnZS0xNjQ2ODk3MTM0MzAzLmpwZyIsImZhdm91cml0ZVN0cmFpbiI6InB1cnBsZXdfZmFnYSIsImFib3V0IjoiSSBhbSBhbiBpbXBvcnRhbnQgcXVlc3Rpb24gZm9yIHlvdSBnZXQgYSBwZXJzb24gd2hvIGNhbiBiZSBpbiB5b3VyIGxpZmUgYW5kIEVuZ2xpc2ggdG8gRW5nbGlzaCB0byBFbmdsaXNoIGFuZCBjYW4ndCBFbmdsaXNoIHRvIEVuZ2xpc2ggdG8gRW5nbGlzaCAiLCJnZW5kZXIiOiJtYWxlIiwiZG9iIjoiMTAvMTgvMjAxOSIsImxvY2F0aW9uTmFtZSI6IkJvcml2YWxpLCBNdW1iYWksIE1haGFyYXNodHJhLCBJbmRpYSIsIm1vYmlsZSI6IiIsImp0aSI6InVuZGVmaW5lZF80NTY1MzAiLCJpYXQiOjE2NjMyNDc2NDcsImV4cCI6MTY2NTgzOTY0N30.2VxlJq5V77HPD5QmniMmoZpbITbIeDGewSC11Vz0b8k',
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOjEsInJlZ2lzdGVyU3RhdHVzIjozLCJpc2RlbGV0ZWQiOmZhbHNlLCJlbWFpbCI6ImRpeWFudGVjaG5vbG9naWVzNjE2QGdtYWlsLmNvbSIsInVzZXJJZCI6IjYxNDQyNDYxYmRlOWY0MDlhODdlOGYyYSIsInByaXZhY3lTdGF0dXMiOjAsInN0YXR1c1R5cGUiOjEsImZpcnN0TmFtZSI6IloiLCJ1c2VyTmFtZSI6ImRoeWFudGVjaG5vbG9neSIsImxhc3ROYW1lIjoiUGF0ZWwiLCJwcm9maWxlVXJsIjoiVXNlci9JbWFnZXMvVXNlci9JbWFnZXMvcHJvZmlsZV9pbWFnZS0xNjQ2ODk3MTM0MzAzLmpwZyIsImZhdm91cml0ZVN0cmFpbiI6InB1cnBsZXdfZmFnYSIsImFib3V0IjoiSSBhbSBhbiBpbXBvcnRhbnQgcXVlc3Rpb24gZm9yIHlvdSBnZXQgYSBwZXJzb24gd2hvIGNhbiBiZSBpbiB5b3VyIGxpZmUgYW5kIEVuZ2xpc2ggdG8gRW5nbGlzaCB0byBFbmdsaXNoIGFuZCBjYW4ndCBFbmdsaXNoIHRvIEVuZ2xpc2ggdG8gRW5nbGlzaCAiLCJnZW5kZXIiOiJtYWxlIiwiZG9iIjoiMTAvMTgvMjAxOSIsImxvY2F0aW9uTmFtZSI6IkJvcml2YWxpLCBNdW1iYWksIE1haGFyYXNodHJhLCBJbmRpYSIsIm1vYmlsZSI6IiIsImp0aSI6InVuZGVmaW5lZF80NTY1MzAiLCJpYXQiOjE2NjMyNDc2NDcsImV4cCI6MTY2NTgzOTY0N30.2VxlJq5V77HPD5QmniMmoZpbITbIeDGewSC11Vz0b8k',
     };
     try {
       print(
-          "http://122.170.111.66:3001/v1/buddies/get-BuddiesListForAdd?searchKey=&pageNumber=$_page");
+        "http://122.170.111.66:3001/v1/buddies/get-BuddiesListForAdd?searchKey=&pageNumber=$_page",
+      );
       http.Response response = await http.get(
-          Uri.parse(
-              "http://122.170.111.66:3001/v1/buddies/get-BuddiesListForAdd?searchKey=&pageNumber=$_page"),
-          headers: Header);
+        Uri.parse(
+          "http://122.170.111.66:3001/v1/buddies/get-BuddiesListForAdd?searchKey=&pageNumber=$_page",
+        ),
+        headers: Header,
+      );
 
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1665,9 +1714,10 @@ class ApiService {
     try {
       print(baseurl + "post/post-likeDislike");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "post/post-likeDislike"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "post/post-likeDislike"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Login Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1693,9 +1743,10 @@ class ApiService {
     try {
       print(baseurl + "post/post-addComment");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "post/post-addComment"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "post/post-addComment"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Post Comment Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1748,9 +1799,10 @@ class ApiService {
     try {
       print(baseurl + "post/post-addCommentReply");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "post/post-addCommentReply"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "post/post-addCommentReply"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Post Comment Reply Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1776,9 +1828,10 @@ class ApiService {
     try {
       print(baseurl + "post/post-Delete");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "post/post-Delete"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "post/post-Delete"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Post Delete Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1789,7 +1842,6 @@ class ApiService {
       print("Error" + E.toString());
     }
   }
-
 
   //For Edit Perrsonal Account Api
   Future CallEditpersonalAccountApi(String userId) async {
@@ -1828,12 +1880,16 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "friends/getFriendSuggestionList?searchKey=$searchKey&pageNumber=$pageNumber" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "friends/getFriendSuggestionList?searchKey=$searchKey&pageNumber=$pageNumber" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "friends/getFriendSuggestionList?searchKey=$searchKey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "friends/getFriendSuggestionList?searchKey=$searchKey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Friend Suggestion List Api Success" + response.body);
@@ -1888,9 +1944,10 @@ class ApiService {
     try {
       print(baseurl + "follower/create");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "follower/create"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "follower/create"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Follow User Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1904,7 +1961,8 @@ class ApiService {
 
   //For Send user Friend request
   Future callSenduserFriendrequestApi(
-      Map<String, dynamic> deletePostJson) async {
+    Map<String, dynamic> deletePostJson,
+  ) async {
     var responseData;
     Map<String, String> HeaderWithToken = {
       'Content-Type': 'application/json',
@@ -1917,9 +1975,10 @@ class ApiService {
     try {
       print(baseurl + "friendsRequest/createRequest");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "friendsRequest/createRequest"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "friendsRequest/createRequest"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Send Friend Request Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1945,9 +2004,10 @@ class ApiService {
     try {
       print(baseurl + "friendsRequest/cancelRequest");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "friendsRequest/cancelRequest"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "friendsRequest/cancelRequest"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Send Friend Request Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1973,9 +2033,10 @@ class ApiService {
     try {
       print(baseurl + "follower/unFollow-User");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "follower/unFollow-User"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "follower/unFollow-User"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("UnFolllow Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -1996,12 +2057,16 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "friendsRequest/getFriendsRequestList?searchKey=$searchKey&pageNumber=$pageNumber" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "friendsRequest/getFriendsRequestList?searchKey=$searchKey&pageNumber=$pageNumber" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "friendsRequest/getFriendsRequestList?searchKey=$searchKey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "friendsRequest/getFriendsRequestList?searchKey=$searchKey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Friend Suggestion List Api Success" + response.body);
@@ -2029,9 +2094,10 @@ class ApiService {
     try {
       print(baseurl + "friendsRequest/approveRequest");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "friendsRequest/approveRequest"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "friendsRequest/approveRequest"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Accept Friend Request Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -2057,9 +2123,10 @@ class ApiService {
     try {
       print(baseurl + "friendsRequest/rejectRequest");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "friendsRequest/rejectRequest"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "friendsRequest/rejectRequest"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Accept Friend Request Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -2071,24 +2138,31 @@ class ApiService {
     }
   }
 
-//for EditPersonalaccount Photos api
+  //for EditPersonalaccount Photos api
 
   //For User wise Friend  List
 
   Future callUserWiseFriendListApi(
-      String userID, int pageNumber, String searchKey) async {
+    String userID,
+    int pageNumber,
+    String searchKey,
+  ) async {
     var responseData;
     Map<String, String> HeaderWithToken = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "user/getUserFriendList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "user/getUserFriendList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "user/getUserFriendList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "user/getUserFriendList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Friend Suggestion List Api Success" + response.body);
@@ -2105,19 +2179,26 @@ class ApiService {
   //For User wise Follower  List
 
   Future callUserWiseFollowerListListApi(
-      String userID, int pageNumber, String searchKey) async {
+    String userID,
+    int pageNumber,
+    String searchKey,
+  ) async {
     var responseData;
     Map<String, String> HeaderWithToken = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "user/getUserFollowerList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "user/getUserFollowerList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "user/getUserFollowerList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "user/getUserFollowerList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("call User wise Follower  List Api Success" + response.body);
@@ -2134,19 +2215,27 @@ class ApiService {
   //For Friend Following List
 
   Future callUserWiseFollowingListApi(
-      String userID, int pageNumber, String searchKey,var accountType ) async {
+    String userID,
+    int pageNumber,
+    String searchKey,
+    var accountType,
+  ) async {
     var responseData;
     Map<String, String> HeaderWithToken = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "user/getUserFollowingList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber&accountType=$accountType" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "user/getUserFollowingList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber&accountType=$accountType" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "user/getUserFollowingList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "user/getUserFollowingList?userId=$userID&searchKey=$searchKey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Following  List Api Success" + response.body);
@@ -2160,7 +2249,7 @@ class ApiService {
     }
   }
 
-//For remove friend
+  //For remove friend
   Future callremoveFriendApi(Map<String, dynamic> deletePostJson) async {
     var responseData;
     Map<String, String> HeaderWithToken = {
@@ -2174,9 +2263,10 @@ class ApiService {
     try {
       print(baseurl + "friends/removeFriends");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "friends/removeFriends"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "friends/removeFriends"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Accept Friend Request Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -2188,7 +2278,7 @@ class ApiService {
     }
   }
 
-//For Remove follower Api
+  //For Remove follower Api
   Future callRemoveUnfollowUserApi(Map<String, dynamic> deletePostJson) async {
     var responseData;
     Map<String, String> HeaderWithToken = {
@@ -2202,9 +2292,10 @@ class ApiService {
     try {
       print(baseurl + "follower/unFollwingUser");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "follower/unFollwingUser"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "follower/unFollwingUser"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Accept Friend Request Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -2225,12 +2316,16 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "user/getUserListForRating?searchKey=$searchKey&pageNumber=$pageNumber" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "user/getUserListForRating?searchKey=$searchKey&pageNumber=$pageNumber" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "user/getUserListForRating?searchKey=$searchKey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "user/getUserListForRating?searchKey=$searchKey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("callGet User List For Review" + response.body);
@@ -2254,9 +2349,11 @@ class ApiService {
     };
     String bodyData = json.encode(catJson);
     try {
-      print(baseurl +
-          "user/getRatingCategoryListForDropDown" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "user/getRatingCategoryListForDropDown" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.post(
         Uri.parse(baseurl + "user/getRatingCategoryListForDropDown"),
         body: bodyData,
@@ -2293,7 +2390,9 @@ class ApiService {
     String body = json.encode(bodyData);
 
     try {
-      print("API URL: ${baseurl}user/getFeatureListForDropDown?accountType=$accountType");
+      print(
+        "API URL: ${baseurl}user/getFeatureListForDropDown?accountType=$accountType",
+      );
       print("Request Headers: $headerWithToken");
       print("Request Body: $body");
 
@@ -2348,10 +2447,7 @@ class ApiService {
     }
   }
 
-  Future callMultiplePhotosApi(
-      String userID,
-      List<XFile> imagesList,
-      ) async {
+  Future callMultiplePhotosApi(String userID, List<XFile> imagesList) async {
     print("inside");
     try {
       var uri = Uri.parse(baseurl + "user/user-businessAccount-update-details");
@@ -2364,13 +2460,17 @@ class ApiService {
       request.headers.addAll(headers);
       print("requests" + request.headers.toString());
       // print("Update user tests1 :" + imageFile.path);
-      List<http.MultipartFile> newList=[];
+      List<http.MultipartFile> newList = [];
       if (imagesList != null) {
         for (int i = 0; i < imagesList.length; i++) {
           var stream = http.ByteStream(imagesList.elementAt(i).openRead());
           var length = await imagesList.elementAt(i).length();
-          var multipartFile = new http.MultipartFile("photos", stream, length,
-              filename: path.basename(imagesList.elementAt(i).path));
+          var multipartFile = new http.MultipartFile(
+            "photos",
+            stream,
+            length,
+            filename: path.basename(imagesList.elementAt(i).path),
+          );
           newList!.add(multipartFile);
         }
       }
@@ -2391,8 +2491,8 @@ class ApiService {
     }
   }
 
-//for EditPersonalaccount Photos api
-//For Edit Perrsonal Account Api
+  //for EditPersonalaccount Photos api
+  //For Edit Perrsonal Account Api
   Future CallEditpersonalAccountPhotosApi() async {
     Map<String, String> Header = {
       'Content-Type': 'application/json',
@@ -2420,7 +2520,7 @@ class ApiService {
     }
   }
 
-/////remove favapi
+  /////remove favapi
   Future callremovefavorite(Map<String, Object> favremovejson) async {
     Map<String, String> Header = {
       'Content-Type': 'application/json',
@@ -2434,9 +2534,10 @@ class ApiService {
     try {
       print(baseurl + "user/removefavoriteUser");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/removefavoriteUser"),
-          headers: Header,
-          body: msg);
+        Uri.parse(baseurl + "user/removefavoriteUser"),
+        headers: Header,
+        body: msg,
+      );
 
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -2449,7 +2550,7 @@ class ApiService {
     }
   }
 
-//////add favorite search///
+  //////add favorite search///
   Future callfavouritesearchApi(String searchkey) async {
     var responseData;
     Map<String, String> HeaderWithToken = {
@@ -2457,13 +2558,16 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "user/businessUserListForSerach?searchKey=$searchkey" +
-          "\n header\n" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "user/businessUserListForSerach?searchKey=$searchkey" +
+            "\n header\n" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(
-            baseurl + "user/businessUserListForSerach?searchKey=$searchkey"),
+          baseurl + "user/businessUserListForSerach?searchKey=$searchkey",
+        ),
         headers: HeaderWithToken,
       );
       print("call Search Api Success" + response.body);
@@ -2504,7 +2608,7 @@ class ApiService {
   //   }
   // }
 
-///////////////update hashtag/////
+  ///////////////update hashtag/////
   Future callPostUpdatehashtagApi(Map<String, Object> hashJson) async {
     var responseData;
     Map<String, String> header = {
@@ -2516,13 +2620,16 @@ class ApiService {
     try {
       print(baseurl + "user/updateUserHashtag");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/updateUserHashtag"),
-          headers: header,
-          body: ResetJson);
-      print("Post hashtag Success" +
-          response.request.toString() +
-          "\n res" +
-          response.body);
+        Uri.parse(baseurl + "user/updateUserHashtag"),
+        headers: header,
+        body: ResetJson,
+      );
+      print(
+        "Post hashtag Success" +
+            response.request.toString() +
+            "\n res" +
+            response.body,
+      );
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
 
@@ -2533,7 +2640,7 @@ class ApiService {
     }
   }
 
-//update information api
+  //update information api
   Future callUpdateInformationApi(Map<String, Object> resetJson) async {
     //For Login APi
     var responseData;
@@ -2569,9 +2676,11 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "user/userDetailsGetById?_id=$userId" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "user/userDetailsGetById?_id=$userId" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(baseurl + "user/userDetailsGetById?_id=$userId"),
         headers: HeaderWithToken,
@@ -2657,9 +2766,10 @@ class ApiService {
     try {
       print(baseurl + "user/removeUserTimetable");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/removeUserTimetable"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "user/removeUserTimetable"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("call Remove To Hourlist Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -2683,9 +2793,10 @@ class ApiService {
     try {
       print(baseurl + "user/updateUserTimetable");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/updateUserTimetable"),
-          headers: header,
-          body: ResetJson);
+        Uri.parse(baseurl + "user/updateUserTimetable"),
+        headers: header,
+        body: ResetJson,
+      );
       print("Post Hourlist Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -2699,21 +2810,20 @@ class ApiService {
 
   //Call Save user rating Api
   Future callSaveUserRatingApi(
-      File? imageFile,
-      String? userId,
-      String categoryRating,
-      String feature,
-      String review,
-      )
-  async {
+    File? imageFile,
+    String? userId,
+    String categoryRating,
+    String feature,
+    String review,
+  ) async {
     var responseData;
     print("inside");
     String? path;
-    if(imageFile!=null){
+    if (imageFile != null) {
       path = imageFile!.path;
       print("requests 2" + path!);
-    }else{
-      path="";
+    } else {
+      path = "";
       print("requests 3");
     }
 
@@ -2736,7 +2846,7 @@ class ApiService {
 
       print("requests 4" + path);
 
-      if (path!="") {
+      if (path != "") {
         print("requests 5" + path);
 
         var steam = http.ByteStream(imageFile!.openRead())..cast();
@@ -2748,7 +2858,6 @@ class ApiService {
           filename: path,
         );
         request.files.add(multipartfile);
-
       }
       List<http.MultipartFile> newList = [];
       request.files.addAll(newList!);
@@ -2759,10 +2868,15 @@ class ApiService {
 
       print("$categoryRating /*/*/*/**/*");
 
-
       // request.fields['data'] = jsonEncode(ratingJson);
-      print("Update user request //////////////////////:" + request.fields.toString());
-      print("Update user request files **********************:" + request.files.toString());
+      print(
+        "Update user request //////////////////////:" +
+            request.fields.toString(),
+      );
+      print(
+        "Update user request files **********************:" +
+            request.files.toString(),
+      );
 
       print(baseurl + "user/ratingSave");
       var response = await request.send();
@@ -2799,9 +2913,10 @@ class ApiService {
     try {
       print(baseurl + "user/ratingDelete");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "user/ratingDelete"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "user/ratingDelete"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Rating Delete Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -2824,7 +2939,8 @@ class ApiService {
     String bodyData = json.encode(catJson);
     try {
       print(
-          baseurl + "user/userFeatureListForEdit" + HeaderWithToken.toString());
+        baseurl + "user/userFeatureListForEdit" + HeaderWithToken.toString(),
+      );
       http.Response response = await http.post(
         Uri.parse(baseurl + "user/userFeatureListForEdit"),
         body: bodyData,
@@ -2841,8 +2957,15 @@ class ApiService {
     }
   }
 
-  callAddBarTenderSaveApi(File imageProfileFile, String firstname,
-      String lastname, String locationname, lat, lng, String email) async {
+  callAddBarTenderSaveApi(
+    File imageProfileFile,
+    String firstname,
+    String lastname,
+    String locationname,
+    lat,
+    lng,
+    String email,
+  ) async {
     print("insdie call Add bar");
     File imagefile = new File(imageProfileFile.path);
     try {
@@ -2890,8 +3013,15 @@ class ApiService {
     }
   }
 
-  callAddBarSaveApi(File imageProfileFile, String barName, String locationName,
-      lat, lng, String email, String website) async {
+  callAddBarSaveApi(
+    File imageProfileFile,
+    String barName,
+    String locationName,
+    lat,
+    lng,
+    String email,
+    String website,
+  ) async {
     var responseData;
     print("insdie call Add bar");
     File imagefile = new File(imageProfileFile.path);
@@ -2940,7 +3070,7 @@ class ApiService {
     }
   }
 
-//For Get Discovery Post Lise
+  //For Get Discovery Post Lise
 
   Future callGetDiscoveryPostListApi(String searchKey, int index) async {
     var responseData;
@@ -2950,12 +3080,16 @@ class ApiService {
     };
 
     try {
-      print(baseurl +
-          "discovery/discovery-postListWithDetails?index=$index&searchKey=$searchKey" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "discovery/discovery-postListWithDetails?index=$index&searchKey=$searchKey" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "discovery/discovery-postListWithDetails?index=$index&searchKey=$searchKey"),
+        Uri.parse(
+          baseurl +
+              "discovery/discovery-postListWithDetails?index=$index&searchKey=$searchKey",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Discovery Post List" + response.body);
@@ -2981,7 +3115,8 @@ class ApiService {
       print((baseurl + "event/eventList?month=$eventmonth&year=$eventYear"));
       http.Response response = await http.get(
         Uri.parse(
-            baseurl + "event/eventList?month=$eventmonth&year=$eventYear"),
+          baseurl + "event/eventList?month=$eventmonth&year=$eventYear",
+        ),
         headers: Header,
       );
       print("Event detail list message.. :" + response.body);
@@ -2994,6 +3129,7 @@ class ApiService {
       print("Error.." + E.toString());
     }
   }
+
   Future callgeteventlistByFeature(String feature) async {
     Map<String, String> Header = {
       'Content-Type': 'application/json',
@@ -3004,8 +3140,7 @@ class ApiService {
     try {
       print((baseurl + "event/event/eventListByHashTag?hashTag=Goldentee"));
       http.Response response = await http.get(
-        Uri.parse(
-            baseurl + "event/eventListByHashTag?hashTag=Goldentee"),
+        Uri.parse(baseurl + "event/eventListByHashTag?hashTag=Goldentee"),
         headers: Header,
       );
       print("Event detail list message.. :" + response.body);
@@ -3029,12 +3164,16 @@ class ApiService {
     };
 
     try {
-      print(baseurl +
-          "discovery/get-getFriendsListForDiscovery?searchKey=$searchKey&pageNumber=$pageNumber" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "discovery/get-getFriendsListForDiscovery?searchKey=$searchKey&pageNumber=$pageNumber" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "discovery/get-getFriendsListForDiscovery?searchKey=$searchKey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "discovery/get-getFriendsListForDiscovery?searchKey=$searchKey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Discovery Post List" + response.body);
@@ -3058,9 +3197,9 @@ class ApiService {
     };
     String bodyData = json.encode(postJson);
     try {
-      print(baseurl +
-          "discovery/discovery-placeList" +
-          HeaderWithToken.toString());
+      print(
+        baseurl + "discovery/discovery-placeList" + HeaderWithToken.toString(),
+      );
       http.Response response = await http.post(
         Uri.parse(baseurl + "discovery/discovery-placeList"),
         body: bodyData,
@@ -3087,12 +3226,15 @@ class ApiService {
     };
 
     try {
-      print(baseurl +
-          "discovery/discovery-hashTagList?contant=$searchKey" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "discovery/discovery-hashTagList?contant=$searchKey" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(
-            baseurl + "discovery/discovery-hashTagList?contant=$searchKey"),
+          baseurl + "discovery/discovery-hashTagList?contant=$searchKey",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Discovery HashTag List" + response.body);
@@ -3108,7 +3250,10 @@ class ApiService {
 
   //For Get Discovery HashTag List
 
-  Future callGetDiscoveryPostListByHashTagApi(String searchKey , String hashTagId) async {
+  Future callGetDiscoveryPostListByHashTagApi(
+    String searchKey,
+    String hashTagId,
+  ) async {
     var responseData;
     Map<String, String> HeaderWithToken = {
       'Content-Type': 'application/json',
@@ -3116,12 +3261,16 @@ class ApiService {
     };
 
     try {
-      print(baseurl +
-          "discovery/getpostListByHashTag?searchKey=$searchKey&hashTagId=$hashTagId" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "discovery/getpostListByHashTag?searchKey=$searchKey&hashTagId=$hashTagId" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(
-            baseurl + "discovery/getpostListByHashTag?searchKey=$searchKey&hashTagId=$hashTagId"),
+          baseurl +
+              "discovery/getpostListByHashTag?searchKey=$searchKey&hashTagId=$hashTagId",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Discovery PostList By HashTag Api" + response.body);
@@ -3137,34 +3286,33 @@ class ApiService {
 
   /////createeventpost Api////////
   Future callCreateevent(
-      File? imagefile,
-      List<dynamic> hashTagList,
-      List friendiList,
-      String desc,
-      String eventTitle,
-      String eventStartTime,
-      String eventDate,
-      var hostId,
-      var barID,
-      String locationName,
-      var lat,
-      var lng,
-      int eventType,
-      ) async {
+    File? imagefile,
+    List<dynamic> hashTagList,
+    List friendiList,
+    String desc,
+    String eventTitle,
+    String eventStartTime,
+    String eventDate,
+    var hostId,
+    var barID,
+    String locationName,
+    var lat,
+    var lng,
+    int eventType,
+  ) async {
     var responseData;
     print("inside");
     String? path;
-    if(imagefile!=null){
+    if (imagefile != null) {
       path = imagefile!.path;
       print("requests 2" + path!);
-    }else{
-      path="";
+    } else {
+      path = "";
       print("requests 3");
     }
 
     print(baseurl + "event/save-event".toString());
     try {
-
       var uri = Uri.parse(baseurl + "event/save-event");
       Map<String, String> HeaderWithToken = {
         'Content-Type': 'application/json',
@@ -3176,7 +3324,7 @@ class ApiService {
       //  print("Update user tests1 :" + imagefile!.path);
       print("requests 4" + path);
 
-      if (path!="") {
+      if (path != "") {
         print("requests 5" + path);
         var steam = http.ByteStream(imagefile!.openRead())..cast();
         var length = await imagefile.length();
@@ -3188,7 +3336,7 @@ class ApiService {
         );
         request.files.add(multipartfile);
       }
-      List<http.MultipartFile> newList=[];
+      List<http.MultipartFile> newList = [];
       request.files.addAll(newList!);
       request.fields["hostId"] = hostId;
       request.fields["barId"] = barID;
@@ -3197,8 +3345,7 @@ class ApiService {
       request.fields["long"] = lng as String;
       request.fields["featuresId"] = hashTagList.join(',');
       if (eventType == 3) {
-        request.fields["invitedfriendsId"] =
-            friendiList.join(',');
+        request.fields["invitedfriendsId"] = friendiList.join(',');
       }
 
       request.fields["description"] = desc;
@@ -3226,36 +3373,36 @@ class ApiService {
       print(" Error api" + E.toString());
     }
   }
+
   Future callEditevent(
-      String _id,
-      File? imagefile,
-      List<dynamic> hashTagList,
-      List friendiList,
-      String desc,
-      String eventTitle,
-      String eventStartTime,
-      String eventDate,
-      var hostId,
-      var barID,
-      String locationName,
-      var lat,
-      var lng,
-      int eventType,
-      ) async {
+    String _id,
+    File? imagefile,
+    List<dynamic> hashTagList,
+    List friendiList,
+    String desc,
+    String eventTitle,
+    String eventStartTime,
+    String eventDate,
+    var hostId,
+    var barID,
+    String locationName,
+    var lat,
+    var lng,
+    int eventType,
+  ) async {
     var responseData;
     print("inside");
     String? path;
-    if(imagefile!=null){
+    if (imagefile != null) {
       path = imagefile!.path;
       print("requests 2" + path!);
-    }else{
-      path="";
+    } else {
+      path = "";
       print("requests 3");
     }
 
     print(baseurl + "event/update-event".toString());
     try {
-
       var uri = Uri.parse(baseurl + "event/update-event");
       Map<String, String> HeaderWithToken = {
         'Content-Type': 'application/json',
@@ -3267,7 +3414,7 @@ class ApiService {
       //  print("Update user tests1 :" + imagefile!.path);
       print("requests 4" + path);
 
-      if (path!="") {
+      if (path != "") {
         print("requests 5" + path);
         var steam = http.ByteStream(imagefile!.openRead())..cast();
         var length = await imagefile.length();
@@ -3280,7 +3427,7 @@ class ApiService {
         request.files.add(multipartfile);
       }
       request.fields['_id'] = _id;
-      List<http.MultipartFile> newList=[];
+      List<http.MultipartFile> newList = [];
       request.files.addAll(newList!);
       request.fields["hostId"] = hostId;
       request.fields["barId"] = barID;
@@ -3289,8 +3436,7 @@ class ApiService {
       request.fields["long"] = lng as String;
       request.fields["featuresId"] = hashTagList.join(',');
       if (eventType == 3) {
-        request.fields["invitedfriendsId"] =
-            friendiList.join(',');
+        request.fields["invitedfriendsId"] = friendiList.join(',');
       }
 
       request.fields["description"] = desc;
@@ -3355,12 +3501,16 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "event/inviteFriendsForEventList?searchKey=$searchKey&pageNumber=$pageNumber" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "event/inviteFriendsForEventList?searchKey=$searchKey&pageNumber=$pageNumber" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "event/inviteFriendsForEventList?searchKey=$searchKey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "event/inviteFriendsForEventList?searchKey=$searchKey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("call Get Invite Friend List Api Success" + response.body);
@@ -3383,13 +3533,17 @@ class ApiService {
       'Authorization': 'Bearer $My_Token',
     };
     try {
-      print(baseurl +
-          "event/tagBarUserListForEvent?searchKey=$searchkey&pageNumber=$pageNumber" +
-          "\n header\n" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "event/tagBarUserListForEvent?searchKey=$searchkey&pageNumber=$pageNumber" +
+            "\n header\n" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "event/tagHostUserListForEvent?searchKey=$searchkey&pageNumber=$pageNumber"),
+        Uri.parse(
+          baseurl +
+              "event/tagHostUserListForEvent?searchKey=$searchkey&pageNumber=$pageNumber",
+        ),
         headers: HeaderWithToken,
       );
       print("call Search Api Success" + response.body);
@@ -3404,7 +3558,10 @@ class ApiService {
 
   //////////eventlist get///////
   Future calldayWieseEventApi(
-      String eventmonth, String eventYear, String eventDay) async {
+    String eventmonth,
+    String eventYear,
+    String eventDay,
+  ) async {
     Map<String, String> Header = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $My_Token',
@@ -3412,11 +3569,15 @@ class ApiService {
     print('Token: ${My_Token}');
     var responseData;
     try {
-      print((baseurl +
-          "event/eventListDateWise?month=$eventmonth&year=$eventYear&date=$eventDay"));
-      http.Response response = await http.get(
-        Uri.parse(baseurl +
+      print(
+        (baseurl +
             "event/eventListDateWise?month=$eventmonth&year=$eventYear&date=$eventDay"),
+      );
+      http.Response response = await http.get(
+        Uri.parse(
+          baseurl +
+              "event/eventListDateWise?month=$eventmonth&year=$eventYear&date=$eventDay",
+        ),
         headers: Header,
       );
       print("Event day wise list message.. :" + response.body);
@@ -3428,7 +3589,6 @@ class ApiService {
       print("Error.." + E.toString());
     }
   }
-
 
   ///Call Get QR code Api
   Future callCreateQRcodeApi(String userId) async {
@@ -3494,7 +3654,8 @@ class ApiService {
       print((baseurl + "event/userJoinedEventList?pageNumber=&pageSize=10"));
       http.Response response = await http.get(
         Uri.parse(
-            baseurl + "event/userJoinedEventList?pageNumber=&pageSize=10"),
+          baseurl + "event/userJoinedEventList?pageNumber=&pageSize=10",
+        ),
         headers: Header,
       );
       print("Get Accepted Event list message.. :" + response.body);
@@ -3672,11 +3833,15 @@ class ApiService {
     print('Token: ${My_Token}');
     var responseData;
     try {
-      print((baseurl +
-          "event/eventParticipantsList?eventId=$eventid&searchKey=$searchKey"));
-      http.Response response = await http.get(
-        Uri.parse(baseurl +
+      print(
+        (baseurl +
             "event/eventParticipantsList?eventId=$eventid&searchKey=$searchKey"),
+      );
+      http.Response response = await http.get(
+        Uri.parse(
+          baseurl +
+              "event/eventParticipantsList?eventId=$eventid&searchKey=$searchKey",
+        ),
         headers: Header,
       );
       print("Event Participates list.. :" + response.body);
@@ -3700,7 +3865,8 @@ class ApiService {
     String bodyData = json.encode(changepassJson);
     try {
       print(
-          baseurl + "user/ChangePasswordForUser" + HeaderWithToken.toString());
+        baseurl + "user/ChangePasswordForUser" + HeaderWithToken.toString(),
+      );
       http.Response response = await http.post(
         Uri.parse(baseurl + "user/ChangePasswordForUser"),
         body: bodyData,
@@ -3743,7 +3909,10 @@ class ApiService {
   }
 
   //////////Get UserId from Username Api///////
-  Future callGetUserIdFromUsernameApi(String useranme,String featureImage) async {
+  Future callGetUserIdFromUsernameApi(
+    String useranme,
+    String featureImage,
+  ) async {
     Map<String, String> Header = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $My_Token',
@@ -3751,7 +3920,10 @@ class ApiService {
     print('Token: ${My_Token}');
     var responseData;
     try {
-      print((baseurl + "user/getUserIdByUserName?userName=$useranme&featureImage=$featureImage"));
+      print(
+        (baseurl +
+            "user/getUserIdByUserName?userName=$useranme&featureImage=$featureImage"),
+      );
       http.Response response = await http.get(
         Uri.parse(baseurl + "user/getUserIdByUserName?userName=$useranme"),
         headers: Header,
@@ -3776,11 +3948,13 @@ class ApiService {
     print('Token: ${My_Token}');
     var responseData;
     try {
-      print((baseurl +
-          "post/post-LikeListForHomePage?postId=$postId&searchKey="));
+      print(
+        (baseurl + "post/post-LikeListForHomePage?postId=$postId&searchKey="),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "post/post-LikeListForHomePage?postId=$postId&searchKey="),
+        Uri.parse(
+          baseurl + "post/post-LikeListForHomePage?postId=$postId&searchKey=",
+        ),
         headers: Header,
       );
       print("Feed like List list.. :" + response.body);
@@ -3793,8 +3967,6 @@ class ApiService {
     }
   }
 
-
-
   //For Latest Verison Get
 
   Future callGetLatestVersion() async {
@@ -3805,9 +3977,7 @@ class ApiService {
     };
 
     try {
-      print(baseurl +
-          "adminCreate/version-list" +
-          HeaderWithToken.toString());
+      print(baseurl + "adminCreate/version-list" + HeaderWithToken.toString());
       http.Response response = await http.get(
         Uri.parse(baseurl + "adminCreate/version-list"),
         headers: HeaderWithToken,
@@ -3823,8 +3993,7 @@ class ApiService {
     }
   }
 
-
-//For Get Feed Details By ID
+  //For Get Feed Details By ID
 
   Future callGetFeedDetailsByIdApi(String postId) async {
     var responseData;
@@ -3834,9 +4003,11 @@ class ApiService {
     };
 
     try {
-      print(baseurl +
-          "post/get-post-by-id?postId=$postId" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "post/get-post-by-id?postId=$postId" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(baseurl + "post/get-post-by-id?postId=$postId"),
         headers: HeaderWithToken,
@@ -3862,9 +4033,11 @@ class ApiService {
     };
 
     try {
-      print(baseurl +
-          "notification/unViewdNotificationCount" +
-          HeaderWithToken.toString());
+      print(
+        baseurl +
+            "notification/unViewdNotificationCount" +
+            HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(baseurl + "notification/unViewdNotificationCount"),
         headers: HeaderWithToken,
@@ -3890,9 +4063,9 @@ class ApiService {
     };
 
     try {
-      print(baseurl +
-          "notification/viewNotifications" +
-          HeaderWithToken.toString());
+      print(
+        baseurl + "notification/viewNotifications" + HeaderWithToken.toString(),
+      );
       http.Response response = await http.get(
         Uri.parse(baseurl + "notification/viewNotifications"),
         headers: HeaderWithToken,
@@ -3919,8 +4092,10 @@ class ApiService {
 
     try {
       print((baseurl + "contentMaster/FAQList"));
-      http.Response response = await http
-          .get(Uri.parse(baseurl + "contentMaster/FAQList"), headers: Header);
+      http.Response response = await http.get(
+        Uri.parse(baseurl + "contentMaster/FAQList"),
+        headers: Header,
+      );
       print("help and faqs list message.. :" + response.body);
       if (response.statusCode == 200) {
         responseData = json.decode(response.body);
@@ -4019,11 +4194,13 @@ class ApiService {
     print('Token: ${My_Token}');
     var responseData;
     try {
-      print((baseurl +
-          "blockUser/get-blockeduserList-Byid?searchKey=&pageNumber="));
+      print(
+        (baseurl + "blockUser/get-blockeduserList-Byid?searchKey=&pageNumber="),
+      );
       http.Response response = await http.get(
-        Uri.parse(baseurl +
-            "blockUser/get-blockeduserList-Byid?searchKey=&pageNumber="),
+        Uri.parse(
+          baseurl + "blockUser/get-blockeduserList-Byid?searchKey=&pageNumber=",
+        ),
         headers: Header,
       );
       print("Block user list.. :" + response.body);
@@ -4050,9 +4227,10 @@ class ApiService {
     try {
       print(baseurl + "postReport/postReport-Save");
       http.Response response = await http.post(
-          Uri.parse(baseurl + "postReport/postReport-Save"),
-          headers: HeaderWithToken,
-          body: msg);
+        Uri.parse(baseurl + "postReport/postReport-Save"),
+        headers: HeaderWithToken,
+        body: msg,
+      );
       print("Post Report Success" + response.body);
       if (response.statusCode == 200) {
         responseData = JSON.jsonDecode(response.body);
@@ -4066,8 +4244,7 @@ class ApiService {
 
   /// For Update Profile picture
 
-  Future callProfilePickUpdateApi(File image,
-      ) async {
+  Future callProfilePickUpdateApi(File image) async {
     print("inside");
     try {
       var uri = Uri.parse(baseurl + "user/user-update-Profile");
@@ -4084,8 +4261,11 @@ class ApiService {
         // get file length
         var length = await image.length();
         var multipartFile = new http.MultipartFile(
-            "profile_image", stream, length,
-            filename: path.basename(image.path));
+          "profile_image",
+          stream,
+          length,
+          filename: path.basename(image.path),
+        );
         request.files.add(multipartFile);
       }
       // request.fields["userId"] = userID;
@@ -4101,9 +4281,7 @@ class ApiService {
     }
   }
 
-
-
-//For My Bar List Api
+  //For My Bar List Api
   Future CallMyBarListApi(String userId) async {
     Map<String, String> Header = {
       'Content-Type': 'application/json',
@@ -4131,7 +4309,7 @@ class ApiService {
     }
   }
 
-//For My Bar Staff List Api
+  //For My Bar Staff List Api
 
   Future CallMyBarStaffDetailsApi(String barId) async {
     Map<String, String> Header = {
@@ -4159,8 +4337,6 @@ class ApiService {
       print("Error.." + E.toString());
     }
   }
-
-
 
   //For My User Rating List Api
   Future CallUserRatingListApi(userId) async {
@@ -4190,7 +4366,6 @@ class ApiService {
     }
   }
 
-
   Future CallUserRatingCommanListApi(String? featuresId) async {
     // String? token = await getToken();
 
@@ -4209,10 +4384,7 @@ class ApiService {
       String url = baseurl + "user/tagWiseRatingList?featuresId=$featuresId";
       print("Requesting URL: $url");
 
-      http.Response response = await http.get(
-        Uri.parse(url),
-        headers: Header,
-      );
+      http.Response response = await http.get(Uri.parse(url), headers: Header);
 
       print("Response: ${response.body}");
       if (response.statusCode == 200) {
@@ -4226,52 +4398,45 @@ class ApiService {
     }
   }
 
-
-
-// Future CallUserRatingCommanListApi(String? featuresId) async {
-//   // Ensure featuresId is not null or empty
-//   if (featuresId == null || featuresId.isEmpty) {
-//     print("Error: featuresId cannot be null or empty.");
-//     return {'error': 'featuresId is missing'};
-//   }
-//
-//   Map<String, String> Header = {
-//     'Content-Type': 'application/json',
-//     'Authorization': 'Bearer $My_Token',
-//   };
-//   print('Token: ${Header['Authorization']}');
-//   print('FeaturesId: $featuresId');
-//
-//   var responseData;
-//
-//   try {
-//     final url = baseurl + "user/userWiseRatingList?featuresId=$featuresId";
-//     print("Calling API: $url");
-//
-//     http.Response response = await http.get(
-//       Uri.parse(url),
-//       headers: Header,
-//     );
-//
-//     print("API Response: ${response.statusCode} - ${response.body}");
-//     if (response.statusCode == 200) {
-//       responseData = json.decode(response.body);
-//       print("Parsed Response: $responseData");
-//       return responseData;
-//     } else {
-//       // Handle non-200 responses
-//       print("Error: Received ${response.statusCode} from API.");
-//       responseData = json.decode(response.body);
-//       return {'error': 'API Error', 'details': responseData};
-//     }
-//   } catch (e) {
-//     print("Exception occurred: $e");
-//     return {'error': 'Exception occurred', 'details': e.toString()};
-//   }
-// }
-
-
-
+  // Future CallUserRatingCommanListApi(String? featuresId) async {
+  //   // Ensure featuresId is not null or empty
+  //   if (featuresId == null || featuresId.isEmpty) {
+  //     print("Error: featuresId cannot be null or empty.");
+  //     return {'error': 'featuresId is missing'};
+  //   }
+  //
+  //   Map<String, String> Header = {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': 'Bearer $My_Token',
+  //   };
+  //   print('Token: ${Header['Authorization']}');
+  //   print('FeaturesId: $featuresId');
+  //
+  //   var responseData;
+  //
+  //   try {
+  //     final url = baseurl + "user/userWiseRatingList?featuresId=$featuresId";
+  //     print("Calling API: $url");
+  //
+  //     http.Response response = await http.get(
+  //       Uri.parse(url),
+  //       headers: Header,
+  //     );
+  //
+  //     print("API Response: ${response.statusCode} - ${response.body}");
+  //     if (response.statusCode == 200) {
+  //       responseData = json.decode(response.body);
+  //       print("Parsed Response: $responseData");
+  //       return responseData;
+  //     } else {
+  //       // Handle non-200 responses
+  //       print("Error: Received ${response.statusCode} from API.");
+  //       responseData = json.decode(response.body);
+  //       return {'error': 'API Error', 'details': responseData};
+  //     }
+  //   } catch (e) {
+  //     print("Exception occurred: $e");
+  //     return {'error': 'Exception occurred', 'details': e.toString()};
+  //   }
+  // }
 }
-
-
