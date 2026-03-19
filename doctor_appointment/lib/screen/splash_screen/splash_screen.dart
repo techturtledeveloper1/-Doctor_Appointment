@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:doctor_appointment/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
 import 'package:doctor_appointment/IntroScreen/IntroScreen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:doctor_appointment/ReusableWidget/app_string.dart';
-import 'package:doctor_appointment/Utils/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

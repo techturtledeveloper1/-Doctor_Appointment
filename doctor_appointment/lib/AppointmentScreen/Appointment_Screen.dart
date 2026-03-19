@@ -1,12 +1,12 @@
 import 'dart:async';
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/HomeScreen/ConsultPsychiatristScreen/ConsultPsychiatrist_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-
-import '../HomeScreen/ConsultPsychiatristScreen/ConsultPsychiatrist_Screen.dart';
-import '../Utils/AppColor.dart';
-import '../../DashBoard/DashBoard.dart';
-import '../../../APIService/ApiService.dart'; // Import your API service
 
 class AppointmentCalendarScreen extends StatefulWidget {
   @override
@@ -68,7 +68,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
       for (var dateGroup in response["data"]) {
         String dateKey = dateGroup["_id"]; // This is in "dd-MM-yyyy" format
 
-        if (dateGroup["appointments"] != null && dateGroup["appointments"] is List) {
+        if (dateGroup["appointments"] != null &&
+            dateGroup["appointments"] is List) {
           List<Map<String, dynamic>> appointmentsForDate = [];
 
           for (var appointment in dateGroup["appointments"]) {
@@ -76,7 +77,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
             Map<String, dynamic> processedAppointment = {
               "id": appointment["_id"],
               "doctor": appointment["doctor"]["fullName"] ?? "Doctor",
-              "specialty": appointment["doctor"]["specialization"] ?? "Specialist",
+              "specialty":
+                  appointment["doctor"]["specialization"] ?? "Specialist",
               "time": _formatTime(appointment["appointmentTime"]),
               "status": "Confirmed", // Default status since API doesn't provide
               "type": "Consultation", // Default type
@@ -99,7 +101,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
       _isLoading = false;
     });
 
-    print("✅ Loaded ${processedAppointments.length} date groups with appointments");
+    print(
+      "✅ Loaded ${processedAppointments.length} date groups with appointments",
+    );
   }
 
   String _formatTime(String time) {
@@ -122,7 +126,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 
   String _getDoctorImage(String? profilePhoto) {
     if (profilePhoto == null || profilePhoto.isEmpty) {
-      return "assets/images/default_doctor.png";
+      return AppImages.d1;
     }
 
     // If it's a full URL, use it directly
@@ -195,7 +199,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
             color: Colors.grey.shade200,
             blurRadius: 4,
             offset: Offset(0, 2),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -220,9 +224,10 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                     Text(
                       doctorName,
                       style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                     Text(
                       specialty,
@@ -232,21 +237,31 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                       children: [
                         Icon(Icons.access_time, size: 14, color: Colors.grey),
                         SizedBox(width: 4),
-                        Text(time,
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87)),
+                        Text(
+                          time,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
                       ],
                     ),
                     Row(
                       children: [
-                        Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                        Icon(
+                          Icons.calendar_today,
+                          size: 14,
+                          color: Colors.grey,
+                        ),
                         SizedBox(width: 4),
-                        Text(type,
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600])),
+                        Text(
+                          type,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -262,8 +277,11 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   onPressed: onJoin,
-                  child: Text("Join Call", style: TextStyle(color: Colors.white, fontSize: 12)),
-                )
+                  child: Text(
+                    "Join Call",
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ),
             ],
           ),
           SizedBox(height: 12),
@@ -292,19 +310,23 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                 children: [
                   TextButton(
                     onPressed: onReschedule,
-                    child: Text("Reschedule",
-                        style: TextStyle(color: Colors.blue, fontSize: 12)),
+                    child: Text(
+                      "Reschedule",
+                      style: TextStyle(color: Colors.blue, fontSize: 12),
+                    ),
                   ),
                   SizedBox(width: 8),
                   TextButton(
                     onPressed: onCancel,
-                    child: Text("Cancel",
-                        style: TextStyle(color: Colors.red, fontSize: 12)),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.red, fontSize: 12),
+                    ),
                   ),
                 ],
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -332,10 +354,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
           SizedBox(height: 16),
           Text(
             "Loading your appointments...",
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColor.colorIntroBG,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColor.colorIntroBG),
           ),
         ],
       ),
@@ -351,10 +370,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
           SizedBox(height: 16),
           Text(
             _errorMessage,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.red,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.red),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 16),
@@ -371,7 +387,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
   }
 
   Widget _buildCalendarContent() {
-    List<Map<String, dynamic>> selectedAppointments = _getAppointmentsForDay(_selectedDay!);
+    List<Map<String, dynamic>> selectedAppointments = _getAppointmentsForDay(
+      _selectedDay!,
+    );
 
     return SingleChildScrollView(
       child: Column(
@@ -385,13 +403,17 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                 Text(
                   "My Appointments",
                   style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppColor.colorIntroBG),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.colorIntroBG,
+                  ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.refresh,
-                      size: 26, color: AppColor.colorIntroBG),
+                  icon: Icon(
+                    Icons.refresh,
+                    size: 26,
+                    color: AppColor.colorIntroBG,
+                  ),
                   onPressed: _loadAppointmentsFromAPI,
                 ),
               ],
@@ -438,7 +460,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                         child: Container(
                           padding: EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.red,       // badge color
+                            color: Colors.red, // badge color
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -475,10 +497,14 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
-                    leftChevronIcon:
-                    Icon(Icons.chevron_left, color: AppColor.colorIntroBG),
-                    rightChevronIcon:
-                    Icon(Icons.chevron_right, color: AppColor.colorIntroBG),
+                    leftChevronIcon: Icon(
+                      Icons.chevron_left,
+                      color: AppColor.colorIntroBG,
+                    ),
+                    rightChevronIcon: Icon(
+                      Icons.chevron_right,
+                      color: AppColor.colorIntroBG,
+                    ),
                   ),
                 ),
               ),
@@ -490,8 +516,11 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                Icon(Icons.calendar_today,
-                    color: AppColor.colorIntroBG, size: 20),
+                Icon(
+                  Icons.calendar_today,
+                  color: AppColor.colorIntroBG,
+                  size: 20,
+                ),
                 SizedBox(width: 8),
                 Text(
                   "Appointments for ${DateFormat('MMMM d, yyyy').format(_selectedDay!)}",
@@ -516,22 +545,24 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
               ),
               child: Column(
                 children: [
-                  Icon(Icons.calendar_today,
-                      size: 50, color: Colors.grey.shade400),
+                  Icon(
+                    Icons.calendar_today,
+                    size: 50,
+                    color: Colors.grey.shade400,
+                  ),
                   SizedBox(height: 10),
                   Text(
                     "No Appointments for this day",
                     style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade600),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
                     "All your booked appointments will appear here",
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade500),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
                   ),
                 ],
               ),
@@ -543,10 +574,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
               children: [
                 Text(
                   "${selectedAppointments.length} appointment${selectedAppointments.length > 1 ? 's' : ''}",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 ),
                 SizedBox(height: 8),
                 ListView.builder(
@@ -561,7 +589,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                       time: appt["time"] ?? "Time not set",
                       status: appt["status"] ?? "Confirmed",
                       type: appt["type"] ?? "Consultation",
-                      image: appt["image"] ?? "assets/images/default_doctor.png",
+                      image:
+                          appt["image"] ?? "assets/images/default_doctor.png",
                       onJoin: () {
                         Navigator.push(
                           context,
@@ -572,11 +601,19 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                       },
                       onReschedule: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Reschedule functionality coming soon")));
+                          SnackBar(
+                            content: Text(
+                              "Reschedule functionality coming soon",
+                            ),
+                          ),
+                        );
                       },
                       onCancel: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Cancel functionality coming soon")));
+                          SnackBar(
+                            content: Text("Cancel functionality coming soon"),
+                          ),
+                        );
                       },
                       rawAppointment: appt["rawAppointment"] ?? {},
                     );
@@ -606,7 +643,10 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const ConsultPsychiatristScreen(specializationId: '',)),
+            MaterialPageRoute(
+              builder: (_) =>
+                  const ConsultPsychiatristScreen(specializationId: ''),
+            ),
           );
         },
       ),

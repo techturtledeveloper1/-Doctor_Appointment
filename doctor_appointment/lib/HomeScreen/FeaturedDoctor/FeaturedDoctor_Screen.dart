@@ -1,5 +1,5 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import '../../Utils/AppColor.dart';
 
 class FeaturedDoctorsScreen extends StatelessWidget {
   final List<Map<String, dynamic>> featuredDoctors;
@@ -12,7 +12,7 @@ class FeaturedDoctorsScreen extends StatelessWidget {
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: const Text("Featured Doctors"),
-        backgroundColor: AppColor.colorIntroBG,
+        backgroundColor: AppColor.colorPrimary,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -49,7 +49,10 @@ class FeaturedDoctorsScreen extends StatelessWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(doc["speciality"], style: const TextStyle(color: Colors.black54)),
+                  Text(
+                    doc["speciality"],
+                    style: const TextStyle(color: Colors.black54),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -65,7 +68,11 @@ class FeaturedDoctorsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 18,
+                color: Colors.grey,
+              ),
               onTap: () {
                 // 🔹 Navigate to Doctor Detail Screen (optional)
                 // Navigator.push(context, MaterialPageRoute(

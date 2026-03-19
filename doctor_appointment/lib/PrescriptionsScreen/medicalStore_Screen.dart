@@ -1,10 +1,8 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/MediclScreen/MedicalSubCategory_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-
-import '../APIService/ApiService.dart';
-import '../MediclScreen/MedicalSubCategory_Screen.dart';
-import '../Utils/AppColor.dart';
-import 'MentalHealthCategoryScreen/MentalHealthCategory_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class MedicalStoreListScreen extends StatefulWidget {
   @override

@@ -1,6 +1,5 @@
-import 'package:doctor_app/Utils/app_loader.dart';
-import 'package:doctor_app/Utils/app_color.dart';
-import 'package:doctor_appointment/Utils/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_loader.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
@@ -61,7 +60,8 @@ class AppButton extends StatelessWidget {
           backgroundColor: backgroundColor,
           disabledBackgroundColor: disabledBackgroundColor,
           elevation: 0,
-          shape: shape ??
+          shape:
+              shape ??
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
         onPressed: () {
@@ -92,9 +92,7 @@ class AppButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (icon != null && iconPosition == IconPosition.left) _buildIcon(),
-          SizedBox(
-            width: 5,
-          ),
+          SizedBox(width: 5),
           _buildText(),
           if (icon != null && iconPosition == IconPosition.right) _buildIcon(),
         ],
@@ -103,10 +101,7 @@ class AppButton extends StatelessWidget {
   }
 
   Widget _buildText() {
-    return Text(
-      text,
-      style: textStyle,
-    );
+    return Text(text, style: textStyle);
   }
 
   Widget _buildIcon() {

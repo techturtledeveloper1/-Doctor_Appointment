@@ -1,4 +1,4 @@
-// Add Appointment Screen
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -113,7 +113,7 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
                       "specialty": specialtyCtrl.text,
                       "time": selectedTime!.format(context),
                       "status": status,
-                      "image": "assets/images/d1.png", // default
+                      "image": AppImages.d1, // default
                     });
                     Navigator.pop(context);
                   }

@@ -1,12 +1,10 @@
 import 'package:circle_nav_bar/circle_nav_bar.dart';
-import 'package:doctor_appointment/Utils/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:doctor_appointment/screen/sign_up_screen/SignUp_Screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 
 class AppbarDemoutils extends StatefulWidget {
   @override
@@ -17,12 +15,15 @@ class _AppbarDemoutils extends State<AppbarDemoutils>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   int tabIndex = 0;
 
-  late TabController tabController =
-  TabController(length: 4, vsync: this, initialIndex: tabIndex);
+  late TabController tabController = TabController(
+    length: 4,
+    vsync: this,
+    initialIndex: tabIndex,
+  );
   String title = "", profileImage = "";
   bool picselected = false;
   String? userId;
-  int accountType=0;
+  int accountType = 0;
 
   @override
   void initState() {
@@ -69,7 +70,7 @@ class _AppbarDemoutils extends State<AppbarDemoutils>
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50.0,
-        backgroundColor: AppColor.colorIntroBG,
+        backgroundColor: AppColor.colorPrimary,
         elevation: 0.0,
         title: const Text('Title'),
         shape: const CustomAppBarShape(multi: 0.10),
@@ -83,10 +84,8 @@ class _AppbarDemoutils extends State<AppbarDemoutils>
       activeIcons: [
         Icon(Icons.home, color: AppColor.white, size: 26),
         Icon(Icons.edit_note_sharp, color: AppColor.white, size: 30),
-        Icon(Icons.time_to_leave_sharp,
-            color: AppColor.white, size: 26),
-        Icon(Icons.horizontal_split_sharp,
-            size: 26, color: AppColor.white),
+        Icon(Icons.time_to_leave_sharp, color: AppColor.white, size: 26),
+        Icon(Icons.horizontal_split_sharp, size: 26, color: AppColor.white),
       ],
       inactiveIcons: [
         // Text("My"),
@@ -95,45 +94,37 @@ class _AppbarDemoutils extends State<AppbarDemoutils>
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.home_outlined,
-                color: AppColor.white, size: 24),
+            Icon(Icons.home_outlined, color: AppColor.white, size: 24),
+          ],
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.edit_note_outlined, color: AppColor.white, size: 24),
+          ],
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.time_to_leave_outlined, color: AppColor.white, size: 24),
           ],
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-                Icons.edit_note_outlined,
-                color: AppColor.white, size: 24
-            ),
-          ],
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.time_to_leave_outlined,
-              color: AppColor.white,
+              Icons.horizontal_split_outlined,
               size: 24,
-            ),
-          ],
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-                Icons.horizontal_split_outlined,
-                size: 24, color: AppColor.white
+              color: AppColor.white,
             ),
           ],
         ),
       ],
-      color: AppColor.colorIntroBG,
+      color: AppColor.colorPrimary,
       height: 60,
       circleWidth: 60,
 
       // tabCurve: ,
-
       cornerRadius: const BorderRadius.only(
         topLeft: Radius.circular(0),
         topRight: Radius.circular(0),
@@ -141,7 +132,8 @@ class _AppbarDemoutils extends State<AppbarDemoutils>
         // bottomLeft: Radius.circular(24),
       ),
       shadowColor: Colors.white,
-      elevation: 0, activeIndex: 0,
+      elevation: 0,
+      activeIndex: 0,
     );
   }
 
@@ -173,17 +165,26 @@ class CustomShapeBorder extends ContinuousRectangleBorder {
 
     Path path = Path();
     path.lineTo(0, rect.height);
-    path.quadraticBezierTo(rect.width / 2 - (innerCircleRadius / 2) - 30,
-        rect.height + 15, rect.width / 2 - 75, rect.height + 50);
+    path.quadraticBezierTo(
+      rect.width / 2 - (innerCircleRadius / 2) - 30,
+      rect.height + 15,
+      rect.width / 2 - 75,
+      rect.height + 50,
+    );
     path.cubicTo(
-        rect.width / 2 - 40,
-        rect.height + innerCircleRadius - 40,
-        rect.width / 2 + 40,
-        rect.height + innerCircleRadius - 40,
-        rect.width / 2 + 75,
-        rect.height + 50);
-    path.quadraticBezierTo(rect.width / 2 + (innerCircleRadius / 2) + 30,
-        rect.height + 15, rect.width, rect.height);
+      rect.width / 2 - 40,
+      rect.height + innerCircleRadius - 40,
+      rect.width / 2 + 40,
+      rect.height + innerCircleRadius - 40,
+      rect.width / 2 + 75,
+      rect.height + 50,
+    );
+    path.quadraticBezierTo(
+      rect.width / 2 + (innerCircleRadius / 2) + 30,
+      rect.height + 15,
+      rect.width,
+      rect.height,
+    );
     path.lineTo(rect.width, 0.0);
     path.close();
 

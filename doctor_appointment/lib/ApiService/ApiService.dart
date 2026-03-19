@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:doctor_appointment/ReusableWidget/app_string.dart';
-import 'package:doctor_appointment/Utils/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -3394,8 +3394,8 @@ class ApiService {
     print("inside");
     String? path;
     if (imagefile != null) {
-      path = imagefile!.path;
-      print("requests 2" + path!);
+      path = imagefile.path;
+      print("requests 2" + path);
     } else {
       path = "";
       print("requests 3");

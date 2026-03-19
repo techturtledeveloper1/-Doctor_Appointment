@@ -1,7 +1,9 @@
+import 'package:doctor_appointment/screen/ResetPassword/Otp_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/screen/sign_up_screen/SignUp_Screen.dart';
 import 'package:flutter/material.dart';
-import '../ResetPassword/Otp_Screen.dart';
-import '../screen/sign_up_screen/SignUp_Screen.dart';
-import '../Utils/AppColor.dart';
+
 import 'LoginWithPasswordScreen.dart';
 
 class LoginScreenNew extends StatefulWidget {
@@ -31,7 +33,7 @@ class _LoginScreenNewState extends State<LoginScreenNew> {
                 Align(
                   alignment: Alignment.topCenter,
                   child: Image.asset(
-                    "assets/images/logo.png",
+                    AppImages.logo,
                     height: 250, // smaller, top style
                   ),
                 ),
@@ -177,7 +179,7 @@ class _LoginScreenNewState extends State<LoginScreenNew> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    icon: Image.asset("assets/images/google.png", height: 22),
+                    icon: Image.asset(AppImages.google, height: 22),
                     label: const Text(
                       "Continue with Google",
                       style: TextStyle(fontSize: 16, color: Colors.black87),

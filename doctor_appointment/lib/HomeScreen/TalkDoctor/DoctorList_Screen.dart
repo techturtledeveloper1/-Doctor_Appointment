@@ -1,5 +1,6 @@
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
-import '../../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'DoctorDetails_Screen.dart';
 
 class DoctorListScreen extends StatelessWidget {
@@ -20,7 +21,7 @@ class DoctorListScreen extends StatelessWidget {
       "experience": "12 years",
       "online": true,
       "desc": "Specialist in women’s health and gynecology treatments.",
-      "image": "assets/images/d6.png",
+      "image": AppImages.d6,
     },
     {
       "name": "Dr. Kavita Patel",
@@ -28,7 +29,7 @@ class DoctorListScreen extends StatelessWidget {
       "experience": "7 years",
       "online": false,
       "desc": "Focuses on infertility and pregnancy-related care.",
-      "image": "assets/images/d2.png",
+      "image": AppImages.d2,
     },
     {
       "name": "Dr. Rahul Sharma",
@@ -36,7 +37,7 @@ class DoctorListScreen extends StatelessWidget {
       "experience": "8 years",
       "online": false,
       "desc": "Expert in internal medicine and primary healthcare.",
-      "image": "assets/images/d3.png",
+      "image": AppImages.d3,
     },
     {
       "name": "Dr. Priya Kapoor",
@@ -44,7 +45,7 @@ class DoctorListScreen extends StatelessWidget {
       "experience": "10 years",
       "online": true,
       "desc": "Skin specialist with focus on acne, rashes, and allergies.",
-      "image": "assets/images/d4.png",
+      "image": AppImages.d4,
     },
   ];
 
@@ -53,13 +54,15 @@ class DoctorListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
 
-      // 🔹 AppBar
       appBar: AppBar(
-        backgroundColor: AppColor.colorIntroBG,
+        backgroundColor: AppColor.colorPrimary,
         elevation: 0,
         title: Text(
           "$speciality Doctors",
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -90,7 +93,9 @@ class DoctorListScreen extends StatelessWidget {
             },
 
             child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
                 contentPadding: const EdgeInsets.all(12),
@@ -100,7 +105,10 @@ class DoctorListScreen extends StatelessWidget {
                 ),
                 title: Text(
                   doctor["name"],
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,12 +125,18 @@ class DoctorListScreen extends StatelessWidget {
                 trailing: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.circle,
-                        size: 14, color: isOnline ? Colors.green : Colors.red),
-                    Text(isOnline ? "Online" : "Offline",
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: isOnline ? Colors.green : Colors.red)),
+                    Icon(
+                      Icons.circle,
+                      size: 14,
+                      color: isOnline ? Colors.green : Colors.red,
+                    ),
+                    Text(
+                      isOnline ? "Online" : "Offline",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isOnline ? Colors.green : Colors.red,
+                      ),
+                    ),
                   ],
                 ),
               ),

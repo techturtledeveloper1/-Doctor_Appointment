@@ -1,5 +1,5 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:doctor_appointment/Utils/AppColor.dart';
 
 import 'ConfirmMedicinePayment_Screen.dart';
 
@@ -22,9 +22,9 @@ class MedicinePaymentScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.white,
       appBar: AppBar(
-        title: Text("Payment",style: TextStyle(color: AppColor.colorIntroBG)),
+        title: Text("Payment", style: TextStyle(color: AppColor.colorPrimary)),
         backgroundColor: AppColor.white,
-        foregroundColor: AppColor.colorIntroBG,
+        foregroundColor: AppColor.colorPrimary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -49,7 +49,10 @@ class MedicinePaymentScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      const Text("Rx:", style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        "Rx:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(width: 8),
                       Text(prescriptionId),
                     ],
@@ -65,12 +68,12 @@ class MedicinePaymentScreen extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Address:",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(deliveryAddress),
+                      const Text(
+                        "Address:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(deliveryAddress)),
                     ],
                   ),
                 ],
@@ -83,9 +86,17 @@ class MedicinePaymentScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Total", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text("₹${totalAmount.toStringAsFixed(2)}",
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const Text(
+                  "Total",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "₹${totalAmount.toStringAsFixed(2)}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
 
@@ -104,9 +115,21 @@ class MedicinePaymentScreen extends StatelessWidget {
               context,
               title: "UPI",
               icons: const [
-                Icon(Icons.account_balance_wallet, color: Colors.blue, size: 22), // GPay alternative
-                Icon(Icons.account_balance, color: Colors.deepPurple, size: 22),  // PhonePe alternative
-                Icon(Icons.payment, color: Colors.indigo, size: 22),              // Paytm alternative
+                Icon(
+                  Icons.account_balance_wallet,
+                  color: Colors.blue,
+                  size: 22,
+                ), // GPay alternative
+                Icon(
+                  Icons.account_balance,
+                  color: Colors.deepPurple,
+                  size: 22,
+                ), // PhonePe alternative
+                Icon(
+                  Icons.payment,
+                  color: Colors.indigo,
+                  size: 22,
+                ), // Paytm alternative
               ],
             ),
 
@@ -120,10 +143,7 @@ class MedicinePaymentScreen extends StatelessWidget {
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text("Cash on Delivery"),
-              trailing: Switch(
-                value: false,
-                onChanged: (val) {},
-              ),
+              trailing: Switch(value: false, onChanged: (val) {}),
             ),
 
             const SizedBox(height: 24),
@@ -144,7 +164,7 @@ class MedicinePaymentScreen extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.colorIntroBG,
+                backgroundColor: AppColor.colorPrimary,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -158,21 +178,27 @@ class MedicinePaymentScreen extends StatelessWidget {
     );
   }
 
-  Widget _paymentOption(BuildContext context,
-      {required String title, List<Widget>? icons, bool trailing = false}) {
+  Widget _paymentOption(
+    BuildContext context, {
+    required String title,
+    List<Widget>? icons,
+    bool trailing = false,
+  }) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(title),
       trailing: icons != null
           ? Row(
-        mainAxisSize: MainAxisSize.min,
-        children: icons
-            .map((e) => Padding(
-          padding: const EdgeInsets.only(left: 8),
-          child: e,
-        ))
-            .toList(),
-      )
+              mainAxisSize: MainAxisSize.min,
+              children: icons
+                  .map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: e,
+                    ),
+                  )
+                  .toList(),
+            )
           : trailing
           ? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey)
           : null,

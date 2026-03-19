@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class BookAppointmentScreen extends StatefulWidget {
   final Map<String, dynamic> doctor;
@@ -33,12 +33,12 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
           colorScheme: ColorScheme.light(
-            primary: AppColor.colorIntroBG,
+            primary: AppColor.colorPrimary,
             onPrimary: Colors.white,
             onSurface: Colors.black,
           ),
           textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(foregroundColor: AppColor.colorIntroBG),
+            style: TextButton.styleFrom(foregroundColor: AppColor.colorPrimary),
           ),
         ),
         child: child!,
@@ -54,12 +54,12 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
           colorScheme: ColorScheme.light(
-            primary: AppColor.colorIntroBG,
+            primary: AppColor.colorPrimary,
             onPrimary: Colors.white,
             onSurface: Colors.black,
           ),
           timePickerTheme: TimePickerThemeData(
-            dialHandColor: AppColor.colorIntroBG,
+            dialHandColor: AppColor.colorPrimary,
             hourMinuteTextColor: Colors.black,
           ),
         ),
@@ -77,7 +77,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
           "Book Appointment",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppColor.colorIntroBG,
+        backgroundColor: AppColor.colorPrimary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -87,7 +87,8 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
@@ -104,38 +105,46 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                           Text(
                             widget.doctor["name"],
                             style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColor.colorIntroBG),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColor.colorPrimary,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             widget.doctor["speciality"],
                             style: TextStyle(
-                                fontSize: 14, color: Colors.grey.shade700),
+                              fontSize: 14,
+                              color: Colors.grey.shade700,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             "Experience: ${widget.doctor["experience"] ?? 'N/A'}",
                             style: TextStyle(
-                                fontSize: 13, color: Colors.grey.shade600),
+                              fontSize: 13,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(Icons.circle,
-                                  size: 12,
-                                  color: widget.doctor["online"]
-                                      ? Colors.green
-                                      : Colors.red),
+                              Icon(
+                                Icons.circle,
+                                size: 12,
+                                color: widget.doctor["online"]
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 widget.doctor["online"] ? "Online" : "Offline",
                                 style: TextStyle(
-                                    fontSize: 12,
-                                    color: widget.doctor["online"]
-                                        ? Colors.green
-                                        : Colors.red),
+                                  fontSize: 12,
+                                  color: widget.doctor["online"]
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
                               ),
                             ],
                           ),
@@ -158,15 +167,16 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                     decoration: InputDecoration(
                       labelText: 'Your Name',
                       border: const OutlineInputBorder(),
-                      prefixIcon:
-                      Icon(Icons.person, color: AppColor.colorIntroBG),
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: AppColor.colorPrimary,
+                      ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                        BorderSide(color: AppColor.colorIntroBG),
+                        borderSide: BorderSide(color: AppColor.colorPrimary),
                       ),
                     ),
                     validator: (value) =>
-                    value!.isEmpty ? 'Please enter your name' : null,
+                        value!.isEmpty ? 'Please enter your name' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -174,77 +184,93 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                     decoration: InputDecoration(
                       labelText: 'Address',
                       border: const OutlineInputBorder(),
-                      prefixIcon:
-                      Icon(Icons.home, color: AppColor.colorIntroBG),
+                      prefixIcon: Icon(
+                        Icons.home,
+                        color: AppColor.colorPrimary,
+                      ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                        BorderSide(color: AppColor.colorIntroBG),
+                        borderSide: BorderSide(color: AppColor.colorPrimary),
                       ),
                     ),
                     validator: (value) =>
-                    value!.isEmpty ? 'Please enter your address' : null,
+                        value!.isEmpty ? 'Please enter your address' : null,
                   ),
                   const SizedBox(height: 16),
                   // 🔹 Appointment Type Dropdown
                   DropdownButtonFormField<String>(
                     value: _appointmentType,
                     items: ['Chat', 'Voice Call', 'Video Call', 'In-Clinic']
-                        .map((type) => DropdownMenuItem(
-                      value: type,
-                      child: Text(type),
-                    ))
+                        .map(
+                          (type) =>
+                              DropdownMenuItem(value: type, child: Text(type)),
+                        )
                         .toList(),
-                    onChanged: (value) => setState(() => _appointmentType = value!),
+                    onChanged: (value) =>
+                        setState(() => _appointmentType = value!),
                     decoration: InputDecoration(
                       labelText: 'Appointment Type',
                       border: const OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.medical_services,
-                          color: AppColor.colorIntroBG),
+                      prefixIcon: Icon(
+                        Icons.medical_services,
+                        color: AppColor.colorPrimary,
+                      ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                        BorderSide(color: AppColor.colorIntroBG),
+                        borderSide: BorderSide(color: AppColor.colorPrimary),
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
                   ListTile(
-                    leading: Icon(Icons.calendar_today,
-                        color: AppColor.colorIntroBG),
-                    title: Text(_selectedDate == null
-                        ? 'Select Date'
-                        : 'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'),
+                    leading: Icon(
+                      Icons.calendar_today,
+                      color: AppColor.colorPrimary,
+                    ),
+                    title: Text(
+                      _selectedDate == null
+                          ? 'Select Date'
+                          : 'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                    ),
                     onTap: _pickDate,
                     tileColor: Colors.grey.shade100,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   ListTile(
-                    leading:
-                    Icon(Icons.access_time, color: AppColor.colorIntroBG),
-                    title: Text(_selectedTime == null
-                        ? 'Select Time'
-                        : 'Time: ${_selectedTime!.format(context)}'),
+                    leading: Icon(
+                      Icons.access_time,
+                      color: AppColor.colorPrimary,
+                    ),
+                    title: Text(
+                      _selectedTime == null
+                          ? 'Select Time'
+                          : 'Time: ${_selectedTime!.format(context)}',
+                    ),
                     onTap: _pickTime,
                     tileColor: Colors.grey.shade100,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.colorIntroBG,
-                          padding: const EdgeInsets.all(16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12))),
+                        backgroundColor: AppColor.colorPrimary,
+                        padding: const EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           if (_selectedDate == null || _selectedTime == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('Please select date and time')),
+                                content: Text('Please select date and time'),
+                              ),
                             );
                             return;
                           }
@@ -255,8 +281,9 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                             "time": "${_selectedTime!.format(context)}",
                             "type": _appointmentType,
                             "status": "Booked",
-                            "date":
-                            DateFormat('yyyy-MM-dd').format(_selectedDate!),
+                            "date": DateFormat(
+                              'yyyy-MM-dd',
+                            ).format(_selectedDate!),
                             "image": widget.doctor["image"],
                           };
 
@@ -267,7 +294,10 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                       },
                       child: Text(
                         "Book Appointment",
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

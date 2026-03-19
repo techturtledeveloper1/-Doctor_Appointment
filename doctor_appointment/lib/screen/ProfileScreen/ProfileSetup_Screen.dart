@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../DashBoard/DashBoard.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -31,19 +31,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     "O+",
     "O-",
     "AB+",
-    "AB-"
+    "AB-",
   ];
 
   // Heights (4’0" → 7’0")
   final List<String> heights = [
     for (int feet = 4; feet <= 7; feet++)
-      for (int inch = 0; inch < 12; inch++) "$feet'${inch}\""
+      for (int inch = 0; inch < 12; inch++) "$feet'${inch}\"",
   ];
 
   // Weight list (30 → 150 KG)
-  final List<String> weights = [
-    for (int w = 30; w <= 150; w++) "$w"
-  ];
+  final List<String> weights = [for (int w = 30; w <= 150; w++) "$w"];
 
   String? selectedBloodGroup;
   String? selectedHeight;
@@ -77,11 +75,15 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 child: CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey[300],
-                  backgroundImage:
-                  _profileImage != null ? FileImage(_profileImage!) : null,
+                  backgroundImage: _profileImage != null
+                      ? FileImage(_profileImage!)
+                      : null,
                   child: _profileImage == null
-                      ? const Icon(Icons.camera_alt,
-                      size: 40, color: Colors.white)
+                      ? const Icon(
+                          Icons.camera_alt,
+                          size: 40,
+                          color: Colors.white,
+                        )
                       : null,
                 ),
               ),
@@ -143,16 +145,26 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             Row(
               children: [
                 Expanded(
-                    child: _buildDropdown("Blood Group", bloodGroups,
-                        selectedBloodGroup, (val) {
-                          setState(() => selectedBloodGroup = val);
-                        })),
+                  child: _buildDropdown(
+                    "Blood Group",
+                    bloodGroups,
+                    selectedBloodGroup,
+                    (val) {
+                      setState(() => selectedBloodGroup = val);
+                    },
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
-                    child: _buildDropdown(
-                        "Height (Feet)", heights, selectedHeight, (val) {
+                  child: _buildDropdown(
+                    "Height (Feet)",
+                    heights,
+                    selectedHeight,
+                    (val) {
                       setState(() => selectedHeight = val);
-                    })),
+                    },
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 15),
@@ -219,8 +231,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            DashBoardNew(0, false, false)), // ✅ Dashboard
+                      builder: (context) => DashBoardNew(0, false, false),
+                    ), // ✅ Dashboard
                   );
                 },
                 child: const Text(
@@ -236,8 +248,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   Widget _buildLabel(String text) {
-    return Text(text,
-        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14));
+    return Text(
+      text,
+      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+    );
   }
 
   InputDecoration _inputDecoration(String hint) {
@@ -257,15 +271,21 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     );
   }
 
-  Widget _buildDropdown(String hint, List<String> options, String? value,
-      Function(String?) onChanged) {
+  Widget _buildDropdown(
+    String hint,
+    List<String> options,
+    String? value,
+    Function(String?) onChanged,
+  ) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),

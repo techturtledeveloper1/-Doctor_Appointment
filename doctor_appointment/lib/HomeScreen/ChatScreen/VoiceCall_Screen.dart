@@ -1,7 +1,6 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../../Utils/AppColor.dart';
 
 class VoiceCallScreen extends StatelessWidget {
   final Map<String, dynamic> doctor;
@@ -12,7 +11,7 @@ class VoiceCallScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Voice Call - ${doctor['name']}"),
-        backgroundColor: AppColor.colorIntroBG,
+        backgroundColor: AppColor.colorPrimary,
       ),
       body: Center(
         child: Column(

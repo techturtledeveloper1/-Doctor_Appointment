@@ -1,6 +1,5 @@
+import 'package:doctor_appointment/PrescriptionsScreen/Prescriptions_Screen.dart';
 import 'package:flutter/material.dart';
-
-import '../../PrescriptionsScreen/Prescriptions_Screen.dart';
 
 class VideoCallScreen extends StatefulWidget {
   final String doctorName;
@@ -53,17 +52,11 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 ),
                 Text(
                   widget.specialty,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
-                  ),
+                  style: const TextStyle(fontSize: 16, color: Colors.black54),
                 ),
                 const Text(
                   "Video Call",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black54,
-                  ),
+                  style: TextStyle(fontSize: 15, color: Colors.black54),
                 ),
               ],
             ),
@@ -149,13 +142,14 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                     backgroundColor: Colors.red,
                     child: IconButton(
                       icon: const Icon(Icons.call_end, color: Colors.white),
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const PrescriptionScreen()),
-                          );
-                        }
-
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PrescriptionScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],

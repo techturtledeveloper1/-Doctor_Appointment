@@ -1,13 +1,12 @@
+import 'package:doctor_appointment/LoginScreen/NewLogin_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/screen/profile_screen/MyPayments/MyPayment_Screen.dart';
+import 'package:doctor_appointment/screen/profile_screen/MyPrescriptions/MyPrescriptions_Screen.dart';
+import 'package:doctor_appointment/screen/profile_screen/PersonalDetailsScreen/PersonalDetails_Screen.dart';
+import 'package:doctor_appointment/screen/profile_screen/Settings/Settings_Screen.dart';
+import 'package:doctor_appointment/screen/profile_screen/address_screen/address_screen.dart';
 import 'package:flutter/material.dart';
-import '../../LoginScreen/NewLogin_Screen.dart'; // 🔹 make sure you have this import
-import '../../Utils/AppColor.dart';
-import '../../UserProfileScreen/AddressScreen/address_screen.dart';
 import 'MyOrder/MyOrders_Screen.dart';
-import '../../UserProfileScreen/MyPayments/MyPayment_Screen.dart';
-import '../../UserProfileScreen/MyPrescriptions/MyPrescriptions_Screen.dart';
-import '../../UserProfileScreen/PersonalDetailsScreen/PersonalDetails_Screen.dart';
-import '../../UserProfileScreen/Settings/Settings_Screen.dart';
-import '../../LoginScreen/Login_Screen.dart'; // 🔹 make sure you have this import
 
 class ProfileScreen extends StatelessWidget {
   final String username;

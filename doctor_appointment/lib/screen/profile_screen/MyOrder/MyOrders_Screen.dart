@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class MyOrdersScreen extends StatelessWidget {
   const MyOrdersScreen({super.key});
@@ -9,7 +9,10 @@ class MyOrdersScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.white,
       appBar: AppBar(
-        title: Text("My Orders", style: TextStyle(color: AppColor.colorIntroBG)),
+        title: Text(
+          "My Orders",
+          style: TextStyle(color: AppColor.colorIntroBG),
+        ),
         backgroundColor: AppColor.white,
       ),
       body: ListView.builder(
@@ -17,14 +20,20 @@ class MyOrdersScreen extends StatelessWidget {
         itemCount: 3, // dummy count
         itemBuilder: (context, index) {
           return Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             elevation: 3,
             margin: EdgeInsets.only(bottom: 12),
             child: ListTile(
               leading: Icon(Icons.local_shipping, color: AppColor.colorIntroBG),
               title: Text("Order #${1001 + index}"),
               subtitle: Text("Status: Delivered"),
-              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.grey,
+              ),
               onTap: () {
                 // Navigate to order details
               },

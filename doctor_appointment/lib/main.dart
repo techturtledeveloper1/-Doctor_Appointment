@@ -1,4 +1,4 @@
-import 'package:doctor_appointment/Utils/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -34,7 +34,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(statusBarColor: AppColor.colorIntroBG),
+    SystemUiOverlayStyle(statusBarColor: AppColor.colorPrimary),
   );
 
   runApp(
@@ -51,7 +51,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SERENEST',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/',
       navigatorKey: NavigationService.instance?.navigationKey,
       routes: {

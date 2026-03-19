@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class TrackOrderScreen extends StatelessWidget {
   final String prescriptionId;
@@ -25,7 +24,10 @@ class TrackOrderScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.white,
       appBar: AppBar(
-        title: Text("Track Order",style: TextStyle(color: AppColor.colorIntroBG)),
+        title: Text(
+          "Track Order",
+          style: TextStyle(color: AppColor.colorPrimary),
+        ),
         backgroundColor: AppColor.white,
         foregroundColor: AppColor.colorIntroBG,
       ),
@@ -56,22 +58,29 @@ class TrackOrderScreen extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Prescription ID",
-                          style: TextStyle(fontSize: 14, color: Colors.black54)),
+                      const Text(
+                        "Prescription ID",
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      ),
                       Text(
                         prescriptionId,
                         style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColor.colorIntroBG),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.colorIntroBG,
+                        ),
                       ),
                       const SizedBox(height: 12),
-                      const Text("Order Date",
-                          style: TextStyle(fontSize: 14, color: Colors.black54)),
+                      const Text(
+                        "Order Date",
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      ),
                       Text(
                         orderDate,
                         style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -80,9 +89,10 @@ class TrackOrderScreen extends StatelessWidget {
                   Text(
                     "₹${totalAmount.toStringAsFixed(2)}",
                     style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
                 ],
               ),
@@ -106,12 +116,14 @@ class TrackOrderScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             // ✅ Courier Info
-            Text("Courier Partner: $courierPartner",
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w500)),
-            Text("Tracking ID: $trackingId",
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w500)),
+            Text(
+              "Courier Partner: $courierPartner",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              "Tracking ID: $trackingId",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
 
             const SizedBox(height: 30),
 
@@ -127,8 +139,10 @@ class TrackOrderScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text("Track with Courier",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: const Text(
+                "Track with Courier",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ),
           ],
         ),
@@ -156,17 +170,9 @@ class TrackOrderScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: completed ? AppColor.colorIntroBG : Colors.grey.shade300,
               ),
-              child: Icon(
-                _getIcon(icon),
-                size: 18,
-                color: Colors.white,
-              ),
+              child: Icon(_getIcon(icon), size: 18, color: Colors.white),
             ),
-            Container(
-              width: 2,
-              height: 50,
-              color: Colors.grey.shade300,
-            ),
+            Container(width: 2, height: 50, color: Colors.grey.shade300),
           ],
         ),
         const SizedBox(width: 12),
@@ -178,15 +184,21 @@ class TrackOrderScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: completed ? Colors.black87 : Colors.grey)),
-                Text(subtitle,
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: completed ? Colors.black54 : Colors.grey)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: completed ? Colors.black87 : Colors.grey,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: completed ? Colors.black54 : Colors.grey,
+                  ),
+                ),
               ],
             ),
           ),

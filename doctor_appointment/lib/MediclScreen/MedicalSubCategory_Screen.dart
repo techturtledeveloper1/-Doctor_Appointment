@@ -1,7 +1,7 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import '../ApiService/ApiService.dart';
-import '../Utils/AppColor.dart';
 import 'ProductDetails_Screen.dart';
 
 class ProductListingScreen extends StatefulWidget {
@@ -32,8 +32,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
   // ✅ Fetch product details
   void loadCategoryData() async {
-    var response =
-    await ApiService().callGetMedicineCategoryById(widget.categoryId);
+    var response = await ApiService().callGetMedicineCategoryById(
+      widget.categoryId,
+    );
 
     debugPrint("📢 API RESULT: $response");
 
@@ -48,7 +49,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           "image": item['images'] != null && item['images'].isNotEmpty
               ? item['images'][0]
               : "",
-        }
+        },
       ];
     } else {
       debugPrint("❌ Failed to load item data");
@@ -77,11 +78,8 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
     Map<String, dynamic> body = {
       "items": [
-        {
-          "medicineId": productId,
-          "quantity": 1
-        }
-      ]
+        {"medicineId": productId, "quantity": 1},
+      ],
     };
 
     debugPrint("🛒 Add to Cart Request: $body");
@@ -163,122 +161,119 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
       ),
       body: isLoading
           ? Center(
-        child: CircularProgressIndicator(
-          color: AppColor.colorIntroBG,
-        ),
-      )
+              child: CircularProgressIndicator(color: AppColor.colorIntroBG),
+            )
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ✅ Mental Wellness Banner
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Color(0xFFE3F2FD), Color(0xFFF3E5F5)],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ✅ Mental Wellness Banner
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [Color(0xFFE3F2FD), Color(0xFFF3E5F5)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Your Mental Wellness, Our Priority",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "Flat 15% OFF on Mental Health Essentials",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.green[700],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // ✅ Categories Section
                   Text(
-                    "Your Mental Wellness, Our Priority",
+                    "Categories",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildCategoryItem("Antidepressants", Icons.mood),
+                      _buildCategoryItem("Anti-anxiety", Icons.psychology),
+                      _buildCategoryItem("Sleep", Icons.nightlight_round),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+
+                  // ✅ Divider
+                  Divider(color: Colors.grey[300], height: 1),
+                  SizedBox(height: 20),
+
+                  // ✅ Featured Products Section
                   Text(
-                    "Flat 15% OFF on Mental Health Essentials",
+                    "Featured Products",
                     style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.green[700],
-                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
+                  ),
+                  SizedBox(height: 16),
+
+                  // ✅ Products Grid - FIXED: Better aspect ratio and layout
+                  GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: products.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.65,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                    ),
+                    itemBuilder: (context, index) {
+                      final item = products[index];
+                      return GestureDetector(
+                        onTap: () {
+                          /// ✅ Only open if ID is not empty
+                          if (item["_id"].toString().isNotEmpty) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailsScreen(
+                                  productId: item["_id"],
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: _productCard(item),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
-
-            // ✅ Categories Section
-            Text(
-              "Categories",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildCategoryItem("Antidepressants", Icons.mood),
-                _buildCategoryItem("Anti-anxiety", Icons.psychology),
-                _buildCategoryItem("Sleep", Icons.nightlight_round),
-              ],
-            ),
-            SizedBox(height: 20),
-
-            // ✅ Divider
-            Divider(color: Colors.grey[300], height: 1),
-            SizedBox(height: 20),
-
-            // ✅ Featured Products Section
-            Text(
-              "Featured Products",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // ✅ Products Grid - FIXED: Better aspect ratio and layout
-            GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: products.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.65,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemBuilder: (context, index) {
-                final item = products[index];
-                return GestureDetector(
-                  onTap: () {
-                    /// ✅ Only open if ID is not empty
-                    if (item["_id"].toString().isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetailsScreen(
-                            productId: item["_id"],
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  child: _productCard(item),
-                );
-              },
-            ),
-
-          ],
-        ),
-      ),
     );
   }
 
@@ -298,10 +293,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
         Text(
           title,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -321,7 +313,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
             color: Colors.black.withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
-          )
+          ),
         ],
         border: Border.all(color: Colors.grey[200]!),
       ),
@@ -332,7 +324,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
             children: [
               // ✅ Product Image - Fixed height
               Container(
-                height: constraints.maxWidth * 0.5, // Responsive height based on width
+                height:
+                    constraints.maxWidth *
+                    0.5, // Responsive height based on width
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
@@ -341,27 +335,34 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                     topRight: Radius.circular(12),
                   ),
                 ),
-                child: item['image'] != null && item['image'].toString().isNotEmpty
+                child:
+                    item['image'] != null && item['image'].toString().isNotEmpty
                     ? ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
-                  ),
-                  child: Image.network(
-                    item['image'],
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Icon(Icons.medical_services,
-                            size: 40, color: Colors.grey[400]),
-                      );
-                    },
-                  ),
-                )
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                        child: Image.network(
+                          item['image'],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Icon(
+                                Icons.medical_services,
+                                size: 40,
+                                color: Colors.grey[400],
+                              ),
+                            );
+                          },
+                        ),
+                      )
                     : Center(
-                  child: Icon(Icons.medical_services,
-                      size: 40, color: Colors.grey[400]),
-                ),
+                        child: Icon(
+                          Icons.medical_services,
+                          size: 40,
+                          color: Colors.grey[400],
+                        ),
+                      ),
               ),
 
               // ✅ Product Content - Flexible space
@@ -417,7 +418,10 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                           // ✅ Rx Required badge
                           if (requiresRx)
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.orange[50],
                                 borderRadius: BorderRadius.circular(4),

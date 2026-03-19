@@ -1,7 +1,7 @@
+import 'package:doctor_appointment/PrescriptionsScreen/RateScreen/RateSession_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 
-import '../../Utils/AppColor.dart';
-import '../RateScreen/RateSession_Screen.dart';
 
 class onlineOrderMedicineScreen extends StatelessWidget {
   const onlineOrderMedicineScreen({super.key});

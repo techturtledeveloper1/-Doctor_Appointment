@@ -59,6 +59,7 @@ flutter:
     - assets/icons/
     - assets/medicine_image/
     - assets/logo/
+    - assets/svg/
 
   fonts:
     - family: HK Bold

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'Symptom_Screen.dart';
 
 class SpecialityScreen extends StatelessWidget {
@@ -16,14 +16,13 @@ class SpecialityScreen extends StatelessWidget {
     {"title": "Pediatrician", "icon": "👶"},
   ];
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: const Text("Speciality"),
-        backgroundColor: AppColor.colorIntroBG,
+        backgroundColor: AppColor.colorPrimary,
         foregroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -37,7 +36,9 @@ class SpecialityScreen extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         itemBuilder: (context, index) {
           return Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             margin: const EdgeInsets.symmetric(vertical: 6),
             child: ListTile(
               leading: CircleAvatar(
@@ -50,9 +51,16 @@ class SpecialityScreen extends StatelessWidget {
               ),
               title: Text(
                 specialities[index]["title"]!,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
               ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 18,
+                color: Colors.grey,
+              ),
               onTap: () {
                 Navigator.push(
                   context,

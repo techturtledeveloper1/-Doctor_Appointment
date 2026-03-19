@@ -1,16 +1,15 @@
 import 'dart:convert';
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import '../../../APIService/ApiService.dart';
-import '../../../DashBoard/DashBoard.dart';
-import '../../../Utils/AppColor.dart';
 
 class DoctorBookAppointmentScreen extends StatefulWidget {
   final Map<String, dynamic> doctor;
   final String selectedDate;
   final String selectedTime;
   final String selectedConsultType;
-  final String slotId; // ✅ This is the availability ID
-
+  final String slotId;
   const DoctorBookAppointmentScreen({
     super.key,
     required this.doctor,
@@ -35,7 +34,7 @@ class _DoctorBookAppointmentScreenState
     "UPI",
     "Credit / Debit Card",
     "Net Banking",
-    "Wallet"
+    "Wallet",
   ];
 
   @override
@@ -68,7 +67,7 @@ class _DoctorBookAppointmentScreenState
             const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.colorIntroBG,
+                backgroundColor: AppColor.colorPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -94,7 +93,9 @@ class _DoctorBookAppointmentScreenState
                       null,
                       {
                         "doctor": widget.doctor["name"],
-                        "specialty": widget.doctor["speciality"] ?? widget.doctor["specialty"],
+                        "specialty":
+                            widget.doctor["speciality"] ??
+                            widget.doctor["specialty"],
                         "time": widget.selectedTime,
                         "status": "Confirmed",
                         "type": selectedConsultType ?? "Video",
@@ -140,7 +141,8 @@ class _DoctorBookAppointmentScreenState
 
       Map<String, dynamic> body = {
         "doctorId": widget.doctor["_id"],
-        "clinicAddressId": widget.doctor["clinicAddressId"] ?? "68bad62466b24b65c0ac9180",
+        "clinicAddressId":
+            widget.doctor["clinicAddressId"] ?? "68bad62466b24b65c0ac9180",
         "appointmentDate": formattedDate,
         "appointmentTime": widget.selectedTime,
         "reason": "Regular health checkup",
@@ -170,9 +172,9 @@ class _DoctorBookAppointmentScreenState
       }
     } catch (e) {
       print("❌ Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Something went wrong")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Something went wrong")));
     } finally {
       setState(() => isLoading = false);
     }
@@ -240,18 +242,19 @@ class _DoctorBookAppointmentScreenState
                     color: Colors.black12,
                     blurRadius: 6,
                     offset: const Offset(0, 2),
-                  )
+                  ),
                 ],
               ),
               child: Row(
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundImage: (doctor["image"] != null &&
-                        doctor["image"].toString().isNotEmpty)
+                    backgroundImage:
+                        (doctor["image"] != null &&
+                            doctor["image"].toString().isNotEmpty)
                         ? NetworkImage(doctor["image"])
                         : const AssetImage("assets/images/default_doctor.png")
-                    as ImageProvider,
+                              as ImageProvider,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -300,19 +303,37 @@ class _DoctorBookAppointmentScreenState
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.calendar_today, color: AppColor.colorIntroBG, size: 20),
+                      Icon(
+                        Icons.calendar_today,
+                        color: AppColor.colorIntroBG,
+                        size: 20,
+                      ),
                       const SizedBox(width: 10),
-                      Text("Date: ${widget.selectedDate}",
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                      Text(
+                        "Date: ${widget.selectedDate}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.access_time, color: AppColor.colorIntroBG, size: 20),
+                      Icon(
+                        Icons.access_time,
+                        color: AppColor.colorIntroBG,
+                        size: 20,
+                      ),
                       const SizedBox(width: 10),
-                      Text("Time: ${widget.selectedTime}",
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                      Text(
+                        "Time: ${widget.selectedTime}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -376,20 +397,24 @@ class _DoctorBookAppointmentScreenState
                   backgroundColor: AppColor.colorIntroBG,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
-                onPressed: (selectedPayment == null ||
-                    selectedConsultType == null ||
-                    isLoading)
+                onPressed:
+                    (selectedPayment == null ||
+                        selectedConsultType == null ||
+                        isLoading)
                     ? null
                     : _confirmAndPay,
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : Text(
-                  "Confirm & Pay ₹${consultFees[selectedConsultType!]}",
-                  style:
-                  const TextStyle(fontSize: 16, color: Colors.white),
-                ),
+                        "Confirm & Pay ₹${consultFees[selectedConsultType!]}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
             ),
           ],

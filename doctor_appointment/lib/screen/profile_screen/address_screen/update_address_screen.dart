@@ -1,7 +1,8 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../ApiService/ApiService.dart';
-import '../../../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+
 
 class AddEditAddressScreen extends StatefulWidget {
   final Map<String, dynamic>? address;

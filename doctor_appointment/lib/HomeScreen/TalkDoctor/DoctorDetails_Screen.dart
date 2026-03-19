@@ -15,7 +15,7 @@
 //     return Scaffold(
 //       backgroundColor: Colors.grey.shade100,
 //       appBar: AppBar(
-//         backgroundColor: AppColor.colorIntroBG,
+//         backgroundColor: AppColor.colorPrimary,
 //         elevation: 0,
 //         title: Text(
 //           doctor["name"],
@@ -101,7 +101,7 @@
 //                     style: TextStyle(
 //                         fontSize: 14,
 //                         fontWeight: FontWeight.w600,
-//                         color: AppColor.colorIntroBG),
+//                         color: AppColor.colorPrimary),
 //                   ),
 //                 ],
 //               ),
@@ -114,7 +114,7 @@
 //               width: double.infinity,
 //               child: ElevatedButton(
 //                 style: ElevatedButton.styleFrom(
-//                   backgroundColor: AppColor.colorIntroBG,
+//                   backgroundColor: AppColor.colorPrimary,
 //                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
 //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
 //                 ),

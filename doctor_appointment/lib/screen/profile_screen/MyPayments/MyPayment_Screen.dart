@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class PaymentScreen extends StatelessWidget {
   const PaymentScreen({super.key});

@@ -1,5 +1,6 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
-import '../../../Utils/AppColor.dart';
 
 class ChatScreen extends StatelessWidget {
   final String doctorName;
@@ -21,9 +22,7 @@ class ChatScreen extends StatelessWidget {
         title: Row(
           children: [
             const CircleAvatar(
-              backgroundImage: AssetImage(
-                "assets/images/d2.png",
-              ), // doctor image
+              backgroundImage: AssetImage(AppImages.d2), // doctor image
             ),
             const SizedBox(width: 10),
             Column(
@@ -50,7 +49,7 @@ class ChatScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
               radius: 18,
-              backgroundColor: AppColor.colorIntroBG,
+              backgroundColor: AppColor.colorPrimary,
               child: IconButton(
                 icon: Icon(Icons.videocam, color: AppColor.white),
                 onPressed: () {},
@@ -83,7 +82,7 @@ class ChatScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: isMe
-                              ? AppColor.colorIntroBG
+                              ? AppColor.colorPrimary
                               : Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -138,7 +137,7 @@ class ChatScreen extends StatelessWidget {
                   const SizedBox(width: 6),
                   CircleAvatar(
                     radius: 22,
-                    backgroundColor: AppColor.colorIntroBG,
+                    backgroundColor: AppColor.colorPrimary,
                     child: IconButton(
                       icon: const Icon(Icons.send, color: Colors.white),
                       onPressed: () {

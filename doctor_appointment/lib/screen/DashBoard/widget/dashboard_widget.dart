@@ -1,26 +1,28 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_button.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
-import '../APIService/ApiService.dart';
-import '../Utils/AppColor.dart';
-import 'ConsultPsychiatristScreen/ConsultPsychiatrist_Screen.dart';
-import 'ConsultPsychiatristScreen/DoctorDetails/DoctorDetails_Screen.dart';
-import 'OrderMedicineScreen/OrderMedicine_Screen.dart';
-import 'OrderMedicineScreen/TrackOrder_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import '../../../HomeScreen/ConsultPsychiatristScreen/ConsultPsychiatrist_Screen.dart';
+import '../../../HomeScreen/ConsultPsychiatristScreen/DoctorDetails/DoctorDetails_Screen.dart';
+import '../../../HomeScreen/OrderMedicineScreen/OrderMedicine_Screen.dart';
+import '../../../HomeScreen/OrderMedicineScreen/TrackOrder_Screen.dart';
 
-class NewhomeScreen extends StatefulWidget {
-  const NewhomeScreen({super.key});
+class DashBoardWidget extends StatefulWidget {
+  const DashBoardWidget({super.key});
 
   @override
-  State<NewhomeScreen> createState() => _NewhomeScreenState();
+  State<DashBoardWidget> createState() => _DashBoardWidgetState();
 }
 
-class _NewhomeScreenState extends State<NewhomeScreen> {
+class _DashBoardWidgetState extends State<DashBoardWidget> {
   int _currentIndex = 0;
 
   final List<String> bannerImages = [
-    "assets/images/banner1.png",
-    "assets/images/banner2.png",
-    "assets/images/banner3.png",
+    AppImages.banner1,
+    AppImages.banner2,
+    AppImages.banner3,
   ];
 
   Map<String, dynamic>? homeData;
@@ -47,13 +49,12 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// Greeting
                     Text(
                       "Hi, Serenest 👋",
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: AppColor.colorIntroBG,
+                        color: AppColor.colorPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -67,10 +68,9 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
 
                     const SizedBox(height: 16),
 
-                    /// Banner
                     CarouselSlider(
                       options: CarouselOptions(
-                        height: 180,
+                        // height: 180,
                         autoPlay: true,
                         enlargeCenterPage: true,
                         viewportFraction: 1,
@@ -96,7 +96,7 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: _currentIndex == entry.key
-                                ? AppColor.colorIntroBG
+                                ? AppColor.colorPrimary
                                 : Colors.grey.shade400,
                           ),
                         );
@@ -105,12 +105,11 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
 
                     const SizedBox(height: 20),
 
-                    /// Services
                     Text(
                       "Our Services",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: AppColor.colorIntroBG,
+                        color: AppColor.colorPrimary,
                         fontSize: 16,
                       ),
                     ),
@@ -127,7 +126,8 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
                         if (homeData!["topSpecializations"] != null &&
                             homeData!["topSpecializations"].length > 0)
                           _serviceCard(
-                            "assets/images/psychiatrist.png",
+                            AppImages.psychiatrist,
+
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -144,7 +144,7 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
                         if (homeData!["topSpecializations"] != null &&
                             homeData!["topSpecializations"].length > 1)
                           _serviceCard(
-                            "assets/images/psychologist.png",
+                            AppImages.psychologist,
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -161,7 +161,7 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
                         if (homeData!["topSpecializations"] != null &&
                             homeData!["topSpecializations"].length > 2)
                           _serviceCard(
-                            "assets/images/therapist.png",
+                            AppImages.therapist,
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -176,7 +176,7 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
                             },
                           ),
                         _serviceCard(
-                          "assets/images/medicine.png",
+                          AppImages.order_medicine,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -191,13 +191,11 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
 
                     const SizedBox(height: 24),
 
-                    /// Featured Doctors
-                    /// Featured Doctors
                     Text(
                       "Featured Psychiatrists",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: AppColor.colorIntroBG,
+                        color: AppColor.colorPrimary,
                         fontSize: 16,
                       ),
                     ),
@@ -260,18 +258,7 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
                                   ],
                                 ),
                               ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColor.colorIntroBG,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 18,
-                                    vertical: 8,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
+                              AppButton(
                                 onPressed: () {
                                   final doctorId =
                                       homeData!['topDoctor']["id"]
@@ -297,7 +284,13 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
                                     ),
                                   );
                                 },
-                                child: const Text("Book Now"),
+                                text: "Book Now",
+                                width: 100,
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.white,
+                                  fontSize: 16,
+                                ),
                               ),
                             ],
                           ),
@@ -308,69 +301,56 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
 
                     const SizedBox(height: 24),
 
-                    /// Delivery Tracker
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "On the way",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColor.colorIntroBG,
-                            fontSize: 16,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => TrackOrderScreen(
-                                  prescriptionId: "709325647",
-                                  orderDate: "April 4, 2024",
-                                  totalAmount: 375,
-                                  courierPartner: "ABC Logistics",
-                                  trackingId: "ABCD123456",
-                                  trackingSteps: [
-                                    {
-                                      "icon": "verified",
-                                      "title": "Verified",
-                                      "subtitle": "April 4, 12:30 PM",
-                                      "status": "true",
-                                    },
-                                    {
-                                      "icon": "packed",
-                                      "title": "Packed",
-                                      "subtitle": "April 5, 9:00 AM",
-                                      "status": "true",
-                                    },
-                                    {
-                                      "icon": "delivery",
-                                      "title": "Out for Delivery",
-                                      "subtitle": "April 5, 2:45 PM",
-                                      "status": "true",
-                                    },
-                                    {
-                                      "icon": "delivered",
-                                      "title": "Delivered",
-                                      "subtitle": "",
-                                      "status": "false",
-                                    },
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "Show >",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.colorIntroBG,
-                              fontSize: 16,
+                    AppButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => TrackOrderScreen(
+                              prescriptionId: "709325647",
+                              orderDate: "April 4, 2024",
+                              totalAmount: 375,
+                              courierPartner: "ABC Logistics",
+                              trackingId: "ABCD123456",
+                              trackingSteps: [
+                                {
+                                  "icon": "verified",
+                                  "title": "Verified",
+                                  "subtitle": "April 4, 12:30 PM",
+                                  "status": "true",
+                                },
+                                {
+                                  "icon": "packed",
+                                  "title": "Packed",
+                                  "subtitle": "April 5, 9:00 AM",
+                                  "status": "true",
+                                },
+                                {
+                                  "icon": "delivery",
+                                  "title": "Out for Delivery",
+                                  "subtitle": "April 5, 2:45 PM",
+                                  "status": "true",
+                                },
+                                {
+                                  "icon": "delivered",
+                                  "title": "Delivered",
+                                  "subtitle": "",
+                                  "status": "false",
+                                },
+                              ],
                             ),
                           ),
-                        ),
-                      ],
+                        );
+                      },
+                      text: "On the way",
+                      iconColor: AppColor.white,
+                      iconPosition: IconPosition.right,
+                      icon: Icons.arrow_circle_right_outlined,
+                      textStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColor.white,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
@@ -379,36 +359,21 @@ class _NewhomeScreenState extends State<NewhomeScreen> {
     );
   }
 
-  /// Banner Widget
   Widget _bannerCard(String imagePath) {
-    return Padding(
-      padding: const EdgeInsets.all(6.0),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 5,
-              spreadRadius: 6,
-              offset: const Offset(3, 3),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            imagePath,
-            fit: BoxFit.fill,
-            width: double.infinity,
-          ),
-        ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.transparent,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadiusGeometry.circular(12),
+        clipBehavior: Clip.hardEdge,
+        child: Image.asset(imagePath, fit: BoxFit.contain),
       ),
     );
   }
 
-  /// Services
   Widget _serviceCard(String imagePath, {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,

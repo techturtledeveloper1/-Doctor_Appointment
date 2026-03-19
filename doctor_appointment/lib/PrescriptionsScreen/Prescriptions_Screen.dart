@@ -1,5 +1,6 @@
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
-import '../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'OnlineOrder/onlineOrder_Screen.dart';
 
 class PrescriptionScreen extends StatelessWidget {
@@ -8,7 +9,12 @@ class PrescriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Prescription",style: TextStyle(color: AppColor.colorIntroBG),)),
+      appBar: AppBar(
+        title: Text(
+          "Prescription",
+          style: TextStyle(color: AppColor.colorIntroBG),
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -16,7 +22,7 @@ class PrescriptionScreen extends StatelessWidget {
             /// 👩‍⚕️ Doctor Image
             const CircleAvatar(
               radius: 40,
-              backgroundImage: AssetImage("assets/images/d2.png"),
+              backgroundImage: AssetImage(AppImages.d2),
             ),
             const SizedBox(height: 12),
 
@@ -24,14 +30,20 @@ class PrescriptionScreen extends StatelessWidget {
             Text(
               "Dr. Sarah Jones\nPsychiatrist\nJul 10, 2023",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: AppColor.colorIntroBG),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColor.colorIntroBG,
+              ),
             ),
 
             const SizedBox(height: 20),
 
             /// Rx Icon
-            Text("Rx",
-                style: TextStyle(fontSize: 48, color: AppColor.colorIntroBG)),
+            Text(
+              "Rx",
+              style: TextStyle(fontSize: 48, color: AppColor.colorIntroBG),
+            ),
 
             const SizedBox(height: 20),
 
@@ -64,7 +76,7 @@ class PrescriptionScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                          const onlineOrderMedicineScreen(),
+                              const onlineOrderMedicineScreen(),
                         ),
                       );
                     },

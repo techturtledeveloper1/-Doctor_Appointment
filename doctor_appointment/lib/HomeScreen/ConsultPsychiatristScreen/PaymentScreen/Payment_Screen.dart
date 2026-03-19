@@ -1,5 +1,5 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import '../../../Utils/AppColor.dart';
 import 'PaymentSuccess_Screen.dart';
 
 class PaymentTypeScreen extends StatefulWidget {
@@ -141,9 +141,7 @@ class _PaymentTypeScreenState extends State<PaymentTypeScreen> {
                         isSelected
                             ? Icons.radio_button_checked
                             : Icons.radio_button_off,
-                        color: isSelected
-                            ? AppColor.colorIntroBG
-                            : Colors.grey,
+                        color: isSelected ? AppColor.colorIntroBG : Colors.grey,
                       ),
                       const SizedBox(width: 12),
                       Text(
@@ -181,10 +179,11 @@ class _PaymentTypeScreenState extends State<PaymentTypeScreen> {
                     MaterialPageRoute(
                       builder: (_) => PaymentSuccessScreen(
                         doctor: doctor,
-                        date: widget.selectedDate,          // ✅ from constructor
-                        time: widget.selectedTime,          // ✅ from constructor
-                        consultationType: widget.consultationType, // ✅ from constructor
-                        paymentMethod: selectedPayment!,    // ✅ non-null
+                        date: widget.selectedDate, // ✅ from constructor
+                        time: widget.selectedTime, // ✅ from constructor
+                        consultationType:
+                            widget.consultationType, // ✅ from constructor
+                        paymentMethod: selectedPayment!, // ✅ non-null
                       ),
                     ),
                   );

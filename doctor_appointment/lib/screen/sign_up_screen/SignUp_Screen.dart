@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:doctor_appointment/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../ResetPassword/Otp_Screen.dart';
-import '../../Utils/AppColor.dart';
-import '../../../APIService/ApiService.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -91,7 +91,7 @@ class _SignupScreenState extends State<SignupScreen> {
               children: [
                 Align(
                   alignment: Alignment.topCenter,
-                  child: Image.asset("assets/images/logo.png", height: 250),
+                  child: Image.asset(AppImages.logo, height: 250),
                 ),
 
                 const SizedBox(height: 10),

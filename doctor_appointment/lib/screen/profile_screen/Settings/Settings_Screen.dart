@@ -1,7 +1,6 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/screen/profile_screen/Settings/Changedpasswordscreen.dart';
 import 'package:flutter/material.dart';
-import '../../../Utils/AppColor.dart';
-import '../../../UserProfileScreen/Settings/Changedpasswordscreen.dart';
-
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -11,10 +10,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.white,
       appBar: AppBar(
-        title: Text(
-          "Settings",
-          style: TextStyle(color: AppColor.colorIntroBG),
-        ),
+        title: Text("Settings", style: TextStyle(color: AppColor.colorIntroBG)),
         backgroundColor: AppColor.white,
         iconTheme: IconThemeData(color: AppColor.colorIntroBG),
       ),
@@ -29,11 +25,17 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.lock, color: AppColor.colorIntroBG),
             title: Text("Change Password"),
-            trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey,
+            ),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const ChangePasswordScreen(),
+                ),
               );
             },
           ),

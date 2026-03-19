@@ -1,6 +1,5 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-
-import '../../Utils/AppColor.dart';
 import 'MedicineOrderConfirm_Screen.dart';
 
 class MedicineConfirmPaymentScreen extends StatelessWidget {
@@ -22,10 +21,10 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.white,
       appBar: AppBar(
-        title: Text("Payment",style: TextStyle(color: AppColor.colorIntroBG),),
+        title: Text("Payment", style: TextStyle(color: AppColor.colorPrimary)),
         backgroundColor: Colors.white,
         elevation: 0,
-        foregroundColor: AppColor.colorIntroBG,
+        foregroundColor: AppColor.colorPrimary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -35,7 +34,11 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
             // Address Section
             Text(
               "Address",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,color: AppColor.colorIntroBG),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: AppColor.colorPrimary,
+              ),
             ),
             const SizedBox(height: 12),
             Container(
@@ -53,9 +56,13 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("John Doe",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        const Text(
+                          "John Doe",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           deliveryAddress,
@@ -66,7 +73,10 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {},
-                    child: Text("Edit",style: TextStyle(color: AppColor.colorIntroBG),),
+                    child: Text(
+                      "Edit",
+                      style: TextStyle(color: AppColor.colorPrimary),
+                    ),
                   ),
                 ],
               ),
@@ -77,7 +87,11 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
             // Payment Method
             Text(
               "Payment Method",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,color: AppColor.colorIntroBG),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: AppColor.colorPrimary,
+              ),
             ),
             const SizedBox(height: 12),
 
@@ -95,16 +109,20 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
                   const Text(
                     "VISA",
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                        fontSize: 16),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   const Text("•••• 1234"),
                   const Spacer(),
                   TextButton(
                     onPressed: () {},
-                    child: Text("Change",style: TextStyle(color: AppColor.colorIntroBG),),
+                    child: Text(
+                      "Change",
+                      style: TextStyle(color: AppColor.colorPrimary),
+                    ),
                   ),
                 ],
               ),
@@ -118,9 +136,12 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundColor: AppColor.colorIntroBG,
-                    child: Icon(Icons.local_shipping,
-                        size: 50, color: AppColor.white),
+                    backgroundColor: AppColor.colorPrimary,
+                    child: Icon(
+                      Icons.local_shipping,
+                      size: 50,
+                      color: AppColor.white,
+                    ),
                   ),
                 ],
               ),
@@ -135,7 +156,9 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
                 Text(
                   "Total: ₹${totalAmount.toStringAsFixed(2)}",
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -147,7 +170,7 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.colorIntroBG,
+                  backgroundColor: AppColor.colorPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -168,7 +191,11 @@ class MedicineConfirmPaymentScreen extends StatelessWidget {
                 },
                 child: Text(
                   "Place Order",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: AppColor.white),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.white,
+                  ),
                 ),
               ),
             ),

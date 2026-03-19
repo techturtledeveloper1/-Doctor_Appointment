@@ -2,7 +2,7 @@ class AppImages {
   // icons
   static const String consult = "assets/icons/consult.png";
   static const String home = "assets/icons/home.png";
-  static const String medicine = "assets/icons/medicine.png";
+  static const String medicine = "assets/icons/order_medicine.png";
   static const String profile = "assets/icons/profile.png";
 
   //   images
@@ -34,6 +34,13 @@ class AppImages {
   //   logo
   static const String logo = "assets/logo/logo.png";
   static const String app_logo = "assets/icons/app_logo.png";
+
+  // svg
+  static const String home_svg = "assets/svg/home_svg.svg";
+  static const String calendar_svg = "assets/svg/calendar_svg.svg";
+  static const String medicine_svg = "assets/svg/medicine_svg.svg";
+  static const String profile_svg = "assets/svg/profile_svg.svg";
+  static const String support_svg = "assets/svg/support_svg.svg";
 
   //   medicine
   static const String amoxicillin = "assets/medicine_image/amoxicillin.png";

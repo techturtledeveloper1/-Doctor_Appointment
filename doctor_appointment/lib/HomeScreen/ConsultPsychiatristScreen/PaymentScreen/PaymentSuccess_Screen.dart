@@ -1,8 +1,7 @@
-import 'package:doctor_appointment/DashBoard/DashBoard.dart';
-import 'package:doctor_appointment/HomeScreen/NewHome_screen.dart';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/screen/DashBoard/widget/dashboard_widget.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import '../../../Utils/AppColor.dart';
-import '../../Home_screen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final Map<String, dynamic> doctor;
@@ -34,11 +33,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.green.shade100,
-                child: Icon(
-                  Icons.check_circle,
-                  size: 80,
-                  color: Colors.green,
-                ),
+                child: Icon(Icons.check_circle, size: 80, color: Colors.green),
               ),
               const SizedBox(height: 24),
 
@@ -54,10 +49,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 "Your appointment has been confirmed.",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -98,7 +90,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                     const Divider(height: 30),
@@ -133,7 +125,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                           false,
                         ),
                       ),
-                          (route) => false, // removes all previous routes
+                      (route) => false, // removes all previous routes
                     );
 
                     // Optionally, you can pass selected appointment data
@@ -158,12 +150,14 @@ class PaymentSuccessScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title,
-              style: const TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.w500)),
-          Text(value,
-              style: const TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          ),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );

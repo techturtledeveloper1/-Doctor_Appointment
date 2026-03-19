@@ -1,8 +1,7 @@
-import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/LoginScreen/NewLogin_Screen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
-import '../LoginScreen/NewLogin_Screen.dart';
-import '../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({Key? key}) : super(key: key);

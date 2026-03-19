@@ -1,10 +1,12 @@
+import 'dart:math';
+
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
-import '../../../Utils/AppColor.dart';
-import 'dart:math';
-import '../../../../APIService/ApiService.dart';
+
 
 class EditProfileScreen extends StatefulWidget {
   final String firstName;

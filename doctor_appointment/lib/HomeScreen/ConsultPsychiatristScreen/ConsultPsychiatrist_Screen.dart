@@ -1,12 +1,12 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../APIService/ApiService.dart';
-import '../../Utils/AppColor.dart';
 import 'DoctorDetails/DoctorDetails_Screen.dart';
 
 class ConsultPsychiatristScreen extends StatefulWidget {
-  final String specializationId; // pass specializationId from previous screen
+  final String specializationId;
 
   const ConsultPsychiatristScreen({super.key, required this.specializationId});
 
@@ -38,7 +38,7 @@ class _ConsultPsychiatristScreenState extends State<ConsultPsychiatristScreen> {
           "_id": doc["_id"]?.toString() ?? "", // ✅ Added safe ID handling
           "name": doc["fullName"] ?? "",
           "specialty": doc["specialzationName"] ?? "",
-          "image": doc["profile_photo"] ?? "assets/images/d1.png",
+          "image": doc["profile_photo"] ?? AppImages.d1,
           "rating": doc["avgRating"] ?? 0,
           "reviews": doc["totalReview"] ?? 0,
           "chatFee": doc["chatFee"] ?? 0,
@@ -66,7 +66,7 @@ class _ConsultPsychiatristScreenState extends State<ConsultPsychiatristScreen> {
         title: Text(
           "Consult",
           style: TextStyle(
-            color: AppColor.colorIntroBG,
+            color: AppColor.colorPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -1,11 +1,10 @@
-import 'package:doctor_appointment/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-import '../../Utils/AppColor.dart';
 import 'MedicineCart_Screen.dart';
-
 
 class OrderMedicineScreen extends StatefulWidget {
   const OrderMedicineScreen({super.key});
@@ -41,7 +40,9 @@ class _OrderMedicineScreenState extends State<OrderMedicineScreen> {
 
         String extractedText = '';
         for (int i = 0; i < document.pages.count; i++) {
-          extractedText += PdfTextExtractor(document).extractText(startPageIndex: i);
+          extractedText += PdfTextExtractor(
+            document,
+          ).extractText(startPageIndex: i);
         }
         document.dispose();
 
@@ -65,8 +66,9 @@ class _OrderMedicineScreenState extends State<OrderMedicineScreen> {
       }
     } catch (e) {
       setState(() => isLoading = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error: $e")));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
     }
   }
 
@@ -76,7 +78,7 @@ class _OrderMedicineScreenState extends State<OrderMedicineScreen> {
       appBar: AppBar(
         title: Text(
           "Order Medicines",
-          style: TextStyle(color: AppColor.colorIntroBG),
+          style: TextStyle(color: AppColor.colorPrimary),
         ),
         centerTitle: true,
       ),
@@ -96,7 +98,7 @@ class _OrderMedicineScreenState extends State<OrderMedicineScreen> {
               child: Icon(
                 Icons.medical_services_outlined,
                 size: 80,
-                color: AppColor.colorIntroBG,
+                color: AppColor.colorPrimary,
               ),
             ),
             const SizedBox(height: 40),
@@ -136,8 +138,10 @@ class _OrderMedicineScreenState extends State<OrderMedicineScreen> {
                     ),
                   );
                 },
-                icon: Icon(Icons.store_mall_directory,
-                    color: AppColor.colorIntroBG),
+                icon: Icon(
+                  Icons.store_mall_directory,
+                  color: AppColor.colorIntroBG,
+                ),
                 label: Text(
                   "Go to Medical Store",
                   style: TextStyle(color: AppColor.colorIntroBG),
@@ -167,16 +171,16 @@ class _OrderMedicineScreenState extends State<OrderMedicineScreen> {
               child: ElevatedButton(
                 onPressed: uploadedMedicines != null
                     ? () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => MedicineCartScreen(
-                  //       medicines: uploadedMedicines!,
-                  //       prescriptionFileName: prescriptionFileName!,
-                  //     ),
-                  //   ),
-                  // );
-                }
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (_) => MedicineCartScreen(
+                        //       medicines: uploadedMedicines!,
+                        //       prescriptionFileName: prescriptionFileName!,
+                        //     ),
+                        //   ),
+                        // );
+                      }
                     : null, // Disable button if no prescription uploaded
                 style: ElevatedButton.styleFrom(
                   backgroundColor: uploadedMedicines != null
@@ -189,10 +193,7 @@ class _OrderMedicineScreenState extends State<OrderMedicineScreen> {
                 ),
                 child: Text(
                   "Proceed",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppColor.white,
-                  ),
+                  style: TextStyle(fontSize: 16, color: AppColor.white),
                 ),
               ),
             ),

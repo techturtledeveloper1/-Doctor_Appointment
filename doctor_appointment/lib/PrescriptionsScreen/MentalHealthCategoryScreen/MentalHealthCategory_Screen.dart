@@ -1,6 +1,6 @@
+import 'package:doctor_appointment/PrescriptionsScreen/ProductDetailsScreen/ProductDetail_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import '../../Utils/AppColor.dart';
-import '../ProductDetailsScreen/ProductDetail_Screen.dart';
 
 class MentalHealthCategoryScreen extends StatelessWidget {
   final String categoryName;

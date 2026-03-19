@@ -1,5 +1,6 @@
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
-import 'package:doctor_appointment/Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class PrescriptionDetailScreen extends StatelessWidget {
   final String doctor;
@@ -23,7 +24,8 @@ class PrescriptionDetailScreen extends StatelessWidget {
         title: const Text("Prescription Details"),
         centerTitle: true,
       ),
-      body: SingleChildScrollView( // ✅ allows scrolling
+      body: SingleChildScrollView(
+        // ✅ allows scrolling
         padding: const EdgeInsets.all(16.0),
         child: Card(
           shape: RoundedRectangleBorder(
@@ -40,19 +42,28 @@ class PrescriptionDetailScreen extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 30,
-                      backgroundImage: const AssetImage("assets/images/d2.png"),
+                      backgroundImage: const AssetImage(AppImages.d2),
                     ),
                     const SizedBox(width: 12),
-                    Expanded( // ✅ prevents overflow in small width
+                    Expanded(
+                      // ✅ prevents overflow in small width
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(doctor,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20)),
-                          Text(specialty,
-                              style: TextStyle(
-                                  fontSize: 14, color: Colors.grey[700])),
+                          Text(
+                            doctor,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                          Text(
+                            specialty,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -60,9 +71,10 @@ class PrescriptionDetailScreen extends StatelessWidget {
                     Text(
                       date,
                       style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600]),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[600],
+                      ),
                     ),
                   ],
                 ),
@@ -70,27 +82,33 @@ class PrescriptionDetailScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 /// Medicines Section
-                const Text("Medicines Prescribed:",
-                    style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                const Text(
+                  "Medicines Prescribed:",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
                 const SizedBox(height: 10),
 
-                ...medicines.map((med) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.medical_services,
-                          size: 18, color: Colors.blueGrey),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          med,
-                          style: const TextStyle(fontSize: 16),
+                ...medicines.map(
+                  (med) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.medical_services,
+                          size: 18,
+                          color: Colors.blueGrey,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            med,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                ),
 
                 const SizedBox(height: 30),
 
@@ -101,7 +119,8 @@ class PrescriptionDetailScreen extends StatelessWidget {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text("Downloading prescription...")),
+                          content: Text("Downloading prescription..."),
+                        ),
                       );
                     },
                     icon: const Icon(Icons.download),
@@ -109,7 +128,9 @@ class PrescriptionDetailScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       textStyle: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

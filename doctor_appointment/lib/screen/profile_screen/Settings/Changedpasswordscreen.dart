@@ -1,6 +1,5 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import '../../../Utils/AppColor.dart';
-// ✅ Import your API file
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});

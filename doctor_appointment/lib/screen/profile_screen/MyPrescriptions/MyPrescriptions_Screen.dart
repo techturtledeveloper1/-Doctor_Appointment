@@ -1,3 +1,6 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/screen/profile_screen/MyPrescriptions/PrescriptionDetails_Screen.dart';
 import 'package:flutter/material.dart';
 
 class MyPrescriptionsScreen extends StatefulWidget {

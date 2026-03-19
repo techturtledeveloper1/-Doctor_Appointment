@@ -1,8 +1,7 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/HomeScreen/ConsultPsychiatristScreen/DoctorBook/DoctorBook_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import '../../../Utils/AppColor.dart';
-import '../../../APIService/ApiService.dart';
-import '../../TalkDoctor/DoctorBookAppointment/DoctorBookAppointment_Screen.dart';
-import '../DoctorBook/DoctorBook_Screen.dart';
 
 class DoctorDetailScreen extends StatefulWidget {
   final String doctorId;
@@ -117,7 +116,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
       appBar: AppBar(
         title: const Text("Doctor Details"),
         backgroundColor: Colors.white,
-        foregroundColor: AppColor.colorIntroBG,
+        foregroundColor: AppColor.colorPrimary,
         elevation: 0,
       ),
       body: isLoading
@@ -387,9 +386,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                 Text(
                   label,
                   style: TextStyle(
-                    color: selected
-                        ? AppColor.colorIntroBG
-                        : Colors.black87,
+                    color: selected ? AppColor.colorIntroBG : Colors.black87,
                   ),
                 ),
               ],

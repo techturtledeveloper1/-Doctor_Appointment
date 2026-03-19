@@ -1,6 +1,5 @@
+import 'package:doctor_appointment/screen/ResetPassword/Otp_Screen.dart';
 import 'package:flutter/material.dart';
-
-import '../ResetPassword/Otp_Screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -55,8 +54,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  validator: (value) =>
-                  value == null || value.isEmpty ? "Enter valid input" : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? "Enter valid input"
+                      : null,
                 ),
 
                 const SizedBox(height: 30),
@@ -78,12 +78,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => OtpScreen(
-                              mobile: _emailController.text, // 👈 pass entered email/mobile here
-                              flow: 'forgot',                // 👈 tell OTP screen it’s forgot password flow
+                              mobile: _emailController.text,
+                              flow: 'forgot',
                             ),
                           ),
                         );
-
                       }
                     },
                     child: const Text(

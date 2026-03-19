@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/screen/ProfileScreen/ProfileSetup_Screen.dart';
+import 'package:doctor_appointment/screen/ResetPassword/NewPassword_screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-
-import '../DashBoard/DashBoard.dart';
-import '../ProfileScreen/ProfileSetup_Screen.dart';
-import '../ResetPassword/NewPassword_screen.dart';
-import '../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class OtpScreen extends StatefulWidget {
   final String mobile;
@@ -84,7 +84,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 const SizedBox(height: 40),
 
                 // --- Logo ---
-                Image.asset("assets/images/logo.png", height: 150),
+                Image.asset(AppImages.logo, height: 150),
                 const SizedBox(height: 20),
 
                 // --- Heading ---

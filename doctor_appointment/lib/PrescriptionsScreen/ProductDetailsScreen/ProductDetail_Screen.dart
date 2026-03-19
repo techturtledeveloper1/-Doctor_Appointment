@@ -1,5 +1,5 @@
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
-import '../../Utils/AppColor.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Map<String, dynamic> product;

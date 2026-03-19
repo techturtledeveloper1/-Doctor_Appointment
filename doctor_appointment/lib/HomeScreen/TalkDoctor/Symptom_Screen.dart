@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'DoctorList_Screen.dart';
 
 class SymptomScreen extends StatefulWidget {
@@ -21,20 +21,8 @@ class _SymptomScreenState extends State<SymptomScreen> {
       "Vaginal Discharge",
       "Menopause Symptoms",
     ],
-    "Physician": [
-      "Fever",
-      "Cough",
-      "Headache",
-      "Chest Pain",
-      "Weakness",
-    ],
-    "Dermatologist": [
-      "Acne",
-      "Itching",
-      "Rashes",
-      "Hair Fall",
-      "Skin Allergy",
-    ],
+    "Physician": ["Fever", "Cough", "Headache", "Chest Pain", "Weakness"],
+    "Dermatologist": ["Acne", "Itching", "Rashes", "Hair Fall", "Skin Allergy"],
   };
 
   // Track selected symptoms
@@ -42,18 +30,22 @@ class _SymptomScreenState extends State<SymptomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final symptoms = symptomsData[widget.speciality] ?? ["General Consultation"];
+    final symptoms =
+        symptomsData[widget.speciality] ?? ["General Consultation"];
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
 
       // 🔹 AppBar
       appBar: AppBar(
-        backgroundColor: AppColor.colorIntroBG,
+        backgroundColor: AppColor.colorPrimary,
         elevation: 0,
         title: Text(
           widget.speciality,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -71,20 +63,25 @@ class _SymptomScreenState extends State<SymptomScreen> {
           final isSelected = _selectedSymptoms.contains(symptom);
 
           return Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             margin: const EdgeInsets.symmetric(vertical: 6),
             child: ListTile(
               leading: CircleAvatar(
                 radius: 25,
-                backgroundColor: AppColor.colorIntroBG.withOpacity(0.1),
-                child: Icon(Icons.local_hospital, color: AppColor.colorIntroBG),
+                backgroundColor: AppColor.colorPrimary.withOpacity(0.1),
+                child: Icon(Icons.local_hospital, color: AppColor.colorPrimary),
               ),
               title: Text(
                 symptom,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               trailing: Checkbox(
-                activeColor: AppColor.colorIntroBG,
+                activeColor: AppColor.colorPrimary,
                 value: isSelected,
                 onChanged: (value) {
                   setState(() {
@@ -97,8 +94,7 @@ class _SymptomScreenState extends State<SymptomScreen> {
                 },
               ),
               onTap: () {
-                setState(()
-                {
+                setState(() {
                   if (isSelected) {
                     _selectedSymptoms.remove(symptom);
                   } else {
@@ -114,28 +110,30 @@ class _SymptomScreenState extends State<SymptomScreen> {
       // 🔹 Continue Button
       bottomNavigationBar: _selectedSymptoms.isNotEmpty
           ? Padding(
-        padding: const EdgeInsets.all(12),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColor.colorIntroBG,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DoctorListScreen(
-                  speciality: widget.speciality,
-                  selectedSymptoms: _selectedSymptoms.toList(),
+              padding: const EdgeInsets.all(12),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.colorPrimary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DoctorListScreen(
+                        speciality: widget.speciality,
+                        selectedSymptoms: _selectedSymptoms.toList(),
+                      ),
+                    ),
+                  );
+                },
+                child: const Text("Continue", style: TextStyle(fontSize: 16)),
               ),
-            );
-          },
-          child: const Text("Continue", style: TextStyle(fontSize: 16)),
-        ),
-      )
+            )
           : null,
     );
   }

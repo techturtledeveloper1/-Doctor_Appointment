@@ -1,7 +1,7 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import '../ApiService/ApiService.dart';
-import '../Utils/AppColor.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productId;
@@ -25,8 +25,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   void loadProductDetails() async {
-    var response =
-    await ApiService().callGetMedicineDetailsById(widget.productId);
+    var response = await ApiService().callGetMedicineDetailsById(
+      widget.productId,
+    );
 
     if (response != null && response['success'] == true) {
       setState(() {
@@ -74,11 +75,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
     Map<String, dynamic> body = {
       "items": [
-        {
-          "medicineId": productId,
-          "quantity": 1
-        }
-      ]
+        {"medicineId": productId, "quantity": 1},
+      ],
     };
 
     var response = await ApiService().callAddToCartApi(body);
@@ -100,15 +98,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(
-            color: AppColor.colorIntroBG,
-          ),
+          child: CircularProgressIndicator(color: AppColor.colorIntroBG),
         ),
       );
     }
@@ -133,7 +128,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     double originalPrice = (item['price'] ?? 0).toDouble();
     double discountedPrice = originalPrice * 0.85; // 15% OFF
     String dosage = item['dosage'] ?? '50 mg';
-    String description = item['description'] ?? 'Helps regulate sleep cycles, supports relaxation.';
+    String description =
+        item['description'] ??
+        'Helps regulate sleep cycles, supports relaxation.';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -143,10 +140,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           item['name'] ?? "Product",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         centerTitle: true,
       ),
@@ -166,11 +160,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
               child: imageUrl != null
                   ? ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(imageUrl, fit: BoxFit.contain),
-              )
-                  : Icon(Icons.medical_services,
-                  size: 80, color: AppColor.colorIntroBG),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(imageUrl, fit: BoxFit.contain),
+                    )
+                  : Icon(
+                      Icons.medical_services,
+                      size: 80,
+                      color: AppColor.colorIntroBG,
+                    ),
             ),
 
             SizedBox(height: 20),
@@ -178,10 +175,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             /// ✅ PRODUCT NAME
             Text(
               item['name'] ?? 'Sertraline',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 
             SizedBox(height: 8),
@@ -291,10 +285,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       child: Container(
                         padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: _prescriptionUploaded ? Colors.green[50] : Colors.white,
+                          color: _prescriptionUploaded
+                              ? Colors.green[50]
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: _prescriptionUploaded ? Colors.green : Colors.grey[300]!,
+                            color: _prescriptionUploaded
+                                ? Colors.green
+                                : Colors.grey[300]!,
                           ),
                         ),
                         child: Row(
@@ -305,12 +303,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: _prescriptionUploaded ? Colors.green : Colors.grey,
+                                  color: _prescriptionUploaded
+                                      ? Colors.green
+                                      : Colors.grey,
                                 ),
-                                color: _prescriptionUploaded ? Colors.green : Colors.transparent,
+                                color: _prescriptionUploaded
+                                    ? Colors.green
+                                    : Colors.transparent,
                               ),
                               child: _prescriptionUploaded
-                                  ? Icon(Icons.check, size: 14, color: Colors.white)
+                                  ? Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: Colors.white,
+                                    )
                                   : null,
                             ),
                             SizedBox(width: 12),
@@ -342,7 +348,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                             Icon(
                               Icons.upload_file,
-                              color: _prescriptionUploaded ? Colors.green : Colors.grey,
+                              color: _prescriptionUploaded
+                                  ? Colors.green
+                                  : Colors.grey,
                             ),
                           ],
                         ),
@@ -378,18 +386,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   /// ✅ RATING TEXT
                   Text(
                     "4.6",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 4),
                   Text(
                     "(120 Reviews)",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -443,10 +445,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
                 child: Text(
                   "Add to Cart",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -467,14 +466,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 onPressed: (requiresPrescription && !_prescriptionUploaded)
                     ? null
                     : () {
-                  // Buy now functionality
-                },
+                        // Buy now functionality
+                      },
                 child: Text(
                   "Buy Now",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

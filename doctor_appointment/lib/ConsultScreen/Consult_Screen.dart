@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:doctor_appointment/Utils/AppColor.dart';
+import 'package:doctor_appointment/HomeScreen/ChatScreen/Chat_Screen.dart';
+import 'package:doctor_appointment/HomeScreen/ChatScreen/VideoCall_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../HomeScreen/ChatScreen/Chat_Screen.dart';
-import '../HomeScreen/ChatScreen/VideoCall_Screen.dart';
 
 class ConsultScreen extends StatefulWidget {
   final String doctorName;
@@ -57,8 +57,14 @@ class _ConsultScreenState extends State<ConsultScreen> {
 
   String get _formattedCountdown {
     final hours = _timeLeft.inHours.remainder(24).toString().padLeft(2, '0');
-    final minutes = _timeLeft.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = _timeLeft.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final minutes = _timeLeft.inMinutes
+        .remainder(60)
+        .toString()
+        .padLeft(2, '0');
+    final seconds = _timeLeft.inSeconds
+        .remainder(60)
+        .toString()
+        .padLeft(2, '0');
     return hours != "00" ? "$hours:$minutes:$seconds" : "$minutes:$seconds";
   }
 
@@ -81,14 +87,17 @@ class _ConsultScreenState extends State<ConsultScreen> {
             /// Doctor Info
             CircleAvatar(
               radius: 45,
-              backgroundImage: AssetImage("assets/images/d2.png")
-                  // : NetworkImage("assets/Images/d1.png") as ImageProvider,
+              backgroundImage: AssetImage(AppImages.d2),
+              // : NetworkImage("assets/Images/d1.png") as ImageProvider,
             ),
             const SizedBox(height: 12),
             Text(
               widget.doctorName,
               style: TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold, color: AppColor.colorIntroBG),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColor.colorIntroBG,
+              ),
             ),
             Text(
               widget.specialty,
@@ -104,15 +113,23 @@ class _ConsultScreenState extends State<ConsultScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.calendar_today, size: 18, color: AppColor.colorIntroBG),
+                Icon(
+                  Icons.calendar_today,
+                  size: 18,
+                  color: AppColor.colorIntroBG,
+                ),
                 const SizedBox(width: 6),
-                Text(DateFormat('dd MMM yyyy').format(widget.appointmentTime),
-                    style: TextStyle(fontSize: 16,color: AppColor.colorIntroBG)),
+                Text(
+                  DateFormat('dd MMM yyyy').format(widget.appointmentTime),
+                  style: TextStyle(fontSize: 16, color: AppColor.colorIntroBG),
+                ),
                 const SizedBox(width: 20),
                 Icon(Icons.access_time, size: 18, color: AppColor.colorIntroBG),
                 const SizedBox(width: 6),
-                Text(DateFormat('hh:mm a').format(widget.appointmentTime),
-                    style: TextStyle(fontSize: 16,color: AppColor.colorIntroBG)),
+                Text(
+                  DateFormat('hh:mm a').format(widget.appointmentTime),
+                  style: TextStyle(fontSize: 16, color: AppColor.colorIntroBG),
+                ),
               ],
             ),
             const SizedBox(height: 25),
@@ -124,23 +141,28 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   Text(
                     "Join available in",
                     style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.colorIntroBG),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.colorIntroBG,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
-                        color: Colors.red[50],
-                        borderRadius: BorderRadius.circular(12)),
+                      color: Colors.red[50],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Text(
                       _formattedCountdown,
                       style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red),
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -159,7 +181,8 @@ class _ConsultScreenState extends State<ConsultScreen> {
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Joining Video Call...")));
+                    const SnackBar(content: Text("Joining Video Call...")),
+                  );
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -170,8 +193,10 @@ class _ConsultScreenState extends State<ConsultScreen> {
                     ),
                   );
                 },
-                child: Text("Join Video Call",
-                    style: TextStyle(color: AppColor.white)),
+                child: Text(
+                  "Join Video Call",
+                  style: TextStyle(color: AppColor.white),
+                ),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
@@ -183,9 +208,13 @@ class _ConsultScreenState extends State<ConsultScreen> {
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Joining Audio Call...")));
+                    const SnackBar(content: Text("Joining Audio Call...")),
+                  );
                 },
-                child: Text("Join Audio Call",style: TextStyle(color: AppColor.colorIntroBG),),
+                child: Text(
+                  "Join Audio Call",
+                  style: TextStyle(color: AppColor.colorIntroBG),
+                ),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
@@ -199,12 +228,14 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) =>
-                          ChatScreen(doctorName: widget.doctorName),
+                      builder: (_) => ChatScreen(doctorName: widget.doctorName),
                     ),
                   );
                 },
-                child: Text("Open Chat",style: TextStyle(color: AppColor.colorIntroBG),),
+                child: Text(
+                  "Open Chat",
+                  style: TextStyle(color: AppColor.colorIntroBG),
+                ),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
@@ -215,11 +246,17 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   ),
                 ),
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Upload Prescription or Notes clicked")));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Upload Prescription or Notes clicked"),
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.upload_file, size: 18),
-                label: Text("Upload Prescription or Notes",style: TextStyle(color: AppColor.colorIntroBG),),
+                label: Text(
+                  "Upload Prescription or Notes",
+                  style: TextStyle(color: AppColor.colorIntroBG),
+                ),
               ),
               const SizedBox(height: 20),
               const Divider(),
@@ -228,26 +265,36 @@ class _ConsultScreenState extends State<ConsultScreen> {
               /// Reschedule & Cancel
               GestureDetector(
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Reschedule Appointment clicked")));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Reschedule Appointment clicked"),
+                    ),
+                  );
                 },
-                child: const Text("Reschedule Appointment",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87)),
+                child: const Text(
+                  "Reschedule Appointment",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
               GestureDetector(
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Cancel Appointment clicked")));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Cancel Appointment clicked")),
+                  );
                 },
-                child: const Text("Cancel Appointment",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.redAccent)),
+                child: const Text(
+                  "Cancel Appointment",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.redAccent,
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               Text(

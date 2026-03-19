@@ -1,5 +1,6 @@
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
-import '../DashBoard/DashBoard.dart';
+import '../screen/DashBoard/DashBoard.dart';
 import '../ForgotPassword/ForgotPassword_Screen.dart';
 import '../screen/sign_up_screen/SignUp_Screen.dart';
 
@@ -22,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset:
-      true, // 👈 allows screen to resize when keyboard opens
+          true, // 👈 allows screen to resize when keyboard opens
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
@@ -34,12 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 40),
 
                 // Logo
-                Center(
-                  child: Image.asset(
-                    'assets/images/intro1.png',
-                    height: 100,
-                  ),
-                ),
+                Center(child: Image.asset(AppImages.order, height: 100)),
                 const SizedBox(height: 30),
 
                 // Title
@@ -145,9 +141,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         // TODO: Handle login
 
                         Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DashBoardNew(2, false, false)));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DashBoardNew(2, false, false),
+                          ),
+                        );
                         // ScaffoldMessenger.of(context).showSnackBar(
                         //   const SnackBar(
                         //     content: Text("Logging in..."),

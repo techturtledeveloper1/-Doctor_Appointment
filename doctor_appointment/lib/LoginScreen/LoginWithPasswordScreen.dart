@@ -1,8 +1,10 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
+import 'package:doctor_appointment/ReusableWidget/app_string.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../APIService/ApiService.dart';
-import '../DashBoard/DashBoard.dart';
-import '../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
 class LoginWithPasswordScreen extends StatefulWidget {
   const LoginWithPasswordScreen({super.key});
@@ -35,19 +37,13 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                 // --- Logo ---
                 Align(
                   alignment: Alignment.topCenter,
-                  child: Image.asset(
-                    "assets/images/logo.png",
-                    height: 220,
-                  ),
+                  child: Image.asset(AppImages.logo, height: 220),
                 ),
                 const SizedBox(height: 8),
 
                 const Text(
                   "Login with Phone & Password",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black87,
-                  ),
+                  style: TextStyle(fontSize: 15, color: Colors.black87),
                 ),
                 const SizedBox(height: 40),
 
@@ -59,8 +55,10 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                   decoration: InputDecoration(
                     hintText: "Enter Mobile Number",
                     counterText: "",
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: Colors.grey.shade400),
@@ -89,15 +87,19 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     hintText: "Enter Password",
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: Colors.grey.shade400),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.grey.shade600,
                       ),
                       onPressed: () {
@@ -132,24 +134,23 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                     onPressed: _isLoading
                         ? null
                         : () {
-                      if (_formKey.currentState!.validate()) {
-                        callLoginApi();
-                      }
-                    },
+                            if (_formKey.currentState!.validate()) {
+                              callLoginApi();
+                            }
+                          },
                     child: _isLoading
                         ? const SizedBox(
-                      height: 22,
-                      width: 22,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
+                            height: 22,
+                            width: 22,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
                         : const Text(
-                      "Login",
-                      style:
-                      TextStyle(fontSize: 16, color: Colors.white),
-                    ),
+                            "Login",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
                   ),
                 ),
 
@@ -226,13 +227,16 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
         await prefs.setBool("isLogin", true);
         await prefs.setString("token", loginRes['token']);
         await prefs.setString("userId", loginRes['user']['id'].toString());
-        await prefs.setString("fullName", loginRes['user']['fullName'].toString());
+        await prefs.setString(
+          "fullName",
+          loginRes['user']['fullName'].toString(),
+        );
         await prefs.setString("email", loginRes['user']['email'].toString());
         await prefs.setString("phone", loginRes['user']['phone'].toString());
         await prefs.setString("role", loginRes['user']['role'].toString());
 
         // Update global token
-        AppColor.token = loginRes['token'];
+        AppStrings.token = loginRes['token'];
 
         // ✅ Navigate to dashboard and remove all previous routes
         Navigator.pushAndRemoveUntil(
@@ -240,7 +244,7 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
           MaterialPageRoute(
             builder: (context) => DashBoardNew(0, false, false),
           ),
-              (route) => false,
+          (route) => false,
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -254,7 +258,8 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              loginRes?['message'] ?? "Invalid credentials or user not registered",
+              loginRes?['message'] ??
+                  "Invalid credentials or user not registered",
               style: const TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.red,
@@ -286,7 +291,9 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Forgot Password?"),
-        content: const Text("Please contact support or use OTP login to reset your password."),
+        content: const Text(
+          "Please contact support or use OTP login to reset your password.",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

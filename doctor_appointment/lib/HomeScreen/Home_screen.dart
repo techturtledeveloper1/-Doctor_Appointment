@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
-import '../Utils/AppColor.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'FeaturedDoctor/FeaturedDoctor_Screen.dart';
 import 'TalkDoctor/DoctorList_Screen.dart';
-import 'TalkDoctor/Speiality_Screen.dart'; // if you have it
+import 'TalkDoctor/Speiality_Screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,9 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 🔹 Banner images
   final List<String> banners = [
-    "assets/images/slider1.png",
-    "assets/images/slider2.png",
-    "assets/images/slider3.png",
+    AppImages.slider1,
+    AppImages.slider2,
+    AppImages.slider3,
   ];
 
   // 🔹 Specializations
@@ -41,11 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "label": "Talk to Doctor",
       "color": AppColor.textColor2,
     },
-    {
-      "icon": Icons.science,
-      "label": "Lab Tests",
-      "color": AppColor.textColor2,
-    },
+    {"icon": Icons.science, "label": "Lab Tests", "color": AppColor.textColor2},
     {
       "icon": Icons.medical_services,
       "label": "Medicines",
@@ -61,11 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "label": "Surgeries",
       "color": AppColor.textColor2,
     },
-    {
-      "icon": Icons.add,
-      "label": "Radiology",
-      "color": AppColor.textColor2,
-    },
+    {"icon": Icons.add, "label": "Radiology", "color": AppColor.textColor2},
   ];
 
   // 🔹 Featured Doctors
@@ -105,12 +98,12 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       "title": "THS Full body Care!",
       "price": "₹899",
-      "image": "assets/images/family.png",
+      "image": AppImages.family,
     },
     {
       "title": "THS Silver Wellness",
       "price": "₹1599",
-      "image": "assets/images/family1.png",
+      "image": AppImages.family,
     },
   ];
 
@@ -152,7 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ===== Welcome Header + Banner =====
               Stack(
                 children: [
                   Container(
@@ -176,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             "Hello, Harsh 👋",
                             style: TextStyle(
-                              color: AppColor.colorIntroBG,
+                              color: AppColor.colorPrimary,
                               fontSize: 12,
                             ),
                           ),
@@ -675,7 +667,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: AppColor.colorIntroBG,
+              color: AppColor.colorPrimary,
             ),
           ),
           if (onViewAll != null)
@@ -685,7 +677,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "View All",
                 style: TextStyle(
                   fontSize: 13,
-                  color: AppColor.colorIntroBG,
+                  color: AppColor.colorPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),

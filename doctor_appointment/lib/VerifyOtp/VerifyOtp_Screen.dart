@@ -1,5 +1,5 @@
+import 'package:doctor_appointment/LoginScreen/Login_Screen.dart';
 import 'package:flutter/material.dart';
-import '../LoginScreen/Login_screen.dart';
 
 
 class SignupOtpScreen extends StatefulWidget {

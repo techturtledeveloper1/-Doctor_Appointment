@@ -1,10 +1,11 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../APIService/ApiService.dart';
-import '../../../Utils/AppColor.dart';
-import 'EditPersonaDetailsl_Screen.dart'; // ✅ Import your edit screen
+
+import 'EditPersonaDetailsl_Screen.dart';
 
 class PersonalDetailsScreen extends StatefulWidget {
   const PersonalDetailsScreen({super.key});
