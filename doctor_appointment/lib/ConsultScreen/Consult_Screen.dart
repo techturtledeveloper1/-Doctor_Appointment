@@ -183,12 +183,22 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Joining Video Call...")),
                   );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => VideoCallScreen(
+                  //       doctorName: widget.doctorName,
+                  //       specialty: widget.specialty,
+                  //     ),
+                  //   ),
+                  // );
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => VideoCallScreen(
-                        doctorName: widget.doctorName,
-                        specialty: widget.specialty,
+                      builder: (_) => CallPage(
+                        userId: "patient_1",
+                        userName: "Pooja",
+                        callId: "appointment_101",
                       ),
                     ),
                   );
