@@ -301,113 +301,119 @@ class _DashBoardNewState extends State<DashBoardNew>
 
   Widget menuItem() {
     return Scaffold(
+      backgroundColor: AppColor.white,
       body: Container(
         color: AppColor.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 50),
-            ListTile(
-              leading: CircleAvatar(
-                backgroundImage: profileImage.isEmpty
-                    ? const AssetImage(AppImages.d1)
-                    : CachedNetworkImage(
-                            imageUrl: ApiService.imageurl + profileImage,
-                            errorWidget: (context, url, error) =>
-                                Image.asset(AppImages.d1),
-                          )
-                          as ImageProvider,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 50),
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: profileImage.isEmpty
+                      ? const AssetImage(AppImages.d1)
+                      : CachedNetworkImage(
+                              imageUrl: ApiService.imageurl + profileImage,
+                              errorWidget: (context, url, error) =>
+                                  Image.asset(AppImages.d1),
+                            )
+                            as ImageProvider,
+                ),
+                title: Text(
+                  "jay Patel",
+                  style: TextStyle(
+                    color: AppColor.colorPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  "jaypatel123@Gmail.com",
+                  style: TextStyle(color: AppColor.colorPrimary),
+                ),
               ),
-              title: Text(
-                "jay Patel",
-                style: TextStyle(
+              Divider(color: AppColor.colorPrimary),
+              drawerItem("Home", Icons.home, 0),
+              drawerItem("Appointments", Icons.calendar_today, 1),
+
+              /// 🔹 Collapsible Consult
+              ExpansionTile(
+                leading: Icon(
+                  Icons.medical_services,
                   color: AppColor.colorPrimary,
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
-              subtitle: Text(
-                "jaypatel123@Gmail.com",
-                style: TextStyle(color: AppColor.colorPrimary),
-              ),
-            ),
-            Divider(color: AppColor.colorPrimary),
-            drawerItem("Home", Icons.home, 0),
-            drawerItem("Appointments", Icons.calendar_today, 1),
-
-            /// 🔹 Collapsible Consult
-            ExpansionTile(
-              leading: Icon(
-                Icons.medical_services,
-                color: AppColor.colorPrimary,
-              ),
-              title: Text(
-                "Consult",
-                style: TextStyle(color: AppColor.colorPrimary),
-              ),
-              initiallyExpanded: false,
-              trailing: Icon(
-                _isConsultExpanded
-                    ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down,
-                color: AppColor.colorPrimary,
-              ),
-              onExpansionChanged: (expanded) {
-                setState(() {
-                  _isConsultExpanded = expanded;
-                });
-              },
-              children: [
-                ListTile(
-                  leading: Icon(Icons.person, color: AppColor.colorPrimary),
-                  title: Text(
-                    "Psychiatrist",
-                    style: TextStyle(color: AppColor.colorPrimary),
-                  ),
-                  onTap: () {
-                    _advancedDrawerController.hideDrawer();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ConsultPsychiatristScreen(
-                          specializationId: '',
+                title: Text(
+                  "Consult",
+                  style: TextStyle(color: AppColor.colorPrimary),
+                ),
+                initiallyExpanded: false,
+                trailing: Icon(
+                  _isConsultExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: AppColor.colorPrimary,
+                ),
+                onExpansionChanged: (expanded) {
+                  setState(() {
+                    _isConsultExpanded = expanded;
+                  });
+                },
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.person, color: AppColor.colorPrimary),
+                    title: Text(
+                      "Psychiatrist",
+                      style: TextStyle(color: AppColor.colorPrimary),
+                    ),
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ConsultPsychiatristScreen(
+                            specializationId: '',
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.psychology, color: AppColor.colorPrimary),
-                  title: Text(
-                    "Psychologist",
-                    style: TextStyle(color: AppColor.colorPrimary),
+                      );
+                    },
                   ),
-                  onTap: () {
-                    _advancedDrawerController.hideDrawer();
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.healing, color: AppColor.colorPrimary),
-                  title: Text(
-                    "Therapist",
-                    style: TextStyle(color: AppColor.colorPrimary),
+                  ListTile(
+                    leading: Icon(
+                      Icons.psychology,
+                      color: AppColor.colorPrimary,
+                    ),
+                    title: Text(
+                      "Psychologist",
+                      style: TextStyle(color: AppColor.colorPrimary),
+                    ),
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                    },
                   ),
-                  onTap: () {
-                    _advancedDrawerController.hideDrawer();
-                  },
-                ),
-              ],
-            ),
+                  ListTile(
+                    leading: Icon(Icons.healing, color: AppColor.colorPrimary),
+                    title: Text(
+                      "Therapist",
+                      style: TextStyle(color: AppColor.colorPrimary),
+                    ),
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                    },
+                  ),
+                ],
+              ),
 
-            drawerItem("Prescriptions", Icons.description, 3),
-            drawerItem("Profile", Icons.person, 4),
-            drawerItem("Settings", Icons.settings, 5), // Added Settings
-            drawerItem(
-              "Help & Support",
-              Icons.help_outline,
-              6,
-            ), // Added Help & Support
-            drawerItem("Logout", Icons.logout, -1, isLogout: true),
-          ],
+              drawerItem("Prescriptions", Icons.description, 3),
+              drawerItem("Profile", Icons.person, 4),
+              drawerItem("Settings", Icons.settings, 5), // Added Settings
+              drawerItem(
+                "Help & Support",
+                Icons.help_outline,
+                6,
+              ), // Added Help & Support
+              drawerItem("Logout", Icons.logout, -1, isLogout: true),
+            ],
+          ),
         ),
       ),
     );

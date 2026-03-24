@@ -146,6 +146,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 "imageUrl": msg.fileDownloadUrl,
                 "isMe": false,
                 "time": DateTime.now(),
+                "status": "delivered",
               };
 
               setState(() => messages.add(data));
@@ -180,6 +181,7 @@ class _ChatScreenState extends State<ChatScreen> {
     };
     setState(() => messages.add(msg));
     saveMessage(msg);
+
     controller.clear();
     scrollToBottom();
   }
