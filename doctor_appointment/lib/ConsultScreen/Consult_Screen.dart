@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/Chat_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/VideoCall_Screen.dart';
+import 'package:doctor_appointment/HomeScreen/ChatScreen/VoiceCall_Screen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
@@ -195,7 +196,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => CallPage(
+                      builder: (_) => VideoCallPage(
                         userId: "patient_1",
                         userName: "Pooja",
                         callId: "appointment_101",
@@ -217,8 +218,18 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   ),
                 ),
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Joining Audio Call...")),
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   const SnackBar(content: Text("Joining Audio Call...")),
+                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => VoiceCallPage(
+                        userId: "patient_2",
+                        userName: "Patient",
+                        callId: "appointment_123", // SAME ID
+                      ),
+                    ),
                   );
                 },
                 child: Text(
@@ -238,10 +249,26 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => ChatScreen(doctorName: widget.doctorName),
+                      builder: (_) => ChatScreen(
+                        myId: "patient_1",
+                        myName: "Pooja Khandhala",
+                        peerId: "doctor_2",
+
+                        // userId: "patient_2",
+                        // userName: "Pooja",
+                        // chatId: "appointment_123",
+                      ),
                     ),
                   );
                 },
+                // onPressed: () {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (_) => ChatScreen(doctorName: widget.doctorName),
+                //     ),
+                //   );
+                // },
                 child: Text(
                   "Open Chat",
                   style: TextStyle(color: AppColor.colorIntroBG),

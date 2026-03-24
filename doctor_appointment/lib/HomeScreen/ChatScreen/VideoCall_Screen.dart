@@ -163,12 +163,12 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 //   }
 // }
 
-class CallPage extends StatefulWidget {
+class VideoCallPage extends StatefulWidget {
   final String userId;
   final String userName;
   final String callId;
 
-  const CallPage({
+  const VideoCallPage({
     super.key,
     required this.userId,
     required this.userName,
@@ -176,10 +176,10 @@ class CallPage extends StatefulWidget {
   });
 
   @override
-  State<CallPage> createState() => _CallPageState();
+  State<VideoCallPage> createState() => _VideoCallPageState();
 }
 
-class _CallPageState extends State<CallPage> {
+class _VideoCallPageState extends State<VideoCallPage> {
   bool isMicOn = true;
   bool isCameraOn = true;
   bool isSpeakerOn = true;

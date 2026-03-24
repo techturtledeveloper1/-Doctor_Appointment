@@ -4,6 +4,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart' show ChangeNotifierProvider;
 
 import 'HomeScreen/Home_screen.dart';
@@ -36,7 +38,9 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(statusBarColor: AppColor.colorPrimary),
   );
+  await Hive.initFlutter();
 
+  await Hive.openBox('chatBox');
   runApp(
     ChangeNotifierProvider(
       create: (context) => DrawerNotifier(),

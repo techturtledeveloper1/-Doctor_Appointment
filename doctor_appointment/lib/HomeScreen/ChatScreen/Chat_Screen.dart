@@ -1,154 +1,444 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:doctor_appointment/HomeScreen/zego_services.dart'
+    show ZegoService;
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
-import 'package:doctor_appointment/ReusableWidget/app_images.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class ChatScreen extends StatelessWidget {
-  final String doctorName;
-  final String specialization;
+import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:zego_zim/zego_zim.dart';
+
+class MyZegoHandler extends ZIMEventHandler {
+  final Function(List<ZIMMessage>, String) onMessage;
+
+  MyZegoHandler(this.onMessage);
+
+  @override
+  void onReceivePeerMessage(
+    ZIM zim,
+    List<ZIMMessage> messageList,
+    String fromUserID,
+  ) {
+    onMessage(messageList, fromUserID);
+  }
+}
+
+class ChatScreen extends StatefulWidget {
+  final String myId;
+  final String myName;
+  final String peerId;
 
   const ChatScreen({
     super.key,
-    required this.doctorName,
-    this.specialization = "Psychiatrist",
+    required this.myId,
+    required this.myName,
+    required this.peerId,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColor.white,
-        elevation: 1,
-        titleSpacing: 0,
-        title: Row(
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  List<Map<String, dynamic>> messages = [];
+  TextEditingController controller = TextEditingController();
+  ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    loadMessages();
+    initZego();
+  }
+
+  void loadMessages() {
+    final box = Hive.box('chatBox');
+    final data = box.values.toList();
+
+    setState(() {
+      messages = data.map((e) {
+        return {
+          "text": e["text"],
+          "image": e["image"],
+          "imageUrl": e["imageUrl"],
+          "isMe": e["isMe"],
+          "time": DateTime.parse(e["time"]),
+        };
+      }).toList();
+    });
+  }
+
+  /// 🔥 SAVE MESSAGE
+  void saveMessage(Map<String, dynamic> msg) {
+    final box = Hive.box('chatBox');
+
+    box.add({
+      "text": msg["text"],
+      "image": msg["image"],
+      "imageUrl": msg["imageUrl"],
+      "isMe": msg["isMe"],
+      "time": msg["time"].toString(),
+    });
+  }
+
+  // Future<void> initZego() async {
+  //   ZegoService().init();
+  //   await ZegoService().login(widget.myId, widget.myName);
+  //
+  //   ZIMEventHandler.onReceivePeerMessage =
+  //       (ZIM zim, List<ZIMMessage> messageList, String fromUserID) {
+  //         setState(() {
+  //           for (var msg in messageList) {
+  //             if (msg is ZIMTextMessage) {
+  //               messages.add({
+  //                 "text": msg.message,
+  //                 "image": null,
+  //                 "imageBytes": null,
+  //                 "isMe": false,
+  //                 "time": DateTime.now(),
+  //               });
+  //             } else if (msg is ZIMImageMessage) {
+  //               messages.add({
+  //                 "text": null,
+  //                 "image": msg.fileLocalPath,
+  //                 "imageUrl": msg.fileDownloadUrl,
+  //                 "isMe": false,
+  //                 "time": DateTime.now(),
+  //               });
+  //             }
+  //           }
+  //         });
+  //
+  //         scrollToBottom();
+  //       };
+  // }
+  Future<void> initZego() async {
+    ZegoService().init();
+    await ZegoService().login(widget.myId, widget.myName);
+
+    ZIMEventHandler.onReceivePeerMessage =
+        (ZIM zim, List<ZIMMessage> messageList, String fromUserID) async {
+          for (var msg in messageList) {
+            /// TEXT
+            if (msg is ZIMTextMessage) {
+              final data = {
+                "text": msg.message,
+                "image": null,
+                "imageUrl": null,
+                "isMe": false,
+                "time": DateTime.now(),
+              };
+
+              setState(() => messages.add(data));
+              saveMessage(data);
+            }
+            /// IMAGE
+            else if (msg is ZIMImageMessage) {
+              // await ZegoService().downloadImage(msg); // MUST
+
+              final data = {
+                "text": null,
+                "image": msg.fileLocalPath,
+                "imageUrl": msg.fileDownloadUrl,
+                "isMe": false,
+                "time": DateTime.now(),
+              };
+
+              setState(() => messages.add(data));
+              saveMessage(data);
+            }
+          }
+
+          scrollToBottom();
+        };
+  }
+
+  void sendMessage() async {
+    String text = controller.text.trim();
+    if (text.isEmpty) return;
+
+    await ZegoService().sendTextMessage(widget.peerId, text);
+
+    // setState(() {
+    //   messages.add({
+    //     "text": text,
+    //     "image": null,
+    //     "isMe": true,
+    //     "time": DateTime.now(),
+    //   });
+    // });
+    final msg = {
+      "text": text,
+      "image": null,
+      "imageUrl": null,
+      "isMe": true,
+      "time": DateTime.now(),
+    };
+    setState(() => messages.add(msg));
+    saveMessage(msg);
+    controller.clear();
+    scrollToBottom();
+  }
+
+  Future<void> pickAndSendImage() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image == null) return;
+
+    File file = File(image.path);
+    List<int> imageBytes = await file.readAsBytes();
+    String base64Image = base64Encode(imageBytes);
+
+    await ZegoService().sendImageMessage(widget.peerId, file.path);
+    // setState(() {
+    //   messages.add({
+    //     "text": null,
+    //     "image": file.path,
+    //     "isMe": true,
+    //     "time": DateTime.now(),
+    //   });
+    // });
+    final msg = {
+      "text": null,
+      "image": file.path,
+      "imageUrl": null,
+      "isMe": true,
+      "time": DateTime.now(),
+    };
+
+    setState(() => messages.add(msg));
+    saveMessage(msg);
+
+    scrollToBottom();
+  }
+
+  // void scrollToBottom() {
+  //   Future.delayed(const Duration(milliseconds: 200), () {
+  //     scrollController.animateTo(
+  //       scrollController.position.maxScrollExtent,
+  //       duration: const Duration(milliseconds: 300),
+  //       curve: Curves.easeOut,
+  //     );
+  //   });
+  // }
+  void scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  String formatTime(DateTime time) {
+    return "${time.hour}:${time.minute.toString().padLeft(2, '0')}";
+  }
+
+  Widget messageBubble1(Map<String, dynamic> msg) {
+    bool isMe = msg["isMe"];
+
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.7,
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isMe ? AppColor.colorPrimary : Colors.grey.shade200,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(12),
+            topRight: const Radius.circular(12),
+            bottomLeft: isMe
+                ? const Radius.circular(12)
+                : const Radius.circular(0),
+            bottomRight: isMe
+                ? const Radius.circular(0)
+                : const Radius.circular(12),
+          ),
+        ),
+        child: Text(
+          msg["text"],
+          style: TextStyle(
+            color: isMe ? Colors.white : Colors.black,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget messageBubble(Map<String, dynamic> msg) {
+    bool isMe = msg["isMe"];
+
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.7,
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: isMe ? AppColor.colorPrimary : Colors.grey.shade200,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(12),
+            topRight: const Radius.circular(12),
+            bottomLeft: isMe
+                ? const Radius.circular(12)
+                : const Radius.circular(0),
+            bottomRight: isMe
+                ? const Radius.circular(0)
+                : const Radius.circular(12),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: isMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              backgroundImage: AssetImage(AppImages.d2), // doctor image
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  doctorName,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+            if (msg["image"] != null && msg["image"].toString().isNotEmpty)
+              Image.file(
+                File(msg["image"]),
+                height: 150,
+                width: 150,
+                fit: BoxFit.cover,
+              )
+            else if (msg["imageUrl"] != null &&
+                msg["imageUrl"].toString().isNotEmpty)
+              Image.network(
+                msg["imageUrl"],
+                height: 150,
+                width: 150,
+                fit: BoxFit.cover,
+              ),
+
+            if (msg["text"] != null)
+              Text(
+                msg["text"],
+                style: TextStyle(
+                  color: isMe ? Colors.white : Colors.black,
+                  fontSize: 15,
                 ),
-                Text(
-                  specialization,
-                  style: const TextStyle(color: Colors.grey, fontSize: 13),
-                ),
-              ],
+              ),
+
+            const SizedBox(height: 5),
+
+            Text(
+              formatTime(msg["time"]),
+              style: TextStyle(
+                fontSize: 10,
+                color: isMe ? Colors.white70 : Colors.black54,
+              ),
             ),
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              radius: 18,
-              backgroundColor: AppColor.colorPrimary,
-              child: IconButton(
-                icon: Icon(Icons.videocam, color: AppColor.white),
-                onPressed: () {},
+      ),
+    );
+  }
+
+  Widget chatInput1() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      color: Colors.white,
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(25),
               ),
+              child: TextField(
+                controller: controller,
+                decoration: const InputDecoration(
+                  hintText: "Type message...",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          CircleAvatar(
+            backgroundColor: Colors.blue,
+            child: IconButton(
+              icon: const Icon(Icons.send, color: Colors.white),
+              onPressed: sendMessage,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget chatInput() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      color: Colors.white,
+      child: Row(
+        children: [
+          IconButton(
+            icon: Icon(Icons.image, color: AppColor.colorPrimary),
+            onPressed: pickAndSendImage,
+          ),
+
+          Expanded(
+            child: TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                hintText: "Type message...",
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+
+          IconButton(
+            icon: Icon(Icons.send, color: AppColor.colorPrimary),
+            onPressed: sendMessage,
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade100,
+
+      appBar: AppBar(
+        title: Text(
+          widget.myName,
+          style: TextStyle(fontSize: 20, color: AppColor.white),
+        ),
+        backgroundColor: AppColor.colorPrimary,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+
       body: Column(
         children: [
-          /// Messages list
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: 6,
+              controller: scrollController,
+              padding: const EdgeInsets.only(top: 10),
+              itemCount: messages.length,
               itemBuilder: (context, index) {
-                bool isMe = index % 2 != 0;
-
-                return Align(
-                  alignment: isMe
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: isMe
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isMe
-                              ? AppColor.colorPrimary
-                              : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          isMe
-                              ? "I’ve been feeling overwhelmed with work"
-                              : "Do you mind telling me what’s been on your mind lately?",
-                          style: TextStyle(
-                            color: isMe ? Colors.white : Colors.black,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2, bottom: 6),
-                        child: Text(
-                          "3:2${index} PM",
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                return messageBubble(messages[index]);
               },
             ),
           ),
 
-          /// Input field
-          SafeArea(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              color: Colors.white,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: const TextField(
-                        decoration: InputDecoration(
-                          hintText: "Message",
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundColor: AppColor.colorPrimary,
-                    child: IconButton(
-                      icon: const Icon(Icons.send, color: Colors.white),
-                      onPressed: () {
-                        // TODO: send message logic
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          chatInput(),
         ],
       ),
     );
