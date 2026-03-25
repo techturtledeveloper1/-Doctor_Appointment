@@ -41,6 +41,9 @@ dependencies:
   zego_zim: ^2.13.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  permission_handler: ^12.0.1
+  connectivity_plus: ^6.0.0
+
 
 dependency_overrides:
   zego_plugin_adapter: 2.14.2

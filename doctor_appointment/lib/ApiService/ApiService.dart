@@ -279,6 +279,76 @@ class ApiService {
     return responseData;
   }
 
+  // Future<dynamic> callDoctorListViewAllApi() async {
+  //   var responseData;
+  //
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? myToken = prefs.getString("token");
+  //
+  //   if (myToken == null) {
+  //     print("❌ Token not found!");
+  //     return null;
+  //   }
+  //
+  //   Map<String, String> headers = {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': 'Bearer $myToken',
+  //   };
+  //
+  //   try {
+  //     final url = Uri.parse("${baseurl}patient/doctor-list");
+  //     print("📤 Doctor List API: $url");
+  //
+  //     final response = await http.get(url, headers: headers);
+  //
+  //     print("📥 Doctor List Response: ${response.body}");
+  //
+  //     if (response.statusCode == 200) {
+  //       responseData = jsonDecode(response.body);
+  //       return responseData;
+  //     } else {
+  //       print("❌ Error: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     print("❌ Exception: $e");
+  //   }
+  //
+  //   return null;
+  // }
+  Future<dynamic> callDoctorListViewAllApi() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? myToken = prefs.getString("token");
+
+      print("TOKEN: $myToken");
+
+      if (myToken == null || myToken.isEmpty) {
+        print("❌ Token missing");
+        return {"success": false};
+      }
+
+      final response = await http.get(
+        Uri.parse("${baseurl}patient/doctor-list"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $myToken',
+        },
+      );
+
+      print("STATUS: ${response.statusCode}");
+      print("BODY: ${response.body}");
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+
+      return {"success": false};
+    } catch (e) {
+      print("ERROR: $e");
+      return {"success": false};
+    }
+  }
+
   Future<dynamic> callGetCalanderScreenList() async {
     var responseData;
     SharedPreferences prefs = await SharedPreferences.getInstance();

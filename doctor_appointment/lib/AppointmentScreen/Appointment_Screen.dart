@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ConsultScreen/Consult_Screen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
 import 'package:doctor_appointment/HomeScreen/ConsultPsychiatristScreen/ConsultPsychiatrist_Screen.dart';
@@ -66,25 +67,28 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 
     if (response["data"] != null && response["data"] is List) {
       for (var dateGroup in response["data"]) {
-        String dateKey = dateGroup["_id"]; // This is in "dd-MM-yyyy" format
+        String dateKey = dateGroup["_id"];
 
         if (dateGroup["appointments"] != null &&
             dateGroup["appointments"] is List) {
           List<Map<String, dynamic>> appointmentsForDate = [];
 
           for (var appointment in dateGroup["appointments"]) {
-            // Convert API response to our app format
             Map<String, dynamic> processedAppointment = {
               "id": appointment["_id"],
               "doctor": appointment["doctor"]["fullName"] ?? "Doctor",
               "specialty":
                   appointment["doctor"]["specialization"] ?? "Specialist",
               "time": _formatTime(appointment["appointmentTime"]),
-              "status": "Confirmed", // Default status since API doesn't provide
-              "type": "Consultation", // Default type
+              "status": "Confirmed",
+              "type": "Consultation",
               "image": _getDoctorImage(appointment["doctor"]["profile_photo"]),
               "appointmentDate": _parseApiDate(appointment["appointmentDate"]),
-              "rawAppointment": appointment, // Keep original data
+              "appointmentDateTime": _combineDateTime(
+                appointment["appointmentDate"],
+                appointment["appointmentTime"],
+              ),
+              "rawAppointment": appointment,
             };
             appointmentsForDate.add(processedAppointment);
           }
@@ -104,6 +108,27 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     print(
       "✅ Loaded ${processedAppointments.length} date groups with appointments",
     );
+  }
+
+  DateTime _combineDateTime(String date, String time) {
+    try {
+      final parsedDate = DateTime.parse(date); // 2025-11-04
+      final timeParts = time.split(":");
+
+      int hour = int.parse(timeParts[0]);
+      int minute = int.parse(timeParts[1]);
+
+      return DateTime(
+        parsedDate.year,
+        parsedDate.month,
+        parsedDate.day,
+        hour,
+        minute,
+      );
+    } catch (e) {
+      print("DateTime combine error: $e");
+      return DateTime.now(); // fallback (safe)
+    }
   }
 
   String _formatTime(String time) {
@@ -387,6 +412,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
   }
 
   Widget _buildCalendarContent() {
+    if (_selectedDay == null) {
+      return Center(child: Text("No date selected"));
+    }
     List<Map<String, dynamic>> selectedAppointments = _getAppointmentsForDay(
       _selectedDay!,
     );
@@ -568,7 +596,6 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
               ),
             ),
 
-          /// Appointment List
           if (selectedAppointments.isNotEmpty)
             Column(
               children: [
@@ -595,7 +622,17 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => DashBoardNew(2, false, false),
+                            builder: (_) => ConsultScreen(
+                              doctorName: appt["doctor"],
+                              specialty: appt["specialty"],
+                              hospital: appt["hospital"] ?? "Hospital",
+                              location:
+                                  appt["location"] ?? "Ahmedabad, Gujarat",
+                              appointmentTime:
+                                  appt["appointmentDateTime"] ?? DateTime.now(),
+                              image: appt["image"] ?? "",
+                            ),
+                            // builder: (_) => DashBoardNew(2, false, false),
                           ),
                         );
                       },
@@ -636,7 +673,6 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
           ? _buildErrorState()
           : _buildCalendarContent(),
 
-      /// Floating Action Button
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColor.colorIntroBG,
         child: Icon(Icons.add, color: Colors.white, size: 30),

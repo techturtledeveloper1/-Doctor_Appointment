@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/HomeScreen/TalkDoctor/DoctorBookAppointment/doctor_list_view_all_screen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
@@ -105,13 +106,36 @@ class _DashBoardWidgetState extends State<DashBoardWidget> {
 
                     const SizedBox(height: 20),
 
-                    Text(
-                      "Our Services",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColor.colorPrimary,
-                        fontSize: 16,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Our Services",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColor.colorPrimary,
+                            fontSize: 16,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const DoctorListViewAllScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "View all",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 12),
 

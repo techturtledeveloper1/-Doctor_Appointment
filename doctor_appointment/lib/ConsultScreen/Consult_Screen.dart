@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/Chat_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/VideoCall_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/VoiceCall_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ConsultScreen extends StatefulWidget {
   final String doctorName;
@@ -75,11 +78,11 @@ class _ConsultScreenState extends State<ConsultScreen> {
 
     return Scaffold(
       backgroundColor: AppColor.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   iconTheme: const IconThemeData(color: Colors.black87),
-      // ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black87),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -88,8 +91,14 @@ class _ConsultScreenState extends State<ConsultScreen> {
             /// Doctor Info
             CircleAvatar(
               radius: 45,
-              backgroundImage: AssetImage(AppImages.d2),
+              // backgroundImage: AssetImage(AppImages.d2),
               // : NetworkImage("assets/Images/d1.png") as ImageProvider,
+              backgroundImage: widget.image.isNotEmpty
+                  ? (widget.image.startsWith("http")
+                            ? NetworkImage(widget.image)
+                            : AssetImage(widget.image))
+                        as ImageProvider
+                  : AssetImage(AppImages.d2),
             ),
             const SizedBox(height: 12),
             Text(
@@ -181,28 +190,26 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   ),
                 ),
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Joining Video Call...")),
-                  );
+                  // // Navigator.push(
+                  // //   context,
+                  // //   MaterialPageRoute(
+                  // //     builder: (_) => VideoCallScreen(
+                  // //       doctorName: widget.doctorName,
+                  // //       specialty: widget.specialty,
+                  // //     ),
+                  // //   ),
+                  // // );
                   // Navigator.push(
                   //   context,
                   //   MaterialPageRoute(
-                  //     builder: (_) => VideoCallScreen(
-                  //       doctorName: widget.doctorName,
-                  //       specialty: widget.specialty,
+                  //     builder: (_) => VideoCallPage(
+                  //       userId: "patient_1",
+                  //       userName: "Pooja",
+                  //       callId: "appointment_101",
                   //     ),
                   //   ),
                   // );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => VideoCallPage(
-                        userId: "patient_1",
-                        userName: "Pooja",
-                        callId: "appointment_101",
-                      ),
-                    ),
-                  );
+                  showTermsDialog(context);
                 },
                 child: Text(
                   "Join Video Call",
@@ -344,5 +351,150 @@ class _ConsultScreenState extends State<ConsultScreen> {
         ),
       ),
     );
+  }
+
+  void showTermsDialog(BuildContext context) {
+    bool isChecked = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+
+              title: Text(
+                "Terms & Conditions",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Before starting the video consultation:\n\n"
+                    "• Do not share personal or sensitive information.\n"
+                    "• This consultation is for general guidance only.\n"
+                    "• In case of emergency, contact a hospital immediately.\n"
+                    "• Please ensure proper lighting and internet connection.\n"
+                    "• Keep your camera and microphone ready.\n"
+                    "• Prescription is at doctor's discretion.\n"
+                    "• Follow doctor's advice responsibly.\n"
+                    "• The call may be recorded for quality purposes.\n",
+                    style: TextStyle(fontSize: 14, color: Colors.black),
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Checkbox(
+                        activeColor: AppColor.colorPrimary,
+                        value: isChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                        },
+                      ),
+                      const Expanded(
+                        child: Text(
+                          "I agree to Terms & Conditions",
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        onPressed: () => Navigator.pop(context),
+                        text: "Cancel",
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AppButton(
+                        onPressed: isChecked
+                            ? () {
+                                Navigator.pop(context);
+                                startVideoCall(context);
+                              }
+                            : null,
+                        text: "Accept",
+                        backgroundColor: isChecked
+                            ? AppColor.colorPrimary
+                            : Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> startVideoCall(BuildContext context) async {
+    // showDialog(
+    //   context: context,
+    //   barrierDismissible: false,
+    //   builder: (_) => const Center(child: CircularProgressIndicator()),
+    // );
+    //
+    // /// Internet Check
+    // var connectivity = await Connectivity().checkConnectivity();
+    // if (connectivity == ConnectivityResult.none) {
+    //   Navigator.pop(context);
+    //   ScaffoldMessenger.of(
+    //     context,
+    //   ).showSnackBar(const SnackBar(content: Text("No Internet Connection")));
+    //   return;
+    // }
+    //
+    // /// Permission Check
+    // await Permission.camera.request();
+    // await Permission.microphone.request();
+    //
+    // await Future.delayed(const Duration(seconds: 1));
+    //
+    // Navigator.pop(context);
+    var cameraStatus = await Permission.camera.request();
+    var micStatus = await Permission.microphone.request();
+
+    if (cameraStatus.isGranted && micStatus.isGranted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VideoCallPage(
+            userId: "patient_1",
+            userName: "Pooja",
+
+            callId: "appointment_101",
+            // callId:
+            //     "appointment_${widget.appointmentTime.millisecondsSinceEpoch}",
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Camera & Microphone permission required"),
+        ),
+      );
+    }
   }
 }

@@ -199,7 +199,7 @@ class _VideoCallPageState extends State<VideoCallPage> {
         ZegoCallMenuBarButtonName.switchAudioOutputButton,
         ZegoCallMenuBarButtonName.toggleMicrophoneButton,
         ZegoCallMenuBarButtonName.showMemberListButton,
-        ZegoCallMenuBarButtonName.chatButton,
+        // ZegoCallMenuBarButtonName.chatButton,
         // ZegoCallMenuBarButtonName.toggleScreenSharingButton,
         // ZegoCallMenuBarButtonName.beautyEffectButton,
         // ZegoCallMenuBarButtonName.soundEffectButton,
