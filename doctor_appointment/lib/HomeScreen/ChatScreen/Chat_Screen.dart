@@ -413,6 +413,16 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  void clearChat() async {
+    final box = Hive.box('chatBox');
+
+    await box.clear(); // 🔥 delete all local messages
+
+    setState(() {
+      messages.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -425,6 +435,12 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         backgroundColor: AppColor.colorPrimary,
         iconTheme: IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () => showClearDialog(),
+          ),
+        ],
       ),
 
       body: Column(
@@ -443,6 +459,31 @@ class _ChatScreenState extends State<ChatScreen> {
           chatInput(),
         ],
       ),
+    );
+  }
+
+  void showClearDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Clear Chat"),
+          content: Text("Are you sure you want to delete all messages?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                clearChat();
+              },
+              child: Text("Delete"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

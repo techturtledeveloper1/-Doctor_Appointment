@@ -37,7 +37,12 @@ import 'package:flutter/material.dart';
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+
+Future<void> requestPermissions() async {
+  await Permission.microphone.request();
+}
 
 class VoiceCallPage extends StatelessWidget {
   final String userId;
@@ -67,7 +72,9 @@ class VoiceCallPage extends StatelessWidget {
           "04AAAAAGnCKFUADMNm2HssJ/ZMprsivwC0VVNGFWLjykaU3D3e5fKACbP3bJiG2QTpRSUS3uO5x00sz9V5yiKAkRIH9eWcag9cmXpsBT5+APZm+UO268wpVK8H7HGfB8vAuaPrwiNRs97HN/rkibMUq43I8BCuRs/PS83Qm8UrpazYecUYCwkUxq8e/ytKVnMK6NSsxGgv/sNa2WfJfsm1Y8LppBSvw0sW36q2z0SHmb4oftADIySfVkBlW1kJN0Do2o2S9dW6oirp0CsuAQ==",
       config: ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
         ..turnOnCameraWhenJoining = false
-        ..turnOnMicrophoneWhenJoining = true,
+        ..turnOnCameraWhenJoining = false
+        ..turnOnMicrophoneWhenJoining = true
+        ..useSpeakerWhenJoining = true,
     );
   }
 }
