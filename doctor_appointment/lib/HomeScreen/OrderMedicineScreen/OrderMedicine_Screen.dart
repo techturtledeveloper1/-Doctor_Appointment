@@ -161,7 +161,7 @@ class _OrderMedicineScreenState extends State<OrderMedicineScreen> {
             Text(
               "Prescriptions are verified by our pharmacists before dispatch.",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: AppColor.colorBlack),
+              style: TextStyle(fontSize: 14, color: AppColor.black),
             ),
             const SizedBox(height: 40),
 

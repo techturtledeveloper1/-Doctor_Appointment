@@ -226,7 +226,7 @@ class _MedicineCartScreenState extends State<MedicineCartScreen> {
                       "From Products Purchased",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: AppColor.colorBlack,
+                        color: AppColor.black,
                       ),
                     ),
                   ),
@@ -279,7 +279,7 @@ class _MedicineCartScreenState extends State<MedicineCartScreen> {
                                         "${med['name']} (${med['dosage']})",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: AppColor.colorBlack,
+                                          color: AppColor.black,
                                         ),
                                       ),
                                       Row(
@@ -306,7 +306,7 @@ class _MedicineCartScreenState extends State<MedicineCartScreen> {
                                           Text(
                                             "${med['quantity']}",
                                             style: TextStyle(
-                                              color: AppColor.colorBlack,
+                                              color: AppColor.black,
                                             ),
                                           ),
 
@@ -340,7 +340,7 @@ class _MedicineCartScreenState extends State<MedicineCartScreen> {
                                       "₹${med['price']}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: AppColor.colorBlack,
+                                        color: AppColor.black,
                                       ),
                                     ),
                                     TextButton(

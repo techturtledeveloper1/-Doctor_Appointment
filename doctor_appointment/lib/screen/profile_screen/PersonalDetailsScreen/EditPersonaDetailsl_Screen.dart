@@ -1,12 +1,13 @@
 import 'dart:math';
 
 import 'package:doctor_appointment/APIService/ApiService.dart';
+import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_edit_text.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
-
 
 class EditProfileScreen extends StatefulWidget {
   final String firstName;
@@ -65,7 +66,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // Dropdown lists
   final List<String> _bloodGroups = [
-    "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"
+    "A+",
+    "A-",
+    "B+",
+    "B-",
+    "O+",
+    "O-",
+    "AB+",
+    "AB-",
   ];
 
   bool _isLoading = false;
@@ -81,25 +89,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _lastNameCtrl.text = widget.lastName;
     _phoneCtrl.text = widget.phone;
     _emailCtrl.text = widget.email;
-
-    // Convert date format from DD/MM/YYYY to YYYY-MM-DD
     if (widget.dob.isNotEmpty) {
       try {
-        List<String> dobParts = widget.dob.split('/');
-        if (dobParts.length == 3) {
-          DateTime dob = DateTime(
-              int.parse(dobParts[2]),
-              int.parse(dobParts[1]),
-              int.parse(dobParts[0])
-          );
-          _dobCtrl.text = "${dob.year}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}";
-          _age = _calculateAge(dob);
-        } else {
-          _dobCtrl.text = widget.dob; // Keep as is if not in expected format
-        }
+        List<String> parts = widget.dob.split('-');
+        DateTime dob = DateTime(
+          int.parse(parts[0]),
+          int.parse(parts[1]),
+          int.parse(parts[2]),
+        );
+
+        _dobCtrl.text =
+            "${dob.day.toString().padLeft(2, '0')}/${dob.month.toString().padLeft(2, '0')}/${dob.year}";
+
+        _age = _calculateAge(dob);
       } catch (e) {
-        _dobCtrl.text = widget.dob; // Keep original if parsing fails
-        print("Error parsing DOB: $e");
+        _dobCtrl.text = widget.dob;
       }
     }
 
@@ -137,48 +141,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _pickDOB() async {
     DateTime now = DateTime.now();
-    DateTime initialDate = now;
-
-    // Set initial date to existing DOB if available
-    if (_dobCtrl.text.isNotEmpty) {
-      try {
-        if (_dobCtrl.text.contains('-')) {
-          // Format: YYYY-MM-DD
-          List<String> dobParts = _dobCtrl.text.split('-');
-          if (dobParts.length == 3) {
-            initialDate = DateTime(
-                int.parse(dobParts[0]),
-                int.parse(dobParts[1]),
-                int.parse(dobParts[2])
-            );
-          }
-        } else if (_dobCtrl.text.contains('/')) {
-          // Format: DD/MM/YYYY
-          List<String> dobParts = _dobCtrl.text.split('/');
-          if (dobParts.length == 3) {
-            initialDate = DateTime(
-                int.parse(dobParts[2]),
-                int.parse(dobParts[1]),
-                int.parse(dobParts[0])
-            );
-          }
-        }
-      } catch (e) {
-        print("Error parsing existing DOB: $e");
-      }
-    }
 
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: initialDate,
+      initialDate: now,
       firstDate: DateTime(1900),
       lastDate: now,
     );
 
     if (pickedDate != null) {
       setState(() {
-        // Format date as YYYY-MM-DD for API
-        _dobCtrl.text = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+        _dobCtrl.text =
+            "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
         _age = _calculateAge(pickedDate);
       });
     }
@@ -202,6 +176,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         // Get token from SharedPreferences
         final prefs = await SharedPreferences.getInstance();
         final String? token = prefs.getString("token");
+        String formattedDob = "";
+        if (_dobCtrl.text.isNotEmpty) {
+          List<String> parts = _dobCtrl.text.split('/');
+          DateTime dob = DateTime(
+            int.parse(parts[2]),
+            int.parse(parts[1]),
+            int.parse(parts[0]),
+          );
+
+          formattedDob =
+              "${dob.year}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}";
+        }
 
         if (token == null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -216,24 +202,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
         // Prepare data according to API format from Postman - USE PUT METHOD
         Map<String, dynamic> profileData = {
-          "fullName": "${_firstNameCtrl.text.trim()} ${_lastNameCtrl.text.trim()}",
+          "fullName":
+              "${_firstNameCtrl.text.trim()} ${_lastNameCtrl.text.trim()}",
           "gender": _gender?.toLowerCase() ?? "",
-          "dateOfBirth": _dobCtrl.text.trim(),
+          "dateOfBirth": formattedDob,
           "email": _emailCtrl.text.trim(),
           "age": _age?.toString() ?? "",
           "height": _heightCtrl.text.trim(),
           "weight": _weightCtrl.text.trim(),
           "medical_history[history]": _hasMedicalHistory ? "yes" : "no",
-          "medical_history[issue]": _hasMedicalHistory ? _medicalIssueCtrl.text.trim() : "",
+          "medical_history[issue]": _hasMedicalHistory
+              ? _medicalIssueCtrl.text.trim()
+              : "",
         };
 
         print("📤 Sending profile data: $profileData");
 
         // Call update profile API with PUT method
         var response = await ApiService().callUpdateProfileApi(
-            profileData,
-            _selectedImage,
-            token
+          profileData,
+          _selectedImage,
+          token,
         );
 
         print("📥 Update Profile Response: $response");
@@ -252,7 +241,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
           // Navigate back to PersonalDetailsScreen
           Navigator.pop(context);
-
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -275,29 +263,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  InputDecoration _inputDecoration(String label, {Widget? suffix}) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: TextStyle(color: AppColor.textColor2),
-      filled: true,
-      fillColor: AppColor.white,
-      suffixIcon: suffix,
-      contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppColor.deviderColour2),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppColor.deviderColour2),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppColor.colorIntroBG, width: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -305,9 +270,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: Text(
           "Edit Personal Details",
-          style: TextStyle(color: AppColor.colorIntroBG),
+          style: TextStyle(color: AppColor.white, fontSize: 20),
         ),
-        backgroundColor: AppColor.white,
+        centerTitle: true,
+
+        iconTheme: IconThemeData(color: AppColor.white, size: 25),
+        backgroundColor: AppColor.colorPrimary,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
@@ -315,7 +283,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           key: _formKey,
           child: Column(
             children: [
-              // Profile Image with Edit
               Center(
                 child: Stack(
                   children: [
@@ -326,11 +293,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         backgroundColor: AppColor.deviderColour2,
                         backgroundImage: _selectedImage != null
                             ? FileImage(_selectedImage!)
-                            : (_profileImageUrl != null && _profileImageUrl!.isNotEmpty
-                            ? NetworkImage(_profileImageUrl!)
-                            : null),
-                        child: _selectedImage == null && (_profileImageUrl == null || _profileImageUrl!.isEmpty)
-                            ? Icon(Icons.person, size: 60, color: AppColor.colorIntroBG)
+                            : (_profileImageUrl != null &&
+                                      _profileImageUrl!.isNotEmpty
+                                  ? NetworkImage(_profileImageUrl!)
+                                  : null),
+                        child:
+                            _selectedImage == null &&
+                                (_profileImageUrl == null ||
+                                    _profileImageUrl!.isEmpty)
+                            ? Icon(
+                                Icons.person,
+                                size: 60,
+                                color: AppColor.colorIntroBG,
+                              )
                             : null,
                       ),
                     ),
@@ -342,7 +317,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: CircleAvatar(
                           radius: 18,
                           backgroundColor: AppColor.colorIntroBG,
-                          child: Icon(Icons.camera_alt, color: Colors.white, size: 18),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ),
@@ -352,46 +331,62 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(height: 25),
 
               // First Name
-              TextFormField(
+              AppEditText(
                 controller: _firstNameCtrl,
-                decoration: _inputDecoration("First Name"),
-                validator: (val) => val!.isEmpty ? "Enter your first name" : null,
+                hint: "Enter your first name",
+                label: "First Name",
+
+                validator: (val) =>
+                    val!.isEmpty ? "Enter your first name" : null,
+                name: '',
               ),
-              SizedBox(height: 15),
+              SizedBox(height: 5),
 
               // Last Name
-              TextFormField(
+              AppEditText(
                 controller: _lastNameCtrl,
-                decoration: _inputDecoration("Last Name"),
-                validator: (val) => val!.isEmpty ? "Enter your last name" : null,
+                name: '',
+                hint: "Enter your last name",
+                label: "Last Name",
+                validator: (val) =>
+                    val!.isEmpty ? "Enter your last name" : null,
               ),
-              SizedBox(height: 15),
+              SizedBox(height: 5),
 
               // Phone
-              TextFormField(
+              AppEditText(
                 controller: _phoneCtrl,
                 keyboardType: TextInputType.phone,
-                readOnly: true, // Phone might be non-editable
-                decoration: _inputDecoration("Phone Number"),
+                readOnly: true,
+                name: '',
+                maxLength: 10,
+                hint: "Enter your phone number",
+                label: "Phone Number",
               ),
-              SizedBox(height: 15),
+              SizedBox(height: 5),
 
               // Email
-              TextFormField(
+              AppEditText(
                 controller: _emailCtrl,
                 keyboardType: TextInputType.emailAddress,
-                decoration: _inputDecoration("Email"),
+                name: '',
+                hint: "Enter your email address",
+                label: "Email Address",
               ),
-              SizedBox(height: 15),
+              SizedBox(height: 5),
 
               // DOB + Age
-              TextFormField(
+              AppEditText(
                 controller: _dobCtrl,
                 readOnly: true,
                 onTap: _pickDOB,
-                decoration: _inputDecoration(
-                  "Date of Birth (YYYY-MM-DD)",
-                  suffix: Icon(Icons.calendar_today, color: AppColor.colorIntroBG),
+                name: '',
+                hint: "Date of Birth (DD-MM-YYYY)",
+                label: "Date of Birth",
+
+                suffixIcon: Icon(
+                  Icons.calendar_month_rounded,
+                  color: AppColor.colorPrimary,
                 ),
               ),
               if (_age != null) ...[
@@ -402,106 +397,140 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     "Age: $_age years",
                     style: TextStyle(
                       fontSize: 16,
-                      color: AppColor.colorIntroBG,
+                      color: AppColor.colorPrimary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ],
-              SizedBox(height: 20),
+              SizedBox(height: 5),
 
-              // Gender
-              DropdownButtonFormField<String>(
-                value: _gender,
-                items: ["Male", "Female", "Other"]
-                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                    .toList(),
-                onChanged: (val) => setState(() => _gender = val),
-                decoration: _inputDecoration("Gender"),
+              AppEditText(
+                name: '',
+                label: "Blood Group",
+                hint: "Select Blood Group",
+                isDropdown: true,
+                dropdownItems: _bloodGroups,
+                dropdownValue: _bloodGroup,
+                suffixIcon: Icon(Icons.keyboard_arrow_down),
+                onDropdownChanged: (val) {
+                  setState(() => _bloodGroup = val);
+                },
               ),
-              SizedBox(height: 15),
-
-              // Blood Group
-              DropdownButtonFormField<String>(
-                value: _bloodGroup,
-                items: _bloodGroups
-                    .map((bg) => DropdownMenuItem(value: bg, child: Text(bg)))
-                    .toList(),
-                onChanged: (val) => setState(() => _bloodGroup = val),
-                decoration: _inputDecoration("Blood Group"),
-              ),
-              SizedBox(height: 15),
+              SizedBox(height: 5),
 
               // Height
-              TextFormField(
+              AppEditText(
                 controller: _heightCtrl,
                 keyboardType: TextInputType.number,
-                decoration: _inputDecoration("Height (in cm)"),
+                name: '',
+                hint: "Enter height (in cm)",
+                label: "Height (In cm)",
               ),
-              SizedBox(height: 15),
+              SizedBox(height: 5),
 
               // Weight
-              TextFormField(
+              AppEditText(
                 controller: _weightCtrl,
                 keyboardType: TextInputType.number,
-                decoration: _inputDecoration("Weight (in kg)"),
+                name: '',
+                label: "Weight (In kg)",
+                hint: "Enter weight (in kg)",
               ),
               SizedBox(height: 15),
+              _buildGenderSelector(),
+              SizedBox(height: 5),
 
               // Medical History
               SwitchListTile(
+                horizontalTitleGap: 0,
+                contentPadding: EdgeInsets.zero,
                 title: Text(
                   "Any Medical History?",
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
-                activeColor: AppColor.colorIntroBG,
+                activeColor: AppColor.colorPrimary,
                 value: _hasMedicalHistory,
                 onChanged: (val) {
                   setState(() => _hasMedicalHistory = val);
                 },
               ),
               if (_hasMedicalHistory) ...[
-                SizedBox(height: 15),
-                TextFormField(
+                SizedBox(height: 5),
+                AppEditText(
                   controller: _medicalIssueCtrl,
-                  decoration: _inputDecoration("Medical Issue"),
-                  maxLines: 3,
+                  name: '',
+                  hint: "Medical Issue",
+                  minLines: 5,
+
+                  maxLines: 8,
                 ),
               ],
               SizedBox(height: 25),
 
-              // Save button
-              // Save button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: AppButton(
                   onPressed: _isLoading ? null : _saveProfile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.colorIntroBG,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? SizedBox(
-                    height: 22,
-                    width: 22,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                      : Text(
-                    "Save Details",
-                    style: TextStyle(fontSize: 16, color: AppColor.white),
-                  ),
+
+                  isLoading: _isLoading,
+                  text: "Save Details",
+                  textStyle: TextStyle(fontSize: 16, color: AppColor.white),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildGenderSelector() {
+    List<String> genders = ["Male", "Female", "Other"];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Gender", style: TextStyle(fontWeight: FontWeight.bold)),
+        SizedBox(height: 5),
+        Row(
+          children: genders.map((gender) {
+            bool isSelected = _gender == gender;
+
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() => _gender = gender);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColor.colorPrimary : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColor.colorPrimary
+                          : Colors.grey.shade300,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      gender,
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : AppColor.colorPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }

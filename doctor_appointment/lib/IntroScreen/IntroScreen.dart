@@ -78,7 +78,7 @@ class _IntroScreenState extends State<IntroScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 17,
-                            color: AppColor.colorBlack,
+                            color: AppColor.black,
                           ),
                         ),
                       ],

@@ -1,3 +1,4 @@
+import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:doctor_appointment/LoginScreen/NewLogin_Screen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:doctor_appointment/screen/profile_screen/MyPayments/MyPayment_Screen.dart';
@@ -8,18 +9,58 @@ import 'package:doctor_appointment/screen/profile_screen/address_screen/address_
 import 'package:flutter/material.dart';
 import 'MyOrder/MyOrders_Screen.dart';
 
-class ProfileScreen extends StatelessWidget {
-  final String username;
-  final int age;
-  final String gender;
-  final String imageUrl;
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
-  ProfileScreen({
-    this.username = "Sanya",
-    this.age = 30,
-    this.gender = "Female",
-    this.imageUrl = '', // provide a network/local image URL
-  });
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String? username;
+  String? email;
+  String imageUrl = "";
+
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  Future<void> loadProfile() async {
+    setState(() => isLoading = true);
+
+    try {
+      var response = await ApiService().callGetProfileApi();
+
+      if (response != null && response["success"] == true) {
+        var data;
+
+        if (response["data"] != null &&
+            response["data"] is List &&
+            response["data"].isNotEmpty) {
+          data = response["data"][0];
+        } else if (response["user"] != null) {
+          data = response["user"];
+        }
+
+        if (data != null) {
+          setState(() {
+            username = data["fullName"] ?? "";
+            email = data["userDetails"]?["email"] ?? "";
+            imageUrl = data["profile_photo"] ?? "";
+            isLoading = false;
+          });
+        }
+      } else {
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      print("Profile error: $e");
+      setState(() => isLoading = false);
+    }
+  }
 
   final List<Map<String, dynamic>> menuItems = [
     {"icon": Icons.person, "title": "Personal Details"},
@@ -29,7 +70,7 @@ class ProfileScreen extends StatelessWidget {
     {"icon": Icons.location_on, "title": "My Address"},
     {"icon": Icons.settings, "title": "Settings"},
     {"icon": Icons.help_outline, "title": "Help & Support"},
-    {"icon": Icons.logout, "title": "Logout"}, // 🔹 Added Logout
+    {"icon": Icons.logout, "title": "Logout"},
   ];
 
   @override
@@ -54,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: 15),
             Text(
-              username,
+              username ?? "No User Name",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -66,11 +107,9 @@ class ProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "$age • $gender",
+                  email ?? "No Email",
                   style: TextStyle(fontSize: 16, color: AppColor.colorIntroBG),
                 ),
-                SizedBox(width: 5),
-                Icon(Icons.edit, size: 18, color: AppColor.colorIntroBG),
               ],
             ),
             SizedBox(height: 30),
@@ -92,7 +131,9 @@ class ProfileScreen extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => PersonalDetailsScreen(),
                           ),
-                        );
+                        ).then((_) {
+                          loadProfile(); // 🔥 refresh after back
+                        });
                         break;
                       case "My Prescriptions":
                         Navigator.push(
