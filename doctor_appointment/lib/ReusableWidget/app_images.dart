@@ -41,6 +41,7 @@ class AppImages {
   static const String medicine_svg = "assets/svg/medicine_svg.svg";
   static const String profile_svg = "assets/svg/profile_svg.svg";
   static const String support_svg = "assets/svg/support_svg.svg";
+  static const String logout_dialog = "assets/svg/logout_dialog.svg";
 
   //   medicine
   static const String amoxicillin = "assets/medicine_image/amoxicillin.png";

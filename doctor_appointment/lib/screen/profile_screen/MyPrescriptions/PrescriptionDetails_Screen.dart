@@ -2,18 +2,15 @@ import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:flutter/material.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 
-
-
 class PrescriptionDetailsScreen extends StatefulWidget {
   final String prescriptionId;
 
-  const PrescriptionDetailsScreen({
-    Key? key,
-    required this.prescriptionId,
-  }) : super(key: key);
+  const PrescriptionDetailsScreen({Key? key, required this.prescriptionId})
+    : super(key: key);
 
   @override
-  State<PrescriptionDetailsScreen> createState() => _PrescriptionDetailsScreenState();
+  State<PrescriptionDetailsScreen> createState() =>
+      _PrescriptionDetailsScreenState();
 }
 
 class _PrescriptionDetailsScreenState extends State<PrescriptionDetailsScreen> {
@@ -29,7 +26,9 @@ class _PrescriptionDetailsScreenState extends State<PrescriptionDetailsScreen> {
 
   Future<void> _loadPrescriptionDetails() async {
     try {
-      var response = await ApiService().callViewPrescriptionDetailsApi(widget.prescriptionId);
+      var response = await ApiService().callViewPrescriptionDetailsApi(
+        widget.prescriptionId,
+      );
 
       if (response != null) {
         setState(() {
@@ -57,14 +56,15 @@ class _PrescriptionDetailsScreenState extends State<PrescriptionDetailsScreen> {
       appBar: AppBar(
         title: Text(
           "Prescription Details",
-          style: TextStyle(color: AppColor.colorIntroBG),
+          style: TextStyle(color: AppColor.white, fontSize: 20),
         ),
-        backgroundColor: AppColor.white,
+        backgroundColor: AppColor.colorPrimary,
+        centerTitle: true,
         elevation: 0,
-        iconTheme: IconThemeData(color: AppColor.colorIntroBG),
+        iconTheme: IconThemeData(color: AppColor.white),
         actions: [
           IconButton(
-            icon: Icon(Icons.download, color: AppColor.colorIntroBG),
+            icon: Icon(Icons.download, color: AppColor.white),
             onPressed: () {
               _downloadPrescription();
             },
@@ -128,17 +128,22 @@ class _PrescriptionDetailsScreenState extends State<PrescriptionDetailsScreen> {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: _getStatusColor(prescription!['status'])
-                              .withOpacity(0.1),
+                          color: _getStatusColor(
+                            prescription!['status'],
+                          ).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
                             color: _getStatusColor(prescription!['status']),
                           ),
                         ),
                         child: Text(
-                          _capitalizeFirst(prescription!['status'] ?? 'Unknown'),
+                          _capitalizeFirst(
+                            prescription!['status'] ?? 'Unknown',
+                          ),
                           style: TextStyle(
                             color: _getStatusColor(prescription!['status']),
                             fontSize: 12,
@@ -176,7 +181,8 @@ class _PrescriptionDetailsScreenState extends State<PrescriptionDetailsScreen> {
                   _buildDetailRow(
                     Icons.phone,
                     "Patient Phone",
-                    prescription!['patient']?['phone']?.toString() ?? 'Not specified',
+                    prescription!['patient']?['phone']?.toString() ??
+                        'Not specified',
                   ),
                 ],
               ),
@@ -271,10 +277,7 @@ class _PrescriptionDetailsScreenState extends State<PrescriptionDetailsScreen> {
                   onPressed: () {
                     _sharePrescription();
                   },
-                  child: const Text(
-                    "Share",
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  child: const Text("Share", style: TextStyle(fontSize: 16)),
                 ),
               ),
             ],
@@ -329,7 +332,8 @@ class _PrescriptionDetailsScreenState extends State<PrescriptionDetailsScreen> {
                   _buildMedicineDetail("Dosage", med['dosage']),
                   _buildMedicineDetail("Frequency", med['frequency']),
                   _buildMedicineDetail("Duration", med['duration']),
-                  if (med['instructions'] != null && med['instructions'].isNotEmpty)
+                  if (med['instructions'] != null &&
+                      med['instructions'].isNotEmpty)
                     _buildMedicineDetail("Instructions", med['instructions']),
                 ],
               ),
@@ -362,17 +366,11 @@ class _PrescriptionDetailsScreenState extends State<PrescriptionDetailsScreen> {
           children: [
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ],
         ),

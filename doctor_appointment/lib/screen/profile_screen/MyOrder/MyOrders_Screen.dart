@@ -11,9 +11,11 @@ class MyOrdersScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "My Orders",
-          style: TextStyle(color: AppColor.colorIntroBG),
+          style: TextStyle(color: AppColor.white, fontSize: 20),
         ),
-        backgroundColor: AppColor.white,
+        backgroundColor: AppColor.colorPrimary,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: AppColor.white),
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),

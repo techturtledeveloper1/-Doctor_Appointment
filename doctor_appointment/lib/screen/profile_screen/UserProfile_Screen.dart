@@ -1,12 +1,17 @@
 import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:doctor_appointment/LoginScreen/NewLogin_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:doctor_appointment/screen/profile_screen/MyPayments/MyPayment_Screen.dart';
 import 'package:doctor_appointment/screen/profile_screen/MyPrescriptions/MyPrescriptions_Screen.dart';
 import 'package:doctor_appointment/screen/profile_screen/PersonalDetailsScreen/PersonalDetails_Screen.dart';
 import 'package:doctor_appointment/screen/profile_screen/Settings/Settings_Screen.dart';
 import 'package:doctor_appointment/screen/profile_screen/address_screen/address_screen.dart';
+import 'package:doctor_appointment/screen/profile_screen/help_support/help_support_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'MyOrder/MyOrders_Screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -78,11 +83,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: AppColor.white,
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            /// Profile Info
             CircleAvatar(
               radius: 50,
               backgroundImage: imageUrl.isNotEmpty
@@ -176,21 +180,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                         break;
                       case "Help & Support":
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Help & Support section coming soon...",
-                            ),
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => HelpSupportScreen(),
+                            transitionsBuilder: (_, animation, __, child) {
+                              return SlideTransition(
+                                position: Tween(
+                                  begin: const Offset(1, 0),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              );
+                            },
                           ),
                         );
                         break;
                       case "Logout":
-                        _showLogoutDialog(context);
+                        showLogoutDialog(context);
                         break;
                     }
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 18),
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColor.deviderColour2),
                       borderRadius: BorderRadius.circular(10),
@@ -198,21 +210,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(item['icon'], color: AppColor.colorIntroBG),
+                        Icon(item['icon'], color: AppColor.colorPrimary),
                         SizedBox(width: 15),
                         Expanded(
                           child: Text(
                             item['title'],
                             style: TextStyle(
                               fontSize: 16,
-                              color: AppColor.colorIntroBG,
+                              color: AppColor.colorPrimary,
                             ),
                           ),
                         ),
                         Icon(
                           Icons.arrow_forward_ios,
                           size: 18,
-                          color: AppColor.textColor2,
+                          color: AppColor.colorPrimary,
                         ),
                       ],
                     ),
@@ -226,31 +238,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  /// 🔹 Show Logout Confirmation Dialog
-  void _showLogoutDialog(BuildContext context) {
+  void showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text("Logout"),
-        content: Text("Are you sure you want to logout?"),
-        actions: [
-          TextButton(
-            child: Text("Cancel"),
-            onPressed: () => Navigator.pop(ctx),
+      barrierDismissible: false,
+      builder: (context) {
+        return Center(
+          child: AlertDialog(
+            backgroundColor: AppColor.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  AppImages.logout_dialog,
+                  height: 70,
+                  width: 70,
+                  alignment: Alignment.center,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "Logout",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.colorPrimary,
+                    fontSize: 30,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Are you sure you want to logout?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColor.black, fontSize: 14),
+                ),
+              ],
+            ),
+            actions: [
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      backgroundColor: AppColor.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(color: AppColor.colorPrimary),
+                      ),
+                      text: "No",
+                      textStyle: TextStyle(
+                        color: AppColor.colorPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: AppButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        callLogout();
+                      },
+                      text: "Yes",
+                      textStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          TextButton(
-            child: Text("Logout"),
-            onPressed: () {
-              Navigator.pop(ctx); // close dialog
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreenNew()),
-                (route) => false, // clears navigation stack
-              );
-            },
-          ),
-        ],
-      ),
+        );
+      },
+    );
+  }
+
+  Future<void> callLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const LoginScreenNew()),
     );
   }
 }

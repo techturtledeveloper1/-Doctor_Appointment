@@ -109,11 +109,12 @@ class _MyPrescriptionsScreenState extends State<MyPrescriptionsScreen> {
       appBar: AppBar(
         title: Text(
           "My Prescriptions",
-          style: TextStyle(color: AppColor.colorIntroBG),
+          style: TextStyle(color: AppColor.white, fontSize: 20),
         ),
-        backgroundColor: AppColor.white,
+        backgroundColor: AppColor.colorPrimary,
         elevation: 0,
-        iconTheme: IconThemeData(color: AppColor.colorIntroBG),
+        iconTheme: IconThemeData(color: AppColor.white),
+        centerTitle: true,
       ),
       body: isLoading
           ? _buildLoadingState()

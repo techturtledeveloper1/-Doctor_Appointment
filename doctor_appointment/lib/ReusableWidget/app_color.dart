@@ -10,6 +10,8 @@ class AppColor {
   // static final colorIntroBG = Color(0xFF195C65); // AppBar / primary
   static Color colorIntroBG = Color(0xFF004D56); // AppBar / primary
   static Color colorPrimary = Color(0xFF195C65);
+  static const Color colorSecondary = Color(0xFF144A52);
+
   static Color colorAccent = Color(0xFF2BB9A5); // can use for highlights
 
   static Color colorTextWelcome = Color(0xFF7D7D7D); // grey text
@@ -30,6 +32,7 @@ class AppColor {
 
   static Color errorIconColor = Color(0xFFB20025);
   static Color grey50 = Color(0xFFB4B4B4);
+  static Color grey = Colors.grey;
 
   static Color eventDeclinedcolor = Color(0xFFD9284D);
   static Color eventJoindedcolor = Color(0xFFB9B9B9);
