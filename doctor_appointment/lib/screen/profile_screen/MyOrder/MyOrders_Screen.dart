@@ -21,11 +21,18 @@ class MyOrdersScreen extends StatelessWidget {
         padding: EdgeInsets.all(16),
         itemCount: 3, // dummy count
         itemBuilder: (context, index) {
-          return Card(
-            shape: RoundedRectangleBorder(
+          return Container(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
+              color: AppColor.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                ),
+              ],
             ),
-            elevation: 3,
             margin: EdgeInsets.only(bottom: 12),
             child: ListTile(
               leading: Icon(Icons.local_shipping, color: AppColor.colorIntroBG),
@@ -36,9 +43,7 @@ class MyOrdersScreen extends StatelessWidget {
                 size: 16,
                 color: Colors.grey,
               ),
-              onTap: () {
-                // Navigate to order details
-              },
+              onTap: () {},
             ),
           );
         },
