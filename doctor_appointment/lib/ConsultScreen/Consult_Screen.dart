@@ -260,7 +260,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
                         myId: "patient_1",
                         myName: "Pooja Khandhala",
                         peerId: "doctor_2",
-
+                        peerName: widget.doctorName,
                         // userId: "patient_2",
                         // userName: "Pooja",
                         // chatId: "appointment_123",
@@ -484,6 +484,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
             userName: "Pooja",
 
             callId: "appointment_101",
+            endTime: widget.appointmentTime.add(const Duration(minutes: 30)),
             // callId:
             //     "appointment_${widget.appointmentTime.millisecondsSinceEpoch}",
           ),

@@ -31,12 +31,14 @@ class ChatScreen extends StatefulWidget {
   final String myId;
   final String myName;
   final String peerId;
+  final String peerName;
 
   const ChatScreen({
     super.key,
     required this.myId,
     required this.myName,
     required this.peerId,
+    required this.peerName,
   });
 
   @override
@@ -416,7 +418,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void clearChat() async {
     final box = Hive.box('chatBox');
 
-    await box.clear(); // 🔥 delete all local messages
+    await box.clear();
 
     setState(() {
       messages.clear();
@@ -430,7 +432,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
       appBar: AppBar(
         title: Text(
-          widget.myName,
+          widget.peerName,
           style: TextStyle(fontSize: 20, color: AppColor.white),
         ),
         backgroundColor: AppColor.colorPrimary,

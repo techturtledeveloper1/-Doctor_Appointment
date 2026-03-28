@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart' show ChangeNotifierProvider;
+import 'package:provider/provider.dart';
 
 import 'HomeScreen/Home_screen.dart';
 import 'screen/splash_screen/splash_screen.dart';
@@ -42,6 +42,13 @@ void main() async {
 
   await Hive.openBox('chatBox');
   runApp(
+    // MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(create: (_) => ThemeProvider()), // ✅ Dark Mode
+    //     ChangeNotifierProvider(create: (_) => DrawerNotifier()), // existing
+    //   ],
+    //   child: MyApp(),
+    // ),
     ChangeNotifierProvider(
       create: (context) => DrawerNotifier(),
       child: MyApp(),
@@ -57,6 +64,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       navigatorKey: NavigationService.instance?.navigationKey,
+
       routes: {
         '/': (context) => SplashScreen(),
         '/home': (context) => HomeScreen(),

@@ -133,7 +133,12 @@ class _AppbarDemoutils extends State<AppbarDemoutils>
       ),
       shadowColor: Colors.white,
       elevation: 0,
-      activeIndex: 0,
+      activeIndex: tabIndex,
+      onTap: (index) {
+        setState(() {
+          tabIndex = index;
+        });
+      },
     );
   }
 

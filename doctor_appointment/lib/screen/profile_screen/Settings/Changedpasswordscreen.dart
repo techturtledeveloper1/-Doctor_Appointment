@@ -1,4 +1,6 @@
+import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_edit_text.dart';
 import 'package:flutter/material.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -66,10 +68,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       appBar: AppBar(
         title: Text(
           "Change Password",
-          style: TextStyle(color: AppColor.colorIntroBG),
+          style: TextStyle(color: AppColor.white, fontSize: 20),
         ),
-        backgroundColor: AppColor.white,
-        iconTheme: IconThemeData(color: AppColor.colorIntroBG),
+        backgroundColor: AppColor.colorPrimary,
+        centerTitle: true,
+
+        iconTheme: IconThemeData(color: AppColor.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -77,55 +81,35 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
+              AppEditText(
                 controller: _currentPasswordController,
                 obscureText: _obscureCurrent,
-                decoration: InputDecoration(
-                  labelText: "Current Password",
-                  prefixIcon: Icon(
-                    Icons.lock_outline,
-                    color: AppColor.colorIntroBG,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureCurrent ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () =>
-                        setState(() => _obscureCurrent = !_obscureCurrent),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                isPassword: true,
+
+                hint: "Current Password",
+                prefixIcon: Icon(
+                  Icons.lock_outline,
+                  color: AppColor.colorIntroBG,
                 ),
+
                 validator: (val) {
                   if (val == null || val.isEmpty) {
                     return 'Please enter your current password';
                   }
                   return null;
                 },
+                name: '',
               ),
               const SizedBox(height: 20),
-              TextFormField(
+              AppEditText(
                 controller: _newPasswordController,
                 obscureText: _obscureNew,
-                decoration: InputDecoration(
-                  labelText: "New Password",
-                  prefixIcon: Icon(
-                    Icons.lock_reset,
-                    color: AppColor.colorIntroBG,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureNew ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () => setState(() => _obscureNew = !_obscureNew),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                hint: "New Password",
+                prefixIcon: Icon(
+                  Icons.lock_reset,
+                  color: AppColor.colorIntroBG,
                 ),
+
                 validator: (val) {
                   if (val == null || val.isEmpty) {
                     return 'Please enter a new password';
@@ -134,25 +118,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   }
                   return null;
                 },
+                name: '',
+                isPassword: true,
               ),
               const SizedBox(height: 30),
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.colorIntroBG,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                child: AppButton(
                   onPressed: _isLoading ? null : _handleSubmit,
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          "Submit",
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
+                  isLoading: _isLoading,
+                  text: "Submit",
+                  textStyle: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ],

@@ -5,6 +5,7 @@ import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:doctor_appointment/AppointmentScreen/Appointment_Screen.dart';
 import 'package:doctor_appointment/ConsultScreen/Consult_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ConsultPsychiatristScreen/ConsultPsychiatrist_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_dialog.dart';
 import 'package:doctor_appointment/screen/DashBoard/widget/dashboard_widget.dart';
 import 'package:doctor_appointment/HomeScreen/OrderMedicineScreen/MedicineCart_Screen.dart';
 import 'package:doctor_appointment/LoginScreen/Login_Screen.dart';
@@ -12,7 +13,10 @@ import 'package:doctor_appointment/LoginScreen/NewLogin_Screen.dart';
 import 'package:doctor_appointment/PrescriptionsScreen/medicalStore_Screen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/screen/profile_screen/PersonalDetailsScreen/PersonalDetails_Screen.dart';
+import 'package:doctor_appointment/screen/profile_screen/Settings/Settings_Screen.dart';
 import 'package:doctor_appointment/screen/profile_screen/UserProfile_Screen.dart';
+import 'package:doctor_appointment/screen/profile_screen/help_support/help_support_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
@@ -71,235 +75,110 @@ class _DashBoardNewState extends State<DashBoardNew>
     super.initState();
     SystemChannels.textInput.invokeMethod('TextInput.hide');
 
-    tabIndex = widget.tabIndex;
+    tabIndex = widget.tabIndex.clamp(0, 4);
     pageController = PageController(initialPage: tabIndex);
+    loadUserData();
+  }
+
+  Future<void> loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      username = prefs.getString("fullName") ?? "";
+      email = prefs.getString("email") ?? "";
+      profileImage = prefs.getString("profileImage") ?? "";
+    });
   }
 
   AppBar getAppBar() {
-    switch (tabIndex) {
-      case 0:
-        return AppBar(
-          backgroundColor: AppColor.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            icon: Icon(
-              Icons.menu_rounded,
-              size: 29.0,
-              color: AppColor.colorPrimary,
-            ),
-            onPressed: () => _advancedDrawerController.showDrawer(),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(AppImages.logo, height: 40),
-              const SizedBox(width: 6),
-              Text(
-                "Serenest",
-                style: TextStyle(
-                  color: AppColor.colorPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+    return AppBar(
+      backgroundColor: AppColor.white,
+      elevation: 0,
+      centerTitle: true,
+      leading: IconButton(
+        icon: Icon(
+          Icons.menu_rounded,
+          size: 29.0,
+          color: AppColor.colorPrimary,
+        ),
+        onPressed: () {
+          _scaffoldKey.currentState?.openDrawer();
+        },
+      ),
+      title: Text(
+        tabIndex == 0
+            ? "Serenest"
+            : tabIndex == 1
+            ? "Appointments"
+            : tabIndex == 2
+            ? "Consult"
+            : tabIndex == 3
+            ? "Order Medicines"
+            : "Profile",
+        style: TextStyle(color: AppColor.colorPrimary),
+      ),
+      actions: tabIndex == 0
+          ? [
+              Icon(Icons.notifications_none, color: AppColor.colorPrimary),
+              const SizedBox(width: 10),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PersonalDetailsScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  margin: const EdgeInsets.only(right: 15),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(image: AssetImage(AppImages.d3)),
+                  ),
                 ),
               ),
-            ],
-          ),
-          actions: [
-            GestureDetector(
-              onTap: () {},
-              child: Icon(
-                Icons.notifications_none,
-                color: AppColor.colorPrimary,
-                size: 26,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              width: 30,
-              height: 30,
-              margin: const EdgeInsets.only(right: 15),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(image: AssetImage(AppImages.d1)),
-              ),
-            ),
-          ],
-        );
-      case 1:
-        return AppBar(
-          backgroundColor: AppColor.white,
-          title: Text(
-            "Appointments",
-            style: TextStyle(color: AppColor.colorPrimary),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.menu_rounded,
-              size: 29.0,
-              color: AppColor.colorPrimary,
-            ),
-            onPressed: () => _advancedDrawerController.showDrawer(),
-          ),
-        );
-      case 2:
-        return AppBar(
-          backgroundColor: AppColor.white,
-          title: Text(
-            "Consult",
-            style: TextStyle(color: AppColor.colorPrimary),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.menu_rounded,
-              size: 29.0,
-              color: AppColor.colorPrimary,
-            ),
-            onPressed: () => _advancedDrawerController.showDrawer(),
-          ),
-        );
-      case 3:
-        // return AppBar(
-        //   backgroundColor: AppColor.white,
-        //   title: Text("Medical Store",style: TextStyle(color: AppColor.colorPrimary)),
-        //   centerTitle: true,
-        //   leading: IconButton(
-        //     icon: Icon(icons.menu_rounded, size: 29.0, color: AppColor.colorPrimary),
-        //     onPressed: () => _advancedDrawerController.showDrawer(),
-        //   ),
-        // );
-        return AppBar(
-          backgroundColor: AppColor.white,
-          title: Text(
-            "Order Medicines",
-            style: TextStyle(color: AppColor.colorPrimary),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.menu_rounded,
-              size: 29.0,
-              color: AppColor.colorPrimary,
-            ),
-            onPressed: () => _advancedDrawerController.showDrawer(),
-          ),
-
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.shopping_cart_outlined,
-                color: AppColor.colorPrimary,
-                size: 26,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MedicineCartScreen()),
-                );
-              },
-            ),
-          ],
-        );
-      case 4:
-        return AppBar(
-          backgroundColor: AppColor.white,
-          title: Text(
-            "Profile",
-            style: TextStyle(color: AppColor.colorPrimary),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.menu_rounded,
-              size: 29.0,
-              color: AppColor.colorPrimary,
-            ),
-            onPressed: () => _advancedDrawerController.showDrawer(),
-          ),
-        );
-      default:
-        return AppBar(
-          backgroundColor: AppColor.white,
-          title: Text(
-            "Doctor Appointment",
-            style: TextStyle(color: AppColor.colorPrimary),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.menu_rounded,
-              size: 29.0,
-              color: AppColor.colorPrimary,
-            ),
-            onPressed: () => _advancedDrawerController.showDrawer(),
-          ),
-        );
-    }
+            ]
+          : null,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: AdvancedDrawer(
-        backdropColor: AppColor.white,
-        backdrop: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(AppImages.profile),
-              fit: BoxFit.cover,
-            ),
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: getAppBar(),
+      drawer: Drawer(child: menuItem()),
+      bottomNavigationBar: bottomNav(),
+      body: PageView(
+        controller: pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        onPageChanged: (v) {
+          setState(() {
+            tabIndex = v;
+          });
+        },
+        children: [
+          DashBoardWidget(),
+          AppointmentCalendarScreen(),
+          ConsultScreen(
+            doctorName: 'Dr. Priya Sharma',
+            specialty: 'Cardiologist',
+            appointmentTime: DateTime.parse("2025-09-15 10:30:00"),
+            hospital: 'Mercy Hospital',
+            location: 'Ahmedabad , gujarat',
+            image: '',
           ),
-        ),
-        controller: _advancedDrawerController,
-        animationCurve: Curves.easeInOut,
-        animationDuration: const Duration(milliseconds: 300),
-        animateChildDecoration: true,
-        rtlOpening: false,
-        disabledGestures: true,
-        childDecoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-        ),
-        child: Scaffold(
-          key: _scaffoldKey,
-          appBar: getAppBar(),
-          bottomNavigationBar: bottomNav(),
-          body: PageView(
-            controller: pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            onPageChanged: (v) {
-              setState(() {
-                tabIndex = v;
-              });
-            },
-            children: [
-              DashBoardWidget(),
-              AppointmentCalendarScreen(),
-              ConsultScreen(
-                doctorName: 'Dr. Priya Sharma',
-                specialty: 'Cardiologist',
-                // mode: 'Video Call',
-                appointmentTime: DateTime.parse("2025-09-15 10:30:00"),
-                hospital: 'Mercy Hospital',
-                location: 'Ahmedabad , gujarat',
-                image: '',
-              ),
-              MedicalStoreListScreen(),
-              // PrescriptionsScreen(),
-              ProfileScreen(),
-            ],
-          ),
-        ),
-        drawer: SafeArea(child: Container(child: menuItem())),
+          MedicalStoreListScreen(),
+          ProfileScreen(),
+        ],
       ),
     );
   }
 
-  Widget menuItem() {
+  Widget menuItem1() {
     return Scaffold(
       backgroundColor: AppColor.white,
       body: Container(
@@ -336,71 +215,38 @@ class _DashBoardNewState extends State<DashBoardNew>
               drawerItem("Home", Icons.home, 0),
               drawerItem("Appointments", Icons.calendar_today, 1),
 
-              /// 🔹 Collapsible Consult
-              ExpansionTile(
-                leading: Icon(
-                  Icons.medical_services,
-                  color: AppColor.colorPrimary,
+              Theme(
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                 ),
-                title: Text(
-                  "Consult",
-                  style: TextStyle(color: AppColor.colorPrimary),
+                child: ExpansionTile(
+                  tilePadding: EdgeInsets.zero,
+                  childrenPadding: EdgeInsets.zero,
+
+                  shape: const RoundedRectangleBorder(side: BorderSide.none),
+                  collapsedShape: const RoundedRectangleBorder(
+                    side: BorderSide.none,
+                  ),
+
+                  backgroundColor: Colors.transparent,
+                  collapsedBackgroundColor: Colors.transparent,
+
+                  leading: Icon(
+                    Icons.medical_services,
+                    color: AppColor.colorPrimary,
+                  ),
+                  title: Text(
+                    "Consult",
+                    style: TextStyle(color: AppColor.colorPrimary),
+                  ),
+
+                  children: [
+                    ListTile(title: Text("Psychiatrist"), onTap: () {}),
+                    ListTile(title: Text("Psychologist"), onTap: () {}),
+                  ],
                 ),
-                initiallyExpanded: false,
-                trailing: Icon(
-                  _isConsultExpanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: AppColor.colorPrimary,
-                ),
-                onExpansionChanged: (expanded) {
-                  setState(() {
-                    _isConsultExpanded = expanded;
-                  });
-                },
-                children: [
-                  ListTile(
-                    leading: Icon(Icons.person, color: AppColor.colorPrimary),
-                    title: Text(
-                      "Psychiatrist",
-                      style: TextStyle(color: AppColor.colorPrimary),
-                    ),
-                    onTap: () {
-                      _advancedDrawerController.hideDrawer();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ConsultPsychiatristScreen(
-                            specializationId: '',
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.psychology,
-                      color: AppColor.colorPrimary,
-                    ),
-                    title: Text(
-                      "Psychologist",
-                      style: TextStyle(color: AppColor.colorPrimary),
-                    ),
-                    onTap: () {
-                      _advancedDrawerController.hideDrawer();
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.healing, color: AppColor.colorPrimary),
-                    title: Text(
-                      "Therapist",
-                      style: TextStyle(color: AppColor.colorPrimary),
-                    ),
-                    onTap: () {
-                      _advancedDrawerController.hideDrawer();
-                    },
-                  ),
-                ],
               ),
 
               drawerItem("Prescriptions", Icons.description, 3),
@@ -419,6 +265,179 @@ class _DashBoardNewState extends State<DashBoardNew>
     );
   }
 
+  Widget menuItem() {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.only(top: 60, bottom: 20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColor.colorPrimary,
+                AppColor.colorPrimary.withOpacity(0.4),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.white,
+                backgroundImage: profileImage.isEmpty
+                    ? const AssetImage(AppImages.d1)
+                    : NetworkImage(ApiService.imageurl + profileImage)
+                          as ImageProvider,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                username.isEmpty ? "Jay Patel" : username,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                email.isEmpty ? "jaypatel123@gmail.com" : email,
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            children: [
+              // ✅ Index based navigation
+              buildLightItem(Icons.home, "Home", 0),
+              buildLightItem(Icons.calendar_today, "Appointments", 1),
+
+              ExpansionTile(
+                leading: Icon(
+                  Icons.medical_services,
+                  color: AppColor.colorPrimary,
+                ),
+                title: const Text("Consult"),
+                children: [
+                  subItem("Psychiatrist", () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ConsultPsychiatristScreen(
+                          specializationId: '',
+                        ),
+                      ),
+                    );
+                  }),
+                  subItem("Psychologist", () {}),
+                  subItem("Therapist", () {}),
+                ],
+              ),
+
+              buildLightItem(Icons.description, "Prescriptions", 3),
+              buildLightItem(Icons.person, "Profile", 4),
+
+              // ✅ ONLY HERE Navigator
+              buildLightItem(
+                Icons.settings,
+                "Settings",
+                0,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => SettingsScreen()),
+                  );
+                },
+              ),
+
+              // ✅ ONLY HERE Navigator
+              buildLightItem(
+                Icons.help_outline,
+                "Help & Support",
+                0,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => HelpSupportScreen()),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              GestureDetector(
+                onTap: () async {
+                  showLogoutDialog(context);
+                },
+                child: Container(
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: AppColor.colorPrimary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Sign out",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildLightItem(
+    IconData icon,
+    String title,
+    int index, {
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: () {
+        Navigator.pop(context);
+
+        if (onTap != null) {
+          onTap(); // Only Settings & Help
+        } else {
+          setState(() {
+            tabIndex = index;
+            pageController.jumpToPage(index);
+          });
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Icon(icon, color: AppColor.colorPrimary, size: 22),
+            const SizedBox(width: 15),
+            Text(title, style: const TextStyle(fontSize: 14)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget subItem(String title, VoidCallback onTap) {
+    return ListTile(
+      contentPadding: const EdgeInsets.only(left: 50),
+      title: Text(title),
+      onTap: () {
+        Navigator.pop(context);
+        onTap();
+      },
+    );
+  }
+
   Widget drawerItem(
     String title,
     IconData icon,
@@ -429,7 +448,7 @@ class _DashBoardNewState extends State<DashBoardNew>
       leading: Icon(icon, color: AppColor.colorPrimary),
       title: Text(title, style: TextStyle(color: AppColor.colorPrimary)),
       onTap: () {
-        _advancedDrawerController.hideDrawer();
+        Navigator.pop(context);
         if (isLogout) {
           Navigator.pushReplacement(
             context,
