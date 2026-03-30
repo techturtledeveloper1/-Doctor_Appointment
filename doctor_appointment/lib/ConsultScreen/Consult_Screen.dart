@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/Chat_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/VideoCall_Screen.dart';
@@ -6,7 +7,9 @@ import 'package:doctor_appointment/HomeScreen/ChatScreen/VoiceCall_Screen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -17,6 +20,7 @@ class ConsultScreen extends StatefulWidget {
   final String location;
   final DateTime appointmentTime;
   final String image;
+  final String appointmentId;
 
   const ConsultScreen({
     super.key,
@@ -26,6 +30,7 @@ class ConsultScreen extends StatefulWidget {
     required this.location,
     required this.appointmentTime,
     required this.image,
+    required this.appointmentId,
   });
 
   @override
@@ -35,6 +40,64 @@ class ConsultScreen extends StatefulWidget {
 class _ConsultScreenState extends State<ConsultScreen> {
   Timer? _timer;
   Duration _timeLeft = Duration.zero;
+  File? selectedFile;
+
+  Future<void> _pickFile() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+
+    if (picked != null) {
+      setState(() {
+        selectedFile = File(picked.path);
+      });
+      // uploadPrescription(widget.appointmentId);
+    }
+  }
+
+  Future<void> _pickPdf() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      setState(() {
+        selectedFile = File(result.files.single.path!);
+      });
+      // uploadPrescription(widget.appointmentId);
+    }
+  }
+
+  void showUploadOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.image),
+                title: Text("Upload Image"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickFile();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.picture_as_pdf),
+                title: Text("Upload PDF"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickPdf();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -290,11 +353,8 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   ),
                 ),
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Upload Prescription or Notes clicked"),
-                    ),
-                  );
+                  // _pickFile();
+                  showUploadOptions();
                 },
                 icon: const Icon(Icons.upload_file, size: 18),
                 label: Text(
@@ -375,44 +435,51 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Before starting the video consultation:\n\n"
-                    "• Do not share personal or sensitive information.\n"
-                    "• This consultation is for general guidance only.\n"
-                    "• In case of emergency, contact a hospital immediately.\n"
-                    "• Please ensure proper lighting and internet connection.\n"
-                    "• Keep your camera and microphone ready.\n"
-                    "• Prescription is at doctor's discretion.\n"
-                    "• Follow doctor's advice responsibly.\n"
-                    "• The call may be recorded for quality purposes.\n",
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              content: Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Checkbox(
-                        activeColor: AppColor.colorPrimary,
-                        value: isChecked,
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked = value!;
-                          });
-                        },
+                      const Text(
+                        "Before starting the video consultation:\n\n"
+                        "• Do not share personal or sensitive information.\n"
+                        "• This consultation is for general guidance only.\n"
+                        "• In case of emergency, contact a hospital immediately.\n"
+                        "• Please ensure proper lighting and internet connection.\n"
+                        "• Keep your camera and microphone ready.\n"
+                        "• Prescription is at doctor's discretion.\n"
+                        "• Follow doctor's advice responsibly.\n"
+                        "• The call may be recorded for quality purposes.\n",
+                        style: TextStyle(fontSize: 14, color: Colors.black),
                       ),
-                      const Expanded(
-                        child: Text(
-                          "I agree to Terms & Conditions",
-                          style: TextStyle(fontSize: 14, color: Colors.black),
-                        ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Checkbox(
+                            activeColor: AppColor.colorPrimary,
+                            value: isChecked,
+                            onChanged: (value) {
+                              setState(() {
+                                isChecked = value!;
+                              });
+                            },
+                          ),
+                          const Expanded(
+                            child: Text(
+                              "I agree to Terms & Conditions",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
               actions: [
                 Row(

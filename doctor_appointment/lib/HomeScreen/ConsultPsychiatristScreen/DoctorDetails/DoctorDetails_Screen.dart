@@ -1,5 +1,6 @@
 import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:doctor_appointment/HomeScreen/ConsultPsychiatristScreen/DoctorBook/DoctorBook_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/material.dart';
 
@@ -73,7 +74,9 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
             List<Map<String, dynamic>> slotList = [];
             for (var s in a["slots"]) {
               slotList.add({
-                "time": s["time"].toString(),
+                // "time": s["time"].toString(),
+                "startTime": s["startTime"] ?? s["time"],
+                "endTime": s["endTime"] ?? "",
                 "isBooked": s["isBooked"] ?? false,
                 "alternativeDoctor": s["alternativeDoctor"],
                 "slotId": s["_id"], // Store the slot ID
@@ -114,9 +117,14 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Doctor Details"),
-        backgroundColor: Colors.white,
-        foregroundColor: AppColor.colorPrimary,
+        title: const Text(
+          "Doctor Details",
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        backgroundColor: AppColor.colorPrimary,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: AppColor.white),
+
         elevation: 0,
       ),
       body: isLoading
@@ -166,38 +174,44 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: OutlinedButton.icon(
+                        child: AppButton(
                           onPressed: _selectDateFromApi,
-                          icon: const Icon(
-                            Icons.calendar_today_outlined,
-                            size: 18,
+                          icon: Icons.calendar_month_rounded,
+                          iconPosition: IconPosition.left,
+                          iconColor: AppColor.colorPrimary,
+                          backgroundColor: AppColor.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(color: AppColor.colorPrimary),
                           ),
-                          label: Text(
-                            _selectedDate == null
-                                ? "Select Date"
-                                : "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}",
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: AppColor.colorIntroBG),
+                          text: _selectedDate == null
+                              ? "Select Date"
+                              : "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}",
+                          textStyle: TextStyle(
+                            color: AppColor.colorPrimary,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: OutlinedButton.icon(
+                        child: AppButton(
                           onPressed: _selectedDate != null
                               ? _selectTimeFromApi
                               : null,
-                          icon: const Icon(
-                            Icons.access_time_outlined,
-                            size: 18,
+                          icon: Icons.access_time_outlined,
+                          iconPosition: IconPosition.left,
+                          iconColor: AppColor.colorPrimary,
+                          backgroundColor: AppColor.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(color: AppColor.colorPrimary),
                           ),
-                          label: Text(
-                            _selectedTime ?? "Select Time",
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: AppColor.colorIntroBG),
+                          text: _selectedTime ?? "Select Time",
+
+                          textStyle: TextStyle(
+                            color: AppColor.colorPrimary,
+                            fontSize: 16,
                           ),
                         ),
                       ),
@@ -241,15 +255,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                   ],
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.colorIntroBG,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
+                    child: AppButton(
                       onPressed:
                           (_selectedDate != null &&
                               _selectedTime != null &&
@@ -280,14 +286,12 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                               );
                             }
                           : null,
-                      child: Text(
-                        alternativeDoctors.isNotEmpty
-                            ? "Slot Booked - Choose Alternative"
-                            : "Book Appointment",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      text: alternativeDoctors.isNotEmpty
+                          ? "Slot Booked - Choose Alternative"
+                          : "Book Appointment",
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -413,32 +417,124 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
 
   void _selectDateFromApi() {
     if (availabilities.isEmpty) return;
+
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        return ListView(
-          shrinkWrap: true,
-          children: availabilities.map((a) {
-            final date = a["date"] as DateTime;
-            final formatted = "${date.day}/${date.month}/${date.year}";
-            return ListTile(
-              title: Text(formatted),
-              textColor: AppColor.colorIntroBG,
-              onTap: () {
-                setState(() {
-                  _selectedDate = date;
-                  _selectedTime = null;
-                  _selectedSlotId = null;
-                  alternativeDoctors.clear();
-                  showBookedMessage = false;
-                });
-                Navigator.pop(context);
-              },
-            );
-          }).toList(),
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// 🔹 HEADER (ONLY ONCE)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Select Date",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        color: AppColor.colorPrimary,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 5),
+              Divider(color: Colors.grey.shade200),
+              const SizedBox(height: 10),
+
+              /// 🔹 DATE LIST
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: availabilities.length,
+                  itemBuilder: (context, index) {
+                    final a = availabilities[index];
+                    final date = a["date"] as DateTime;
+
+                    final formatted = "${date.day}/${date.month}/${date.year}";
+
+                    final isSelected =
+                        _selectedDate != null &&
+                        _selectedDate!.year == date.year &&
+                        _selectedDate!.month == date.month &&
+                        _selectedDate!.day == date.day;
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedDate = date;
+                          _selectedTime = null;
+                          _selectedSlotId = null;
+                          alternativeDoctors.clear();
+                          showBookedMessage = false;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                          horizontal: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColor.colorIntroBG.withOpacity(0.1)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColor.colorIntroBG
+                                : Colors.grey.shade300,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              formatted,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: isSelected
+                                    ? AppColor.colorIntroBG
+                                    : Colors.black87,
+                              ),
+                            ),
+
+                            if (isSelected)
+                              Icon(
+                                Icons.check_circle,
+                                color: AppColor.colorIntroBG,
+                                size: 20,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -455,68 +551,149 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(16),
-        child: Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: List.generate(slots.length, (index) {
-            final slot = slots[index];
-            final time = slot["time"];
-            final isBooked = slot["isBooked"];
-            final individualSlotId = slot["slotId"];
+      builder: (context) {
+        return Container(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Select Time Slot",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: AppColor.colorPrimary,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Divider(color: Colors.grey.shade200),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: List.generate(slots.length, (index) {
+                    final slot = slots[index];
 
-            return ChoiceChip(
-              label: Text(time),
-              selected: _selectedTime == time,
-              selectedColor: AppColor.colorIntroBG,
-              labelStyle: TextStyle(
-                color: _selectedTime == time ? Colors.white : Colors.black87,
-              ),
-              backgroundColor: isBooked
-                  ? Colors.grey.shade200
-                  : Colors.grey.shade100,
-              onSelected: (_) {
-                Navigator.pop(context);
-                setState(() {
-                  _selectedTime = time;
-                  // ✅ Store the availability ID as slotId for booking
-                  _selectedSlotId = availabilityId;
+                    final start = slot["startTime"];
+                    final end = slot["endTime"];
+                    final isBooked = slot["isBooked"];
 
-                  if (isBooked == true && slot["alternativeDoctor"] != null) {
-                    final altDoc = slot["alternativeDoctor"];
-                    showBookedMessage = true;
-                    alternativeDoctors = [
-                      {
-                        "_id": altDoc["_id"] ?? "",
-                        "name":
-                            altDoc["fullName"] ?? altDoc["name"] ?? "Doctor",
-                        "photo": altDoc["profile_photo"] ?? "",
-                        "avgRating": altDoc["avgRating"] ?? 0,
-                        "totalReviews": altDoc["totalReviews"] ?? 0,
-                        "specialization":
-                            doctorDetail?["speciality"] ?? "Specialist",
-                        "availabilities": altDoc["availabilities"] ?? [],
-                        "chatFee": altDoc["chatFee"] ?? 200,
-                        "audioFee": altDoc["voiceCallFee"] ?? 300,
-                        "videoFee": altDoc["videoCallFee"] ?? 600,
-                        "about": altDoc["about"] ?? "",
-                        "languages": altDoc["languages"] ?? ["English"],
-                      },
-                    ];
-                  } else {
-                    showBookedMessage = false;
-                    alternativeDoctors.clear();
-                  }
-                });
-              },
-            );
-          }),
-        ),
-      ),
+                    final displayTime = end != null && end != ""
+                        ? "$start - $end"
+                        : start;
+
+                    final isSelected = _selectedTime == displayTime;
+
+                    return GestureDetector(
+                      onTap: isBooked
+                          ? null
+                          : () {
+                              Navigator.pop(context);
+
+                              setState(() {
+                                _selectedTime = displayTime;
+                                _selectedSlotId = availabilityId;
+
+                                if (slot["isBooked"] == true &&
+                                    slot["alternativeDoctor"] != null) {
+                                  final altDoc = slot["alternativeDoctor"];
+                                  showBookedMessage = true;
+
+                                  alternativeDoctors = [
+                                    {
+                                      "_id": altDoc["_id"] ?? "",
+                                      "name":
+                                          altDoc["fullName"] ??
+                                          altDoc["name"] ??
+                                          "Doctor",
+                                      "photo": altDoc["profile_photo"] ?? "",
+                                      "avgRating": altDoc["avgRating"] ?? 0,
+                                      "totalReviews":
+                                          altDoc["totalReviews"] ?? 0,
+                                      "specialization":
+                                          doctorDetail?["speciality"] ??
+                                          "Specialist",
+                                      "availabilities":
+                                          altDoc["availabilities"] ?? [],
+                                      "chatFee": altDoc["chatFee"] ?? 200,
+                                      "audioFee": altDoc["voiceCallFee"] ?? 300,
+                                      "videoFee": altDoc["videoCallFee"] ?? 600,
+                                    },
+                                  ];
+                                } else {
+                                  showBookedMessage = false;
+                                  alternativeDoctors.clear();
+                                }
+                              });
+                            },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isBooked
+                              ? Colors.grey.shade200
+                              : isSelected
+                              ? AppColor.colorIntroBG
+                              : Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColor.colorIntroBG
+                                : Colors.transparent,
+                          ),
+                        ),
+                        child: Text(
+                          displayTime,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isBooked
+                                ? Colors.grey
+                                : isSelected
+                                ? Colors.white
+                                : Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -71,6 +71,29 @@ class ApiService {
     return null;
   }
 
+  Future<void> uploadPrescription(
+    String appointmentId,
+    File? selectedFile,
+  ) async {
+    var request = http.MultipartRequest('POST', Uri.parse("YOUR_API_URL"));
+
+    request.fields['appointment_id'] = appointmentId;
+
+    if (selectedFile != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('prescription', selectedFile!.path),
+      );
+    }
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print("Upload Success");
+    } else {
+      print("Upload Failed");
+    }
+  }
+
   //For Register APi
   Future callSignupApi(Map<String, dynamic> loginJson) async {
     var responseData;

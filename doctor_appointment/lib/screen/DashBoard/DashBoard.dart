@@ -67,6 +67,8 @@ class _DashBoardNewState extends State<DashBoardNew>
 
   String profileImage = "", email = "", username = "";
   int tabIndex = 0;
+  int drawerIndex = 0;
+
   late PageController pageController;
   bool _isConsultExpanded = false;
 
@@ -76,6 +78,7 @@ class _DashBoardNewState extends State<DashBoardNew>
     SystemChannels.textInput.invokeMethod('TextInput.hide');
 
     tabIndex = widget.tabIndex.clamp(0, 4);
+    drawerIndex = tabIndex;
     pageController = PageController(initialPage: tabIndex);
     loadUserData();
   }
@@ -158,6 +161,7 @@ class _DashBoardNewState extends State<DashBoardNew>
         onPageChanged: (v) {
           setState(() {
             tabIndex = v;
+            drawerIndex = v;
           });
         },
         children: [
@@ -170,97 +174,11 @@ class _DashBoardNewState extends State<DashBoardNew>
             hospital: 'Mercy Hospital',
             location: 'Ahmedabad , gujarat',
             image: '',
+            appointmentId: '',
           ),
           MedicalStoreListScreen(),
           ProfileScreen(),
         ],
-      ),
-    );
-  }
-
-  Widget menuItem1() {
-    return Scaffold(
-      backgroundColor: AppColor.white,
-      body: Container(
-        color: AppColor.white,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 50),
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: profileImage.isEmpty
-                      ? const AssetImage(AppImages.d1)
-                      : CachedNetworkImage(
-                              imageUrl: ApiService.imageurl + profileImage,
-                              errorWidget: (context, url, error) =>
-                                  Image.asset(AppImages.d1),
-                            )
-                            as ImageProvider,
-                ),
-                title: Text(
-                  "jay Patel",
-                  style: TextStyle(
-                    color: AppColor.colorPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(
-                  "jaypatel123@Gmail.com",
-                  style: TextStyle(color: AppColor.colorPrimary),
-                ),
-              ),
-              Divider(color: AppColor.colorPrimary),
-              drawerItem("Home", Icons.home, 0),
-              drawerItem("Appointments", Icons.calendar_today, 1),
-
-              Theme(
-                data: Theme.of(context).copyWith(
-                  dividerColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                ),
-                child: ExpansionTile(
-                  tilePadding: EdgeInsets.zero,
-                  childrenPadding: EdgeInsets.zero,
-
-                  shape: const RoundedRectangleBorder(side: BorderSide.none),
-                  collapsedShape: const RoundedRectangleBorder(
-                    side: BorderSide.none,
-                  ),
-
-                  backgroundColor: Colors.transparent,
-                  collapsedBackgroundColor: Colors.transparent,
-
-                  leading: Icon(
-                    Icons.medical_services,
-                    color: AppColor.colorPrimary,
-                  ),
-                  title: Text(
-                    "Consult",
-                    style: TextStyle(color: AppColor.colorPrimary),
-                  ),
-
-                  children: [
-                    ListTile(title: Text("Psychiatrist"), onTap: () {}),
-                    ListTile(title: Text("Psychologist"), onTap: () {}),
-                  ],
-                ),
-              ),
-
-              drawerItem("Prescriptions", Icons.description, 3),
-              drawerItem("Profile", Icons.person, 4),
-              drawerItem("Settings", Icons.settings, 5), // Added Settings
-              drawerItem(
-                "Help & Support",
-                Icons.help_outline,
-                6,
-              ), // Added Help & Support
-              drawerItem("Logout", Icons.logout, -1, isLogout: true),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -293,7 +211,7 @@ class _DashBoardNewState extends State<DashBoardNew>
               ),
               const SizedBox(height: 10),
               Text(
-                username.isEmpty ? "Jay Patel" : username,
+                username.isEmpty ? "User Name" : username,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -301,7 +219,7 @@ class _DashBoardNewState extends State<DashBoardNew>
                 ),
               ),
               Text(
-                email.isEmpty ? "jaypatel123@gmail.com" : email,
+                email.isEmpty ? "example@gmail.com" : email,
                 style: const TextStyle(color: Colors.white70, fontSize: 13),
               ),
             ],
@@ -312,58 +230,85 @@ class _DashBoardNewState extends State<DashBoardNew>
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             children: [
-              // ✅ Index based navigation
               buildLightItem(Icons.home, "Home", 0),
               buildLightItem(Icons.calendar_today, "Appointments", 1),
 
-              ExpansionTile(
-                leading: Icon(
-                  Icons.medical_services,
-                  color: AppColor.colorPrimary,
-                ),
-                title: const Text("Consult"),
-                children: [
-                  subItem("Psychiatrist", () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ConsultPsychiatristScreen(
-                          specializationId: '',
+              Theme(
+                data: Theme.of(
+                  context,
+                ).copyWith(dividerColor: Colors.transparent),
+
+                child: ExpansionTile(
+                  tilePadding: EdgeInsets.symmetric(horizontal: 10),
+                  childrenPadding: EdgeInsets.zero,
+                  shape: LinearBorder.none,
+                  collapsedShape: LinearBorder.none,
+                  leading: Icon(
+                    Icons.medical_services,
+                    color: AppColor.colorPrimary,
+                  ),
+                  title: const Text("Consult"),
+                  children: [
+                    subItem("Psychiatrist", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ConsultPsychiatristScreen(
+                            specializationId: '',
+                          ),
                         ),
-                      ),
-                    );
-                  }),
-                  subItem("Psychologist", () {}),
-                  subItem("Therapist", () {}),
-                ],
+                      );
+                    }),
+                    subItem("Psychologist", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ConsultPsychiatristScreen(
+                            specializationId: '',
+                          ),
+                        ),
+                      );
+                    }),
+                    subItem("Therapist", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ConsultPsychiatristScreen(
+                            specializationId: '',
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ),
 
               buildLightItem(Icons.description, "Prescriptions", 3),
               buildLightItem(Icons.person, "Profile", 4),
 
-              // ✅ ONLY HERE Navigator
               buildLightItem(
                 Icons.settings,
                 "Settings",
-                0,
-                onTap: () {
-                  Navigator.push(
+                100,
+                onTap: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => SettingsScreen()),
                   );
+                  setState(() => drawerIndex = 100);
                 },
               ),
 
-              // ✅ ONLY HERE Navigator
               buildLightItem(
                 Icons.help_outline,
                 "Help & Support",
-                0,
-                onTap: () {
-                  Navigator.push(
+                101,
+                onTap: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => HelpSupportScreen()),
                   );
+                  setState(() => drawerIndex = 101);
                 },
               ),
 
@@ -400,27 +345,44 @@ class _DashBoardNewState extends State<DashBoardNew>
     int index, {
     VoidCallback? onTap,
   }) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(10),
+    bool isSelected = tabIndex == index;
+
+    return GestureDetector(
       onTap: () {
         Navigator.pop(context);
 
         if (onTap != null) {
-          onTap(); // Only Settings & Help
+          onTap();
         } else {
           setState(() {
             tabIndex = index;
+            drawerIndex = index;
+
             pageController.jumpToPage(index);
           });
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColor.colorPrimary.withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: AppColor.colorPrimary, size: 22),
             const SizedBox(width: 15),
-            Text(title, style: const TextStyle(fontSize: 14)),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                color: isSelected ? AppColor.colorPrimary : AppColor.black,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
           ],
         ),
       ),
@@ -429,8 +391,10 @@ class _DashBoardNewState extends State<DashBoardNew>
 
   Widget subItem(String title, VoidCallback onTap) {
     return ListTile(
-      contentPadding: const EdgeInsets.only(left: 50),
-      title: Text(title),
+      minVerticalPadding: 0,
+      contentPadding: const EdgeInsets.only(left: 50, top: 0, bottom: 0),
+      title: Text(title, style: TextStyle(fontSize: 14, color: AppColor.black)),
+
       onTap: () {
         Navigator.pop(context);
         onTap();
@@ -553,6 +517,7 @@ class _DashBoardNewState extends State<DashBoardNew>
       onTap: (index) {
         setState(() {
           tabIndex = index;
+          drawerIndex = index;
           pageController.jumpToPage(tabIndex);
         });
       },
