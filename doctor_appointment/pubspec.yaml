@@ -48,6 +48,7 @@ dependencies:
   razorpay_flutter: ^1.4.3
   fluttertoast: ^9.0.0
   get: ^4.7.3
+  webview_flutter: ^4.7.0
 
 
 

@@ -1,6 +1,9 @@
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:doctor_appointment/screen/profile_screen/Settings/Changedpasswordscreen.dart';
+import 'package:doctor_appointment/screen/profile_screen/Settings/feedback_screen.dart';
+import 'package:doctor_appointment/screen/profile_screen/Settings/web_view.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // class SettingsScreen extends StatelessWidget {
 //   const SettingsScreen({super.key});
@@ -102,28 +105,124 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildTile(
             icon: Icons.description,
             title: "Terms & Conditions",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const WebViewPage(
+                    title: "Terms & Conditions",
+                    url: "https://serenest.co.in/terms-of-service.html",
+                  ),
+                ),
+              );
+            },
           ),
 
           _buildTile(
             icon: Icons.privacy_tip,
             title: "Privacy Policy",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const WebViewPage(
+                    title: "Privacy Policy",
+                    url: "https://serenest.co.in/privacy.html",
+                  ),
+                ),
+              );
+            },
           ),
 
           _buildTile(
             icon: Icons.support_agent,
             title: "Contact Us",
-            onTap: () {},
+            onTap: () {
+              showContactDialog(context);
+            },
           ),
 
-          _buildTile(icon: Icons.star_rate, title: "Rate Us", onTap: () {}),
+          _buildTile(
+            icon: Icons.star_rate,
+            title: "Rate Us",
+            onTap: () {
+              openPlayStore();
+            },
+          ),
 
-          _buildTile(icon: Icons.feedback, title: "Feedback", onTap: () {}),
+          _buildTile(
+            icon: Icons.feedback,
+            title: "Feedback",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => FeedbackPage()),
+              );
+            },
+          ),
 
           SizedBox(height: 20),
         ],
       ),
+    );
+  }
+
+  Future<void> openPlayStore() async {
+    final Uri url = Uri.parse(
+      "https://play.google.com/store/apps/details?id=com.example.doctor_appointment",
+    );
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception("Could not open Play Store");
+    }
+  }
+
+  void showContactDialog(BuildContext context) {
+    final nameCtrl = TextEditingController();
+    final phoneCtrl = TextEditingController();
+    final emailCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Contact Us"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: nameCtrl,
+                  decoration: const InputDecoration(labelText: "Name"),
+                ),
+                TextField(
+                  controller: phoneCtrl,
+                  decoration: const InputDecoration(labelText: "Phone"),
+                  keyboardType: TextInputType.phone,
+                ),
+                TextField(
+                  controller: emailCtrl,
+                  decoration: const InputDecoration(labelText: "Email"),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Submitted successfully")),
+                );
+              },
+              child: const Text("Submit"),
+            ),
+          ],
+        );
+      },
     );
   }
 

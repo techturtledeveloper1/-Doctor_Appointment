@@ -549,6 +549,17 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     final availabilityId = selectedAvail["availabilityId"];
     final slots = selectedAvail["slots"] ?? [];
 
+    // ✅ SORT BY TIME
+    slots.sort((a, b) {
+      String timeA = a["startTime"] ?? "";
+      String timeB = b["startTime"] ?? "";
+
+      DateTime parsedA = _parseTime(timeA);
+      DateTime parsedB = _parseTime(timeB);
+
+      return parsedA.compareTo(parsedB);
+    });
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -598,8 +609,8 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                 Divider(color: Colors.grey.shade200),
                 const SizedBox(height: 10),
                 Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: List.generate(slots.length, (index) {
                     final slot = slots[index];
 
@@ -658,7 +669,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           vertical: 12,
-                          horizontal: 14,
+                          horizontal: 12,
                         ),
                         decoration: BoxDecoration(
                           color: isBooked
@@ -695,6 +706,18 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
         );
       },
     );
+  }
+
+  DateTime _parseTime(String time) {
+    try {
+      final parts = time.split(":");
+      int hour = int.parse(parts[0]);
+      int minute = int.parse(parts[1]);
+
+      return DateTime(0, 0, 0, hour, minute);
+    } catch (e) {
+      return DateTime(0);
+    }
   }
 
   Widget _buildAlternativeDoctorSlider() {

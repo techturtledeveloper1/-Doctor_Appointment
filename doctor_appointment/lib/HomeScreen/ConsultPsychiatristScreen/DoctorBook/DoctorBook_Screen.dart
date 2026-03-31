@@ -486,8 +486,8 @@ class _DoctorBookAppointmentScreenState
                         selectedConsultType == null ||
                         isLoading)
                     ? null
-                    : _openRazorpay,
-                // : _confirmAndPay,
+                    // : _openRazorpay,
+                    : _confirmAndPay,
                 isLoading: isLoading,
                 text: "Confirm & Pay ₹${consultFees[selectedConsultType!]}",
                 textStyle: const TextStyle(fontSize: 16, color: Colors.white),
@@ -509,6 +509,70 @@ class _DoctorBookAppointmentScreenState
         return Icons.videocam_outlined;
       default:
         return Icons.help_outline;
+    }
+  }
+
+  Future<void> _confirmAndPay() async {
+    if (selectedPayment == null || selectedConsultType == null) return;
+
+    setState(() => isLoading = true);
+
+    try {
+      // ✅ Convert date from "14/9/2025" ➜ "2025-09-14"
+      String formattedDate = _formatDateToYMD(widget.selectedDate);
+
+      // ✅ Get the correct fee based on consultation type
+      int amount = 0;
+      switch (selectedConsultType) {
+        case "chat":
+          amount = widget.doctor["chatFee"] ?? 150;
+          break;
+        case "audio":
+          amount = widget.doctor["audioFee"] ?? 300;
+          break;
+        case "video":
+          amount = widget.doctor["videoFee"] ?? 600;
+          break;
+      }
+
+      Map<String, dynamic> body = {
+        "doctorId": widget.doctor["_id"],
+        "clinicAddressId":
+            widget.doctor["clinicAddressId"] ?? "68bad62466b24b65c0ac9180",
+        "appointmentDate": formattedDate,
+        "appointmentTime": widget.selectedTime,
+        "reason": "Regular health checkup",
+        "payment_type": "online",
+        "payment_method": selectedPayment,
+        "mode": selectedConsultType,
+        "slotId": widget.slotId,
+        "amount": amount,
+      };
+
+      print("📤 Booking Request: $body");
+      print("📤 Slot ID being sent: ${widget.slotId}");
+
+      var response = await ApiService().callBookAppointmentApi(body);
+
+      print("📥 Booking Response: $response");
+
+      // ✅ Check for success (both 200 and 201 are success status codes)
+      if (response != null && response["success"] == true) {
+        print("✅ Appointment booked successfully!");
+        _showPaymentSuccessDialog();
+      } else {
+        print("❌ Booking failed: ${response?["message"]}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response?["message"] ?? "Booking failed")),
+        );
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Something went wrong")));
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 }

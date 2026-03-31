@@ -75,7 +75,7 @@ class ApiService {
     String appointmentId,
     File? selectedFile,
   ) async {
-    var request = http.MultipartRequest('POST', Uri.parse("YOUR_API_URL"));
+    var request = http.MultipartRequest('POST', Uri.parse(" YOUR_API_URL"));
 
     request.fields['appointment_id'] = appointmentId;
 

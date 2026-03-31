@@ -141,17 +141,12 @@ class _ConsultScreenState extends State<ConsultScreen> {
 
     return Scaffold(
       backgroundColor: AppColor.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black87),
-      ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            /// Doctor Info
             CircleAvatar(
               radius: 45,
               // backgroundImage: AssetImage(AppImages.d2),
@@ -541,7 +536,6 @@ class _ConsultScreenState extends State<ConsultScreen> {
     // Navigator.pop(context);
     var cameraStatus = await Permission.camera.request();
     var micStatus = await Permission.microphone.request();
-
     if (cameraStatus.isGranted && micStatus.isGranted) {
       Navigator.push(
         context,
@@ -549,7 +543,6 @@ class _ConsultScreenState extends State<ConsultScreen> {
           builder: (_) => VideoCallPage(
             userId: "patient_1",
             userName: "Pooja",
-
             callId: "appointment_101",
             endTime: widget.appointmentTime.add(const Duration(minutes: 30)),
             // callId:
