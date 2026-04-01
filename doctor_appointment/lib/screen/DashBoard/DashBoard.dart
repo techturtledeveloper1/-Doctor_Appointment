@@ -175,6 +175,7 @@ class _DashBoardNewState extends State<DashBoardNew>
             location: 'Ahmedabad , gujarat',
             image: '',
             appointmentId: '',
+            patientId: '',
           ),
           MedicalStoreListScreen(),
           ProfileScreen(),

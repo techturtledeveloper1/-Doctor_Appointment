@@ -21,6 +21,7 @@ class ConsultScreen extends StatefulWidget {
   final DateTime appointmentTime;
   final String image;
   final String appointmentId;
+  final String patientId;
 
   const ConsultScreen({
     super.key,
@@ -31,6 +32,7 @@ class ConsultScreen extends StatefulWidget {
     required this.appointmentTime,
     required this.image,
     required this.appointmentId,
+    required this.patientId,
   });
 
   @override
@@ -50,7 +52,19 @@ class _ConsultScreenState extends State<ConsultScreen> {
       setState(() {
         selectedFile = File(picked.path);
       });
+
       // uploadPrescription(widget.appointmentId);
+    }
+  }
+
+  Future<void> _pickFromCamera() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.camera);
+
+    if (picked != null) {
+      setState(() {
+        selectedFile = File(picked.path);
+      });
     }
   }
 
@@ -71,27 +85,87 @@ class _ConsultScreenState extends State<ConsultScreen> {
   void showUploadOptions() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: AppColor.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
             children: [
-              ListTile(
-                leading: Icon(Icons.image),
-                title: Text("Upload Image"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickFile();
-                },
+              /// Title
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
-              ListTile(
-                leading: Icon(Icons.picture_as_pdf),
-                title: Text("Upload PDF"),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickPdf();
-                },
+
+              const SizedBox(height: 10),
+
+              Row(
+                children: [
+                  /// Camera
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        _pickFromCamera();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        decoration: BoxDecoration(
+                          color: AppColor.grey.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(Icons.camera_alt, size: 30),
+                            SizedBox(height: 8),
+                            Text("Take Photo"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  /// Gallery
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        // _pickFromGallery();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        decoration: BoxDecoration(
+                          color: AppColor.grey.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(Icons.image, size: 30),
+                            SizedBox(height: 8),
+                            Text("Gallery"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
+
+              const SizedBox(height: 10),
             ],
           ),
         );

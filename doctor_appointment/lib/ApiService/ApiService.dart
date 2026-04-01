@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:doctor_appointment/ReusableWidget/app_string.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert' as JSON;
@@ -72,25 +73,55 @@ class ApiService {
   }
 
   Future<void> uploadPrescription(
-    String appointmentId,
+    BuildContext context,
     File? selectedFile,
+    String appointmentId,
   ) async {
-    var request = http.MultipartRequest('POST', Uri.parse(" YOUR_API_URL"));
-
-    request.fields['appointment_id'] = appointmentId;
-
-    if (selectedFile != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath('prescription', selectedFile!.path),
-      );
+    if (selectedFile == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please select image")));
+      return;
     }
 
-    var response = await request.send();
+    var uri = Uri.parse("${ApiService.baseurl}prescription/create");
 
-    if (response.statusCode == 200) {
-      print("Upload Success");
+    var request = http.MultipartRequest('POST', uri);
+
+    /// ✅ TOKEN IMPORTANT
+    request.headers['Authorization'] = 'Bearer ${AppStrings.token}';
+
+    request.fields['appointmentId'] = appointmentId;
+    request.fields['patientId'] = "PATIENT_ID"; // dynamic mukjo
+
+    /// Optional fields
+    request.fields['notes'] = "";
+    request.fields['followUpDate'] = DateTime.now().toIso8601String();
+
+    /// ❌ medicines remove
+    /// request.fields['medicines'] = jsonEncode([]);
+
+    /// ✅ Correct field name (VERY IMPORTANT)
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'prescriptionImage',
+        selectedFile!.path,
+      ),
+    );
+
+    var response = await request.send();
+    var res = await response.stream.bytesToString();
+
+    print(res);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Uploaded Successfully")));
     } else {
-      print("Upload Failed");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Upload Failed: $res")));
     }
   }
 

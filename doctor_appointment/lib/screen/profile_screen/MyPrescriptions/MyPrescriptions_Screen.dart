@@ -219,11 +219,19 @@ class _MyPrescriptionsScreenState extends State<MyPrescriptionsScreen> {
           final medicines = prescription['medicines'] ?? [];
           final prescriptionId = prescription['_id'] ?? '';
 
-          return Card(
-            shape: RoundedRectangleBorder(
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColor.white,
               borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                ),
+              ],
             ),
-            elevation: 2,
+
             margin: const EdgeInsets.only(bottom: 12),
             child: Padding(
               padding: const EdgeInsets.all(16),

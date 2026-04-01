@@ -1,60 +1,11 @@
+import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
+import 'package:doctor_appointment/ReusableWidget/app_edit_text.dart';
 import 'package:doctor_appointment/screen/profile_screen/Settings/Changedpasswordscreen.dart';
-import 'package:doctor_appointment/screen/profile_screen/Settings/feedback_screen.dart';
 import 'package:doctor_appointment/screen/profile_screen/Settings/web_view.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// class SettingsScreen extends StatelessWidget {
-//   const SettingsScreen({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: AppColor.white,
-//       appBar: AppBar(
-//         title: Text("Settings", style: TextStyle(color: AppColor.colorIntroBG)),
-//         backgroundColor: AppColor.white,
-//         iconTheme: IconThemeData(color: AppColor.colorIntroBG),
-//       ),
-//       body: ListView(
-//         children: [
-//           SwitchListTile(
-//             title: Text("Dark Mode"),
-//             activeColor: AppColor.colorIntroBG,
-//             value: false,
-//             onChanged: (val) {},
-//           ),
-//           ListTile(
-//             leading: Icon(Icons.lock, color: AppColor.colorIntroBG),
-//             title: Text("Change Password"),
-//             trailing: Icon(
-//               Icons.arrow_forward_ios,
-//               size: 16,
-//               color: Colors.grey,
-//             ),
-//             onTap: () {
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(
-//                   builder: (context) => const ChangePasswordScreen(),
-//                 ),
-//               );
-//             },
-//           ),
-//           Divider(),
-//           ListTile(
-//             leading: Icon(Icons.logout, color: Colors.red),
-//             title: Text("Logout", style: TextStyle(color: Colors.red)),
-//             onTap: () {
-//               // TODO: Add your logout logic
-//             },
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -154,16 +105,138 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.feedback,
             title: "Feedback",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => FeedbackPage()),
-              );
+              showFeedbackDialog(context);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (_) => FeedbackPage()),
+              // );
             },
           ),
 
           SizedBox(height: 20),
         ],
       ),
+    );
+  }
+
+  void showFeedbackDialog(BuildContext context) {
+    TextEditingController feedbackCtrl = TextEditingController();
+    int rating = 0;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: AppColor.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: AppColor.colorPrimary,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(5, (index) {
+                          return IconButton(
+                            onPressed: () {
+                              setState(() {
+                                rating = index + 1;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.star,
+                              color: index < rating
+                                  ? Colors.orange
+                                  : Colors.grey.shade300,
+                              size: 30,
+                            ),
+                          );
+                        }),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Text(
+                        "We need your feedback",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.black,
+                        ),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      const Text(
+                        "How would you rate your experience\nwith the app today?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      AppEditText(
+                        controller: feedbackCtrl,
+                        name: "",
+                        maxLines: 5,
+                        minLines: 5,
+                        hint: "Write your note....",
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: AppButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+
+                            Fluttertoast.showToast(
+                              msg: "Feedback submitted successfully ✅",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 14,
+                            );
+                          },
+                          text: "Submit",
+                          textStyle: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -177,52 +250,208 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void showContactDialog(BuildContext context) {
-    final nameCtrl = TextEditingController();
-    final phoneCtrl = TextEditingController();
-    final emailCtrl = TextEditingController();
+  void showContactDialog1(BuildContext context) {
+    String name = "Dr. Chirag Ambaliya";
+    String phone = "9876543210";
+    String email = "doctor@gmail.com";
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("Contact Us"),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  controller: nameCtrl,
-                  decoration: const InputDecoration(labelText: "Name"),
-                ),
-                TextField(
-                  controller: phoneCtrl,
-                  decoration: const InputDecoration(labelText: "Phone"),
-                  keyboardType: TextInputType.phone,
-                ),
-                TextField(
-                  controller: emailCtrl,
-                  decoration: const InputDecoration(labelText: "Email"),
-                ),
-              ],
-            ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Name: $name"),
+              Text("Phone: $phone"),
+              Text("Email: $email"),
+            ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Submitted successfully")),
-                );
-              },
-              child: const Text("Submit"),
+              child: const Text("Close"),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _contactTile({
+    required IconData icon,
+    required String title,
+    required String value,
+    Color color = Colors.blue,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: color,
+            child: Icon(icon, color: Colors.white, size: 18),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showContactDialog(BuildContext context) {
+    String name = "Dr. Chirag Ambaliya";
+    String phone = "9876543210";
+    String email = "doctor@gmail.com";
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// 🔘 Top Handle
+              Container(
+                width: 50,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              CircleAvatar(
+                radius: 35,
+                backgroundColor: Colors.blue.shade100,
+                child: const Icon(Icons.person, size: 35, color: Colors.blue),
+              ),
+
+              const SizedBox(height: 12),
+
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 4),
+
+              const Text("Psychiatrist", style: TextStyle(color: Colors.grey)),
+
+              const SizedBox(height: 20),
+
+              _modernTile(
+                icon: Icons.phone,
+                title: "Call",
+                value: phone,
+                color: Colors.green,
+              ),
+
+              const SizedBox(height: 12),
+
+              _modernTile(
+                icon: Icons.email,
+                title: "Email",
+                value: email,
+                color: Colors.orange,
+              ),
+
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                child: AppButton(
+                  onPressed: () => Navigator.pop(context),
+                  text: "Close",
+                  textStyle: TextStyle(fontSize: 16, color: AppColor.white),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// 🔥 Modern Tile
+  Widget _modernTile({
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: color,
+            child: Icon(icon, color: Colors.white, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

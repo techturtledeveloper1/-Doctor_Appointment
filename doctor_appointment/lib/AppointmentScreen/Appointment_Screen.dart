@@ -632,6 +632,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                                   appt["appointmentDateTime"] ?? DateTime.now(),
                               image: appt["image"] ?? "",
                               appointmentId: '',
+                              patientId: '',
                             ),
                             // builder: (_) => DashBoardNew(2, false, false),
                           ),
