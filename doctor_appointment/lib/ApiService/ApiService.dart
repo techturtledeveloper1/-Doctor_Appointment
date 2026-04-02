@@ -256,8 +256,6 @@ class ApiService {
     return null;
   }
 
-  // ✅ GET DOCTOR DETAILS BY ID
-  // ✅ GET DOCTOR DETAILS BY ID
   Future<dynamic> callGetDoctorById(String doctorId) async {
     var responseData;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -295,8 +293,6 @@ class ApiService {
     return null;
   }
 
-  // ✅ BOOK APPOINTMENT API
-  // ✅ BOOK APPOINTMENT API
   Future<dynamic> callBookAppointmentApi(Map<String, dynamic> body) async {
     var responseData;
     SharedPreferences prefs = await SharedPreferences.getInstance();

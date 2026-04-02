@@ -43,7 +43,7 @@ class _DoctorBookAppointmentScreenState
     "Wallet",
   ];
   late Razorpay _razorpay;
-  static const String razorpayKey = "rzp_test_YourKeyHere";
+  static const String razorpayKey = "rzp_test_SYW7mYi7oDe4ec";
   @override
   void initState() {
     super.initState();
@@ -102,7 +102,6 @@ class _DoctorBookAppointmentScreenState
       await _confirmBookingAfterPayment(response.paymentId!);
     } else {
       print("❌ Payment ID is null");
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Payment verification failed")),
       );
@@ -122,31 +121,40 @@ class _DoctorBookAppointmentScreenState
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    Get.snackbar(
-      "Wallet",
-      "${'External Wallet'}: ${response.walletName}",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColor.colorPrimary,
-    );
+    print("Wallet: ${response.walletName}");
   }
+  // void _handleExternalWallet(ExternalWalletResponse response) {
+  //   Get.snackbar(
+  //     "Wallet",
+  //     "${'External Wallet'}: ${response.walletName}",
+  //     snackPosition: SnackPosition.BOTTOM,
+  //     backgroundColor: AppColor.colorPrimary,
+  //   );
+  // }
 
-  Future<void> _confirmBookingAfterPayment(String paymentId) async {
+  Future<void> _confirmBookingAfterPayment1(String paymentId) async {
     setState(() => isLoading = true);
 
     try {
       String formattedDate = _formatDateToYMD(widget.selectedDate);
 
+      print("📤 SLOT ID: ${widget.slotId}");
+      print("📤 TIME: ${widget.selectedTime}");
+      print("📤 DATE: $formattedDate");
+
       Map<String, dynamic> body = {
         "doctorId": widget.doctor["_id"],
         "clinicAddressId":
             widget.doctor["clinicAddressId"] ?? "68bad62466b24b65c0ac9180",
-        "appointmentDate": formattedDate,
-        "appointmentTime": widget.selectedTime,
+        // "appointmentDate": formattedDate,
+        "appointmentDate": "${formattedDate}T00:00:00.000Z",
+        // "appointmentTime": widget.selectedTime,
+        "appointmentTime": "${widget.selectedTime}:00",
         "reason": "Regular health checkup",
         "payment_type": "online",
         "payment_method": "razorpay",
         "transaction_id": paymentId,
-        "mode": selectedConsultType,
+        "mode": widget.selectedConsultType,
         "slotId": widget.slotId,
         "amount": _getAmount(),
       };
@@ -164,6 +172,50 @@ class _DoctorBookAppointmentScreenState
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Something went wrong")));
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _confirmBookingAfterPayment(String paymentId) async {
+    setState(() => isLoading = true);
+
+    try {
+      String formattedDate = _formatDateToYMD(widget.selectedDate);
+
+      final body = {
+        "doctorId": widget.doctor["_id"],
+        "clinicAddressId": widget.doctor["clinicAddressId"],
+        "appointmentDate": formattedDate, // ✅ FIXED (NO ISO Z)
+        // "appointmentDate": DateTime.parse(
+        //   _formatDateToYMD(widget.selectedDate),
+        // ).toUtc().toIso8601String(),
+        "appointmentTime": widget.selectedTime, // ✅ "10:00"
+        "consult_type": widget.selectedConsultType,
+        "reason": "Regular health checkup",
+        "payment_type": "online",
+        "payment_method": "razorpay",
+        "transaction_id": paymentId,
+        "mode": widget.selectedConsultType,
+        "slotId": widget.slotId, // ✅ CORRECT
+        "amount": _getAmount(),
+      };
+
+      print("📤 FINAL REQUEST: $body");
+
+      var response = await ApiService().callBookAppointmentApi(body);
+
+      print("📥 RESPONSE: $response");
+
+      if (response != null && response["success"] == true) {
+        _showPaymentSuccessDialog();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response?["message"] ?? "Booking failed")),
+        );
+      }
+    } catch (e) {
+      print("❌ ERROR: $e");
     } finally {
       setState(() => isLoading = false);
     }
@@ -268,7 +320,6 @@ class _DoctorBookAppointmentScreenState
         elevation: 0,
         backgroundColor: AppColor.colorPrimary,
         centerTitle: true,
-
         title: Text(
           "Book Appointment",
           style: TextStyle(fontSize: 20, color: AppColor.white),
@@ -481,13 +532,13 @@ class _DoctorBookAppointmentScreenState
             SizedBox(
               width: double.infinity,
               child: AppButton(
-                onPressed:
-                    (selectedPayment == null ||
-                        selectedConsultType == null ||
-                        isLoading)
-                    ? null
-                    // : _openRazorpay,
-                    : _confirmAndPay,
+                onPressed: _openRazorpay,
+                // (selectedPayment == null ||
+                //     selectedConsultType == null ||
+                //     isLoading)
+                // ? null
+                // : _openRazorpay,
+                // : _confirmAndPay,
                 isLoading: isLoading,
                 text: "Confirm & Pay ₹${consultFees[selectedConsultType!]}",
                 textStyle: const TextStyle(fontSize: 16, color: Colors.white),

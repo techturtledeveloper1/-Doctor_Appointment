@@ -632,8 +632,8 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
 
                               setState(() {
                                 _selectedTime = displayTime;
-                                _selectedSlotId = availabilityId;
-
+                                // _selectedSlotId = availabilityId;
+                                _selectedSlotId = slot["slotId"];
                                 if (slot["isBooked"] == true &&
                                     slot["alternativeDoctor"] != null) {
                                   final altDoc = slot["alternativeDoctor"];
