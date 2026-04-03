@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:doctor_appointment/ConsultScreen/Consult_Screen.dart';
+import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
 import 'package:doctor_appointment/HomeScreen/ConsultPsychiatristScreen/ConsultPsychiatrist_Screen.dart';
@@ -34,6 +35,23 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     _timer = Timer.periodic(Duration(seconds: 1), (_) {
       setState(() {});
     });
+  }
+
+  bool _canJoinCall(DateTime appointmentDateTime) {
+    final now = DateTime.now();
+
+    // Allow join 10 minutes before to 30 minutes after
+    final startTime = appointmentDateTime.subtract(Duration(minutes: 10));
+    final endTime = appointmentDateTime.add(Duration(minutes: 30));
+
+    return now.isAfter(startTime) && now.isBefore(endTime);
+  }
+
+  bool _isExpired(DateTime appointmentDateTime) {
+    final now = DateTime.now();
+    final endTime = appointmentDateTime.add(Duration(minutes: 30));
+
+    return now.isAfter(endTime);
   }
 
   Future<void> _loadAppointmentsFromAPI() async {
@@ -88,7 +106,14 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                 appointment["appointmentDate"],
                 appointment["appointmentTime"],
               ),
-              "rawAppointment": appointment,
+              // "rawAppointment": appointment,
+              "rawAppointment": {
+                ...appointment,
+                "appointmentDateTime": _combineDateTime(
+                  appointment["appointmentDate"],
+                  appointment["appointmentTime"],
+                ),
+              },
             };
             appointmentsForDate.add(processedAppointment);
           }
@@ -211,7 +236,12 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     required VoidCallback onReschedule,
     required VoidCallback onCancel,
     required Map<String, dynamic> rawAppointment,
+    required Map<String, dynamic> appt,
   }) {
+    DateTime dt = appt["appointmentDateTime"];
+    bool canJoin = _canJoinCall(dt);
+    bool isExpired = _isExpired(dt);
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: EdgeInsets.all(12),
@@ -240,6 +270,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                     : image.startsWith("assets/")
                     ? AssetImage(image)
                     : AssetImage("assets/images/default_doctor.png"),
+                // backgroundImage: NetworkImage(appt["image"]),
               ),
               SizedBox(width: 12),
               Expanded(
@@ -293,19 +324,29 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                 ),
               ),
               if (status == "Confirmed")
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.colorIntroBG,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  onPressed: onJoin,
-                  child: Text(
-                    "Join Call",
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
+                AppButton(
+                  // onPressed: onJoin,
+                  onPressed: canJoin
+                      ? onJoin
+                      : () {
+                          if (isExpired) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Appointment time finished"),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "You can join only at appointment time",
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                  text: "Join Call",
+                  textStyle: TextStyle(color: Colors.white, fontSize: 12),
                 ),
             ],
           ),
@@ -610,6 +651,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   itemCount: selectedAppointments.length,
                   itemBuilder: (context, index) {
                     var appt = selectedAppointments[index];
+
                     return appointmentCard(
                       doctorName: appt["doctor"] ?? "Doctor",
                       specialty: appt["specialty"] ?? "Specialist",
@@ -655,6 +697,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                         );
                       },
                       rawAppointment: appt["rawAppointment"] ?? {},
+                      appt: {},
                     );
                   },
                 ),

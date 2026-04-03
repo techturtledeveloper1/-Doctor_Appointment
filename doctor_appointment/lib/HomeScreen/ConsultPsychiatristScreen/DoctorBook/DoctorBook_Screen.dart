@@ -36,12 +36,23 @@ class _DoctorBookAppointmentScreenState
   String? selectedPayment;
   bool isLoading = false;
 
+  final Map<String, String> paymentMapping = {
+    "UPI": "UPI",
+    "Credit / Debit Card": "Credit/Debit Card",
+    "Net Banking": "Net Banking",
+    "Wallet": "Wallet",
+  };
   final List<String> paymentMethods = [
     "UPI",
     "Credit / Debit Card",
     "Net Banking",
     "Wallet",
   ];
+  final Map<String, String> modeMapping = {
+    "chat": "chat",
+    "audio": "phone",
+    "video": "video",
+  };
   late Razorpay _razorpay;
   static const String razorpayKey = "rzp_test_SYW7mYi7oDe4ec";
   @override
@@ -182,27 +193,28 @@ class _DoctorBookAppointmentScreenState
 
     try {
       String formattedDate = _formatDateToYMD(widget.selectedDate);
-
+      String cleanTime = widget.selectedTime.split(" - ").first;
+      String paymentMethod = paymentMapping[selectedPayment] ?? "UPI";
       final body = {
         "doctorId": widget.doctor["_id"],
         "clinicAddressId": widget.doctor["clinicAddressId"],
         "appointmentDate": formattedDate, // ✅ FIXED (NO ISO Z)
-        // "appointmentDate": DateTime.parse(
-        //   _formatDateToYMD(widget.selectedDate),
-        // ).toUtc().toIso8601String(),
-        "appointmentTime": widget.selectedTime, // ✅ "10:00"
+        "appointmentTime": cleanTime,
         "consult_type": widget.selectedConsultType,
         "reason": "Regular health checkup",
         "payment_type": "online",
-        "payment_method": "razorpay",
+        "payment_method": paymentMethod,
         "transaction_id": paymentId,
-        "mode": widget.selectedConsultType,
+        "mode": modeMapping[selectedConsultType] ?? "chat",
         "slotId": widget.slotId, // ✅ CORRECT
         "amount": _getAmount(),
       };
 
       print("📤 FINAL REQUEST: $body");
-
+      print("DoctorId: ${widget.doctor["_id"]}");
+      print("SlotId: ${widget.slotId}");
+      print("Time: $cleanTime");
+      print("Date: $formattedDate");
       var response = await ApiService().callBookAppointmentApi(body);
 
       print("📥 RESPONSE: $response");
@@ -244,6 +256,7 @@ class _DoctorBookAppointmentScreenState
             const SizedBox(height: 20),
             AppButton(
               onPressed: () {
+                Navigator.pop(context);
                 Navigator.pop(context);
                 // Navigator.pushReplacement(
                 //   context,
@@ -532,7 +545,8 @@ class _DoctorBookAppointmentScreenState
             SizedBox(
               width: double.infinity,
               child: AppButton(
-                onPressed: _openRazorpay,
+                onPressed: (selectedPayment == null) ? null : _openRazorpay,
+                // onPressed: _openRazorpay,
                 // (selectedPayment == null ||
                 //     selectedConsultType == null ||
                 //     isLoading)
