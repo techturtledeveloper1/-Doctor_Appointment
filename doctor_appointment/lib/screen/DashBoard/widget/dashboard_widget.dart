@@ -147,8 +147,8 @@ class _DashBoardWidgetState extends State<DashBoardWidget> {
                       crossAxisSpacing: 12,
                       childAspectRatio: 2.5,
                       children: [
-                        if (homeData!["topSpecializations"] != null &&
-                            homeData!["topSpecializations"].length > 0)
+                        if (homeData?["topSpecializations"] != null &&
+                            homeData?["topSpecializations"].length > 0)
                           _serviceCard(
                             AppImages.psychiatrist,
 
