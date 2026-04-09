@@ -431,7 +431,6 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              /// 🔹 HEADER (ONLY ONCE)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -461,7 +460,6 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               Divider(color: Colors.grey.shade200),
               const SizedBox(height: 10),
 
-              /// 🔹 DATE LIST
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -572,135 +570,139 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
           width: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Select Time Slot",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Icon(
-                          Icons.close,
-                          color: AppColor.colorPrimary,
-                          size: 20,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Select Time Slot",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 5),
-                Divider(color: Colors.grey.shade200),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: List.generate(slots.length, (index) {
-                    final slot = slots[index];
-
-                    final start = slot["startTime"];
-                    final end = slot["endTime"];
-                    final isBooked = slot["isBooked"];
-
-                    final displayTime = end != null && end != ""
-                        ? "$start - $end"
-                        : start;
-
-                    final isSelected = _selectedTime == displayTime;
-
-                    return GestureDetector(
-                      onTap: isBooked
-                          ? null
-                          : () {
-                              Navigator.pop(context);
-
-                              setState(() {
-                                _selectedTime = displayTime;
-                                _selectedSlotId = availabilityId;
-                                // _selectedSlotId = slot["slotId"];
-                                if (slot["isBooked"] == true &&
-                                    slot["alternativeDoctor"] != null) {
-                                  final altDoc = slot["alternativeDoctor"];
-                                  showBookedMessage = true;
-
-                                  alternativeDoctors = [
-                                    {
-                                      "_id": altDoc["_id"] ?? "",
-                                      "name":
-                                          altDoc["fullName"] ??
-                                          altDoc["name"] ??
-                                          "Doctor",
-                                      "photo": altDoc["profile_photo"] ?? "",
-                                      "avgRating": altDoc["avgRating"] ?? 0,
-                                      "totalReviews":
-                                          altDoc["totalReviews"] ?? 0,
-                                      "specialization":
-                                          doctorDetail?["speciality"] ??
-                                          "Specialist",
-                                      "availabilities":
-                                          altDoc["availabilities"] ?? [],
-                                      "chatFee": altDoc["chatFee"] ?? 200,
-                                      "audioFee": altDoc["voiceCallFee"] ?? 300,
-                                      "videoFee": altDoc["videoCallFee"] ?? 600,
-                                    },
-                                  ];
-                                } else {
-                                  showBookedMessage = false;
-                                  alternativeDoctors.clear();
-                                }
-                              });
-                            },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isBooked
-                              ? Colors.grey.shade200
-                              : isSelected
-                              ? AppColor.colorIntroBG
-                              : Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColor.colorIntroBG
-                                : Colors.transparent,
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Icon(
+                            Icons.close,
+                            color: AppColor.colorPrimary,
+                            size: 20,
                           ),
                         ),
-                        child: Text(
-                          displayTime,
-                          style: TextStyle(
-                            fontSize: 14,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Divider(color: Colors.grey.shade200),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(slots.length, (index) {
+                      final slot = slots[index];
+
+                      final start = slot["startTime"];
+                      final end = slot["endTime"];
+                      final isBooked = slot["isBooked"];
+
+                      final displayTime = end != null && end != ""
+                          ? "$start - $end"
+                          : start;
+
+                      final isSelected = _selectedTime == displayTime;
+
+                      return GestureDetector(
+                        onTap: isBooked
+                            ? null
+                            : () {
+                                Navigator.pop(context);
+
+                                setState(() {
+                                  _selectedTime = displayTime;
+                                  _selectedSlotId = availabilityId;
+                                  // _selectedSlotId = slot["slotId"];
+                                  if (slot["isBooked"] == true &&
+                                      slot["alternativeDoctor"] != null) {
+                                    final altDoc = slot["alternativeDoctor"];
+                                    showBookedMessage = true;
+
+                                    alternativeDoctors = [
+                                      {
+                                        "_id": altDoc["_id"] ?? "",
+                                        "name":
+                                            altDoc["fullName"] ??
+                                            altDoc["name"] ??
+                                            "Doctor",
+                                        "photo": altDoc["profile_photo"] ?? "",
+                                        "avgRating": altDoc["avgRating"] ?? 0,
+                                        "totalReviews":
+                                            altDoc["totalReviews"] ?? 0,
+                                        "specialization":
+                                            doctorDetail?["speciality"] ??
+                                            "Specialist",
+                                        "availabilities":
+                                            altDoc["availabilities"] ?? [],
+                                        "chatFee": altDoc["chatFee"] ?? 200,
+                                        "audioFee":
+                                            altDoc["voiceCallFee"] ?? 300,
+                                        "videoFee":
+                                            altDoc["videoCallFee"] ?? 600,
+                                      },
+                                    ];
+                                  } else {
+                                    showBookedMessage = false;
+                                    alternativeDoctors.clear();
+                                  }
+                                });
+                              },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 12,
+                          ),
+                          decoration: BoxDecoration(
                             color: isBooked
-                                ? Colors.grey
+                                ? Colors.grey.shade200
                                 : isSelected
-                                ? Colors.white
-                                : Colors.black,
-                            fontWeight: FontWeight.w500,
+                                ? AppColor.colorIntroBG
+                                : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColor.colorIntroBG
+                                  : Colors.transparent,
+                            ),
+                          ),
+                          child: Text(
+                            displayTime,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isBooked
+                                  ? Colors.grey
+                                  : isSelected
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-                ),
-              ],
+                      );
+                    }),
+                  ),
+                ],
+              ),
             ),
           ),
         );

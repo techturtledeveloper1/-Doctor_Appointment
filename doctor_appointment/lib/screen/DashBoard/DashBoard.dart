@@ -5,6 +5,8 @@ import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:doctor_appointment/AppointmentScreen/Appointment_Screen.dart';
 import 'package:doctor_appointment/ConsultScreen/Consult_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ConsultPsychiatristScreen/ConsultPsychiatrist_Screen.dart';
+import 'package:doctor_appointment/Notification/notification_listener.dart';
+import 'package:doctor_appointment/Notification/notification_services.dart';
 import 'package:doctor_appointment/ReusableWidget/app_dialog.dart';
 import 'package:doctor_appointment/screen/DashBoard/widget/dashboard_widget.dart';
 import 'package:doctor_appointment/HomeScreen/OrderMedicineScreen/MedicineCart_Screen.dart';
@@ -75,12 +77,26 @@ class _DashBoardNewState extends State<DashBoardNew>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this as WidgetsBindingObserver);
+
     SystemChannels.textInput.invokeMethod('TextInput.hide');
 
-    tabIndex = widget.tabIndex.clamp(0, 4);
+    tabIndex = widget.tabIndex.clamp(0, 3);
     drawerIndex = tabIndex;
     pageController = PageController(initialPage: tabIndex);
     loadUserData();
+    _initNotifications();
+  }
+
+  Future<void> _initNotifications() async {
+    await NotificationService().init();
+
+    // Start listening to appointments
+    // Get doctor ID from SharedPreferences or Auth service
+    final prefs = await SharedPreferences.getInstance();
+    final doctorId = prefs.getString('doctorId') ?? 'doctor_1';
+
+    AppointmentNotificationListener().startListening(doctorId, context);
   }
 
   Future<void> loadUserData() async {
@@ -91,6 +107,13 @@ class _DashBoardNewState extends State<DashBoardNew>
       email = prefs.getString("email") ?? "";
       profileImage = prefs.getString("profileImage") ?? "";
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this as WidgetsBindingObserver);
+    AppointmentNotificationListener().stopListening();
+    super.dispose();
   }
 
   AppBar getAppBar() {
@@ -114,8 +137,6 @@ class _DashBoardNewState extends State<DashBoardNew>
             : tabIndex == 1
             ? "Appointments"
             : tabIndex == 2
-            ? "Consult"
-            : tabIndex == 3
             ? "Order Medicines"
             : "Profile",
         style: TextStyle(color: AppColor.colorPrimary),
@@ -167,16 +188,16 @@ class _DashBoardNewState extends State<DashBoardNew>
         children: [
           DashBoardWidget(),
           AppointmentCalendarScreen(),
-          ConsultScreen(
-            doctorName: 'Dr. Priya Sharma',
-            specialty: 'Cardiologist',
-            appointmentTime: DateTime.parse("2025-09-15 10:30:00"),
-            hospital: 'Mercy Hospital',
-            location: 'Ahmedabad , gujarat',
-            image: '',
-            appointmentId: '',
-            patientId: '',
-          ),
+          // ConsultScreen(
+          //   doctorName: 'Dr. Priya Sharma',
+          //   specialty: 'Cardiologist',
+          //   appointmentTime: DateTime.parse("2025-09-15 10:30:00"),
+          //   hospital: 'Mercy Hospital',
+          //   location: 'Ahmedabad , gujarat',
+          //   image: '',
+          //   appointmentId: '',
+          //   patientId: '',
+          // ),
           MedicalStoreListScreen(),
           ProfileScreen(),
         ],
@@ -451,15 +472,15 @@ class _DashBoardNewState extends State<DashBoardNew>
             color: AppColor.white,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(15),
-          child: SvgPicture.asset(
-            AppImages.support_svg,
-            height: 20,
-            width: 20,
-            color: AppColor.white,
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.all(15),
+        //   child: SvgPicture.asset(
+        //     AppImages.support_svg,
+        //     height: 20,
+        //     width: 20,
+        //     color: AppColor.white,
+        //   ),
+        // ),
         Padding(
           padding: const EdgeInsets.all(15),
           child: SvgPicture.asset(
@@ -492,12 +513,12 @@ class _DashBoardNewState extends State<DashBoardNew>
           width: 24,
           color: AppColor.colorPrimary,
         ),
-        SvgPicture.asset(
-          AppImages.support_svg,
-          height: 24,
-          width: 24,
-          color: AppColor.colorPrimary,
-        ),
+        // SvgPicture.asset(
+        //   AppImages.support_svg,
+        //   height: 24,
+        //   width: 24,
+        //   color: AppColor.colorPrimary,
+        // ),
         SvgPicture.asset(
           AppImages.medicine_svg,
           height: 24,
