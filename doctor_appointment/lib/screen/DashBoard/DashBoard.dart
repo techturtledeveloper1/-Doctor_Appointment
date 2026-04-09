@@ -77,7 +77,6 @@ class _DashBoardNewState extends State<DashBoardNew>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this as WidgetsBindingObserver);
 
     SystemChannels.textInput.invokeMethod('TextInput.hide');
 
@@ -96,7 +95,7 @@ class _DashBoardNewState extends State<DashBoardNew>
     final prefs = await SharedPreferences.getInstance();
     final doctorId = prefs.getString('doctorId') ?? 'doctor_1';
 
-    AppointmentNotificationListener().startListening(doctorId, context);
+    // AppointmentNotificationListener().startListening(doctorId, context);
   }
 
   Future<void> loadUserData() async {
@@ -112,7 +111,7 @@ class _DashBoardNewState extends State<DashBoardNew>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this as WidgetsBindingObserver);
-    AppointmentNotificationListener().stopListening();
+    // AppointmentNotificationListener().stopListening();
     super.dispose();
   }
 

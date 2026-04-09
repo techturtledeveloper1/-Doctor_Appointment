@@ -24,6 +24,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
   Timer? _timer;
   bool _isLoading = true;
   String _errorMessage = '';
+  bool _isActionLoading = false;
 
   Map<String, List<Map<String, dynamic>>> appointmentsByDate = {};
 
@@ -337,6 +338,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     required String status,
     required String type,
     required String image,
+
     required VoidCallback onJoin,
     required VoidCallback onReschedule,
     required VoidCallback onCancel,
@@ -402,7 +404,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   ],
                 ),
               ),
-              if (status == "Confirmed")
+              if (status == "Confirmed" && !_isActionLoading)
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColor.colorIntroBG,
@@ -442,7 +444,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
               Row(
                 children: [
                   TextButton(
-                    onPressed: onReschedule,
+                    // onPressed: onReschedule,
+                    onPressed: _isActionLoading ? null : onReschedule,
                     child: Text(
                       "Reschedule",
                       style: TextStyle(color: Colors.blue, fontSize: 12),
@@ -450,7 +453,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   ),
                   SizedBox(width: 8),
                   TextButton(
-                    onPressed: onCancel,
+                    // onPressed: onCancel,
+                    onPressed: _isActionLoading ? null : onCancel,
                     child: Text(
                       "Cancel",
                       style: TextStyle(color: Colors.red, fontSize: 12),
@@ -711,8 +715,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                     DateTime appointmentDateTime =
                         appt["appointmentDateTime"] ?? DateTime.now();
 
-                    print("🔍 Opening appointment: ${appt["doctor"]}");
-                    print("📅 Appointment DateTime: $appointmentDateTime");
+                    // print("🔍 Opening appointment: ${appt["doctor"]}");
+                    // print("📅 Appointment DateTime: $appointmentDateTime");
 
                     return appointmentCard(
                       doctorName: appt["doctor"] ?? "Doctor",
@@ -741,22 +745,24 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                           ),
                         );
                       },
-                      onReschedule: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Reschedule functionality coming soon",
-                            ),
-                          ),
-                        );
-                      },
-                      onCancel: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Cancel functionality coming soon"),
-                          ),
-                        );
-                      },
+                      // onReschedule: () {
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //     SnackBar(
+                      //       content: Text(
+                      //         "Reschedule functionality coming soon",
+                      //       ),
+                      //     ),
+                      //   );
+                      // },
+                      // onCancel: () {
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //     SnackBar(
+                      //       content: Text("Cancel functionality coming soon"),
+                      //     ),
+                      //   );
+                      // },
+                      onReschedule: () => _rescheduleAppointment(appt),
+                      onCancel: () => _cancelAppointment(appt),
                       rawAppointment: appt["rawAppointment"] ?? {},
                     );
                   },
@@ -766,6 +772,319 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _cancelAppointment(Map<String, dynamic> appointment) async {
+    // Show confirmation dialog
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Expanded(
+              child: Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.red,
+                size: 28,
+              ),
+            ),
+            SizedBox(width: 10),
+            Expanded(child: Text("Cancel Appointment")),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Are you sure you want to cancel this appointment?",
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "👨‍⚕️ ${appointment["doctor"]}",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  SizedBox(height: 5),
+                  Text("📅 ${appointment["time"]}"),
+                  Text("🏥 ${appointment["hospital"]}"),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "This action cannot be undone.",
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("No, Keep It", style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text("Yes, Cancel", style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // Show loading
+    setState(() => _isActionLoading = true);
+
+    try {
+      // Call API to cancel appointment
+      final response = await ApiService().cancelAppointment(appointment["id"]);
+
+      print("Cancel Response: $response");
+
+      if (response["success"] == true) {
+        // Remove from local list
+        setState(() {
+          String dateKey =
+              appointment["rawDate"] ??
+              DateFormat('yyyy-MM-dd').format(_selectedDay!);
+          if (appointmentsByDate.containsKey(dateKey)) {
+            appointmentsByDate[dateKey]!.removeWhere(
+              (item) =>
+                  item["id"] == appointment["id"] ||
+                  item["_id"] == appointment["id"],
+            );
+            if (appointmentsByDate[dateKey]!.isEmpty) {
+              appointmentsByDate.remove(dateKey);
+            }
+          }
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  response["message"] ?? "Appointment cancelled successfully",
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        throw Exception(response["message"] ?? "Failed to cancel");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error cancelling appointment: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => _isActionLoading = false);
+    }
+  }
+
+  Future<void> _rescheduleAppointment(Map<String, dynamic> appointment) async {
+    // Select new date
+    DateTime? newDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 90)),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColor.colorIntroBG,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (newDate == null) return;
+
+    // Select new time
+    TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColor.colorIntroBG,
+              onPrimary: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (newTime == null) return;
+
+    // Format date as "YYYY-MM-DD"
+    String formattedDate = DateFormat('yyyy-MM-dd').format(newDate);
+
+    // Format time as "HH:MM" (24-hour format)
+    String formattedTime =
+        "${newTime.hour.toString().padLeft(2, '0')}:${newTime.minute.toString().padLeft(2, '0')}";
+
+    // Show confirmation dialog
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text("Reschedule Appointment"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Are you sure you want to reschedule this appointment?"),
+            SizedBox(height: 10),
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("👨‍⚕️ ${appointment["doctor"]}"),
+                  SizedBox(height: 5),
+                  Text("📅 From: ${appointment["time"]}"),
+                  Text(
+                    "📅 To: ${DateFormat('dd MMM, hh:mm a').format(DateTime(newDate.year, newDate.month, newDate.day, newTime.hour, newTime.minute))}",
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColor.colorIntroBG,
+            ),
+            child: Text("Confirm Reschedule"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // Show loading
+    setState(() => _isActionLoading = true);
+
+    try {
+      // Call API to reschedule appointment
+      final response = await ApiService().rescheduleAppointmentApi(
+        appointmentId: appointment["id"],
+        newDate: formattedDate,
+        newTime: formattedTime,
+      );
+
+      print("Reschedule Response: $response");
+
+      if (response["success"] == true) {
+        // Update local data
+        setState(() {
+          // Remove from old date
+          String oldDateKey = DateFormat('yyyy-MM-dd').format(_selectedDay!);
+          if (appointmentsByDate.containsKey(oldDateKey)) {
+            appointmentsByDate[oldDateKey]!.removeWhere(
+              (item) => item["id"] == appointment["id"],
+            );
+            if (appointmentsByDate[oldDateKey]!.isEmpty) {
+              appointmentsByDate.remove(oldDateKey);
+            }
+          }
+
+          // Add to new date
+          String newDateKey = DateFormat('yyyy-MM-dd').format(newDate);
+          Map<String, dynamic> updatedAppointment = Map.from(appointment);
+          updatedAppointment["time"] = _formatTime(formattedTime);
+          updatedAppointment["rawTime"] = formattedTime;
+          updatedAppointment["rawDate"] = formattedDate;
+          updatedAppointment["appointmentDateTime"] = DateTime(
+            newDate.year,
+            newDate.month,
+            newDate.day,
+            newTime.hour,
+            newTime.minute,
+          );
+
+          if (appointmentsByDate.containsKey(newDateKey)) {
+            appointmentsByDate[newDateKey]!.add(updatedAppointment);
+          } else {
+            appointmentsByDate[newDateKey] = [updatedAppointment];
+          }
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.calendar_today, color: Colors.white),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    response["message"] ??
+                        "Appointment rescheduled to ${DateFormat('dd MMM, hh:mm a').format(DateTime(newDate.year, newDate.month, newDate.day, newTime.hour, newTime.minute))}",
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else {
+        throw Exception(response["message"] ?? "Failed to reschedule");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error rescheduling: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => _isActionLoading = false);
+    }
   }
 
   @override

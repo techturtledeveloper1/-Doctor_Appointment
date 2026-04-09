@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/Chat_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/VideoCall_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/VoiceCall_Screen.dart';
+import 'package:doctor_appointment/Notification/call_notification.dart';
 import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
@@ -53,6 +54,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
   Timer? _timer;
   Duration _timeLeft = Duration.zero;
   File? selectedFile;
+  PatientCallListener? _callListener;
 
   @override
   void initState() {
@@ -62,6 +64,12 @@ class _ConsultScreenState extends State<ConsultScreen> {
       _updateTimeLeft();
     });
 
+    // Start listening for incoming calls
+    _callListener = PatientCallListener();
+    _callListener!.startListening(widget.patientId, context);
+
+    print("📅 ConsultScreen Initialized:");
+    print("Patient ID for call listening: ${widget.patientId}");
     // Debug prints
     print("📅 ConsultScreen Initialized:");
     print("Doctor: ${widget.doctorName}");
@@ -110,6 +118,8 @@ class _ConsultScreenState extends State<ConsultScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _callListener?.stopListening();
+
     super.dispose();
   }
 

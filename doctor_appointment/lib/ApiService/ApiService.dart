@@ -524,6 +524,319 @@ class ApiService {
     }
   }
 
+  // Add these methods to your existing ApiService class
+  // ==================== CANCEL APPOINTMENT API ====================
+  Future<Map<String, dynamic>> cancelAppointment(String appointmentId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? myToken = prefs.getString("token");
+
+      if (myToken == null) {
+        print("❌ Token not found!");
+        return {"success": false, "message": "Token not found"};
+      }
+
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $myToken',
+      };
+
+      // Prepare request body
+      Map<String, dynamic> requestBody = {"appointmentId": appointmentId};
+
+      print("📤 Cancel Appointment API Call");
+      print("URL: ${baseurl}appointment/cancel-appointment");
+      print("Request Body: $requestBody");
+
+      http.Response response = await http.post(
+        Uri.parse("${baseurl}appointment/cancel-appointment"),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      print("📥 Cancel Appointment Response: ${response.body}");
+      print("Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonDecode(response.body);
+      } else {
+        return {
+          "success": false,
+          "message":
+              "Failed to cancel appointment. Status: ${response.statusCode}",
+        };
+      }
+    } catch (e) {
+      print("❌ Error in cancelAppointment: $e");
+      return {"success": false, "message": e.toString()};
+    }
+  }
+
+  // ==================== RESCHEDULE APPOINTMENT API ====================
+  Future<Map<String, dynamic>> rescheduleAppointmentApi({
+    required String appointmentId,
+    required String newDate, // Format: "2025-12-17"
+    required String newTime, // Format: "10:00"
+  }) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? myToken = prefs.getString("token");
+
+      if (myToken == null) {
+        print("❌ Token not found!");
+        return {"success": false, "message": "Token not found"};
+      }
+
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $myToken',
+      };
+
+      // Prepare request body
+      Map<String, dynamic> requestBody = {
+        "appointmentId": appointmentId,
+        "newDate": newDate,
+        "newTime": newTime,
+      };
+
+      print("📤 Reschedule Appointment API Call");
+      print("URL: ${baseurl}appointment/reschedule-appointment");
+      print("Request Body: $requestBody");
+
+      http.Response response = await http.post(
+        Uri.parse("${baseurl}appointment/reschedule-appointment"),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      print("📥 Reschedule Appointment Response: ${response.body}");
+      print("Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonDecode(response.body);
+      } else {
+        return {
+          "success": false,
+          "message":
+              "Failed to reschedule appointment. Status: ${response.statusCode}",
+        };
+      }
+    } catch (e) {
+      print("❌ Error in rescheduleAppointment: $e");
+      return {"success": false, "message": e.toString()};
+    }
+  }
+
+  // Alternative: If your API uses PUT method
+  Future<Map<String, dynamic>> rescheduleAppointmentPut({
+    required String appointmentId,
+    required String newDate,
+    required String newTime,
+  }) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? myToken = prefs.getString("token");
+
+      if (myToken == null) {
+        print("❌ Token not found!");
+        return {"success": false, "message": "Token not found"};
+      }
+
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $myToken',
+      };
+
+      Map<String, dynamic> requestBody = {
+        "appointmentId": appointmentId,
+        "newDate": newDate,
+        "newTime": newTime,
+      };
+
+      print("📤 Reschedule Appointment (PUT) API Call");
+      print("URL: ${baseurl}appointment/reschedule-appointment");
+      print("Request Body: $requestBody");
+
+      http.Response response = await http.put(
+        Uri.parse("${baseurl}appointment/reschedule-appointment"),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      print("📥 Reschedule Appointment Response: ${response.body}");
+      print("Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonDecode(response.body);
+      } else {
+        return {
+          "success": false,
+          "message":
+              "Failed to reschedule appointment. Status: ${response.statusCode}",
+        };
+      }
+    } catch (e) {
+      print("❌ Error in rescheduleAppointmentPut: $e");
+      return {"success": false, "message": e.toString()};
+    }
+  }
+
+  // ==================== CANCEL APPOINTMENT API ====================
+  // Future<Map<String, dynamic>> cancelAppointment(String appointmentId) async {
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? myToken = prefs.getString("token");
+  //
+  //     if (myToken == null) {
+  //       print("❌ Token not found!");
+  //       return {"success": false, "message": "Token not found"};
+  //     }
+  //
+  //     Map<String, String> headers = {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer $myToken',
+  //     };
+  //
+  //     // Prepare request body
+  //     Map<String, dynamic> requestBody = {"appointmentId": appointmentId};
+  //
+  //     print("📤 Cancel Appointment API Call");
+  //     print("URL: ${baseurl}appointment/cancel-appointment");
+  //     print("Request Body: $requestBody");
+  //
+  //     http.Response response = await http.post(
+  //       Uri.parse("${baseurl}appointment/cancel-appointment"),
+  //       headers: headers,
+  //       body: jsonEncode(requestBody),
+  //     );
+  //
+  //     print("📥 Cancel Appointment Response: ${response.body}");
+  //     print("Status Code: ${response.statusCode}");
+  //
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       return jsonDecode(response.body);
+  //     } else {
+  //       return {
+  //         "success": false,
+  //         "message":
+  //             "Failed to cancel appointment. Status: ${response.statusCode}",
+  //       };
+  //     }
+  //   } catch (e) {
+  //     print("❌ Error in cancelAppointment: $e");
+  //     return {"success": false, "message": e.toString()};
+  //   }
+  // }
+  //
+  // // ==================== RESCHEDULE APPOINTMENT API ====================
+  // Future<Map<String, dynamic>> rescheduleAppointment({
+  //   required String appointmentId,
+  //   required String newDate, // Format: "2025-12-17"
+  //   required String newTime, // Format: "10:00"
+  // }) async {
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? myToken = prefs.getString("token");
+  //
+  //     if (myToken == null) {
+  //       print("❌ Token not found!");
+  //       return {"success": false, "message": "Token not found"};
+  //     }
+  //
+  //     Map<String, String> headers = {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer $myToken',
+  //     };
+  //
+  //     // Prepare request body
+  //     Map<String, dynamic> requestBody = {
+  //       "appointmentId": appointmentId,
+  //       "newDate": newDate, // Format: "2025-12-17"
+  //       "newTime": newTime, // Format: "10:00"
+  //     };
+  //
+  //     print("📤 Reschedule Appointment API Call");
+  //     print("URL: ${baseurl}appointment/reschedule-appointment");
+  //     print("Request Body: $requestBody");
+  //
+  //     http.Response response = await http.post(
+  //       Uri.parse("${baseurl}appointment/reschedule-appointment"),
+  //       headers: headers,
+  //       body: jsonEncode(requestBody),
+  //     );
+  //
+  //     print("📥 Reschedule Appointment Response: ${response.body}");
+  //     print("Status Code: ${response.statusCode}");
+  //
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       return jsonDecode(response.body);
+  //     } else {
+  //       return {
+  //         "success": false,
+  //         "message":
+  //             "Failed to reschedule appointment. Status: ${response.statusCode}",
+  //       };
+  //     }
+  //   } catch (e) {
+  //     print("❌ Error in rescheduleAppointment: $e");
+  //     return {"success": false, "message": e.toString()};
+  //   }
+  // }
+  //
+  // // Alternative: If your API uses PUT method
+  // Future<Map<String, dynamic>> rescheduleAppointmentPut({
+  //   required String appointmentId,
+  //   required String newDate,
+  //   required String newTime,
+  // }) async {
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? myToken = prefs.getString("token");
+  //
+  //     if (myToken == null) {
+  //       print("❌ Token not found!");
+  //       return {"success": false, "message": "Token not found"};
+  //     }
+  //
+  //     Map<String, String> headers = {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer $myToken',
+  //     };
+  //
+  //     Map<String, dynamic> requestBody = {
+  //       "appointmentId": appointmentId,
+  //       "newDate": newDate,
+  //       "newTime": newTime,
+  //     };
+  //
+  //     print("📤 Reschedule Appointment (PUT) API Call");
+  //     print("URL: ${baseurl}appointment/reschedule-appointment");
+  //     print("Request Body: $requestBody");
+  //
+  //     http.Response response = await http.put(
+  //       Uri.parse("${baseurl}appointment/reschedule-appointment"),
+  //       headers: headers,
+  //       body: jsonEncode(requestBody),
+  //     );
+  //
+  //     print("📥 Reschedule Appointment Response: ${response.body}");
+  //     print("Status Code: ${response.statusCode}");
+  //
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       return jsonDecode(response.body);
+  //     } else {
+  //       return {
+  //         "success": false,
+  //         "message":
+  //             "Failed to reschedule appointment. Status: ${response.statusCode}",
+  //       };
+  //     }
+  //   } catch (e) {
+  //     print("❌ Error in rescheduleAppointmentPut: $e");
+  //     return {"success": false, "message": e.toString()};
+  //   }
+  // }
+
   Future<Map<String, dynamic>> callChangedPassword(
     Map<String, dynamic> body,
     String token,
