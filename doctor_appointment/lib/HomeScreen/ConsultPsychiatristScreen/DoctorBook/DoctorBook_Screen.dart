@@ -258,6 +258,7 @@ class _DoctorBookAppointmentScreenState
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
+                Navigator.pop(context);
                 // Navigator.pushReplacement(
                 //   context,
                 //   MaterialPageRoute(
