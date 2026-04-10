@@ -33,6 +33,7 @@ class ConsultScreen extends StatefulWidget {
   final String image;
   final String appointmentId;
   final String patientId;
+  final String status;
 
   const ConsultScreen({
     super.key,
@@ -44,6 +45,7 @@ class ConsultScreen extends StatefulWidget {
     required this.image,
     required this.appointmentId,
     required this.patientId,
+    required this.status,
   });
 
   @override
@@ -85,6 +87,10 @@ class _ConsultScreenState extends State<ConsultScreen> {
     final difference = widget.appointmentTime.difference(DateTime.now());
     print("Time difference: ${difference.inMinutes} minutes");
   }
+
+  bool get isCancelled => widget.status.toLowerCase() == "cancelled";
+  bool get isPending => widget.status.toLowerCase() == "pending";
+  bool get isConfirmed => widget.status.toLowerCase() == "confirmed";
 
   void _updateTimeLeft() {
     final now = DateTime.now();
@@ -598,8 +604,34 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   const SizedBox(height: 30),
                 ],
               ),
-
-            if (isExpired)
+            if (isCancelled) ...[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Column(
+                  children: const [
+                    Icon(Icons.cancel, size: 50, color: Colors.red),
+                    SizedBox(height: 10),
+                    Text(
+                      "Appointment Cancelled",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                    Text(
+                      "This appointment has been cancelled",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            ] else if (isExpired) ...[
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -625,6 +657,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
                   ],
                 ),
               ),
+            ],
 
             /// Action Buttons
             if (canJoin) ...[
@@ -1008,7 +1041,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
 //             CircleAvatar(
 //               radius: 45,
 //               // backgroundImage: AssetImage(AppImages.d2),
-//               // : NetworkImage("assets/Images/d1.png") as ImageProvider,
+//               // : NetworkImage("audio/Images/d1.png") as ImageProvider,
 //               backgroundImage: widget.image.isNotEmpty
 //                   ? (widget.image.startsWith("http")
 //                             ? NetworkImage(widget.image)

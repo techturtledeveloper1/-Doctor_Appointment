@@ -65,7 +65,7 @@ dependency_overrides:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/logo/app_logo.png"
+  image_path: "audio/logo/app_logo.png"
 
 
 
@@ -80,11 +80,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/
-    - assets/icons/
-    - assets/medicine_image/
-    - assets/logo/
-    - assets/svg/
+    - audio/images/
+    - audio/icons/
+    - audio/medicine_image/
+    - audio/logo/
+    - audio/svg/
 
   fonts:
     - family: HK Bold

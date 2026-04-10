@@ -311,7 +311,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               (doctorDetail!["image"] != null &&
                   doctorDetail!["image"].toString().isNotEmpty)
               ? NetworkImage(doctorDetail!["image"])
-              : const AssetImage("assets/images/default_doctor.png")
+              : const AssetImage("audio/images/default_doctor.png")
                     as ImageProvider,
         ),
         const SizedBox(height: 12),
@@ -766,7 +766,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                         (doc["photo"] != null &&
                             doc["photo"].toString().isNotEmpty)
                         ? NetworkImage(doc["photo"])
-                        : const AssetImage("assets/images/default_doctor.png")
+                        : const AssetImage("audio/images/default_doctor.png")
                               as ImageProvider,
                   ),
                   const SizedBox(height: 10),

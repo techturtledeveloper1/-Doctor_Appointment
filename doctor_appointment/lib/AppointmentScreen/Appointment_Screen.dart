@@ -300,7 +300,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 
   String _getDoctorImage(String? profilePhoto) {
     if (profilePhoto == null || profilePhoto.isEmpty) {
-      return "assets/images/default_doctor.png";
+      return "audio/images/default_doctor.png";
     }
     if (profilePhoto.startsWith('http')) {
       return profilePhoto;
@@ -344,13 +344,18 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     required VoidCallback onCancel,
     required Map<String, dynamic> rawAppointment,
   }) {
+    // bool isCancelled = status.toLowerCase() == "cancelled";
+    bool isCancelled = status.toLowerCase().contains("cancel");
+    bool isConfirmed = status.toLowerCase() == "confirmed";
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isCancelled ? Colors.grey.shade50 : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(
+          color: isCancelled ? Colors.red.shade100 : Colors.grey.shade300,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade200,
@@ -404,7 +409,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   ],
                 ),
               ),
-              if (status == "Confirmed" && !_isActionLoading)
+              if (isConfirmed && !isCancelled && !_isActionLoading)
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColor.colorIntroBG,
@@ -433,7 +438,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   border: Border.all(color: _getStatusColor(status)),
                 ),
                 child: Text(
-                  status,
+                  status.toUpperCase(),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -445,7 +450,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                 children: [
                   TextButton(
                     // onPressed: onReschedule,
-                    onPressed: _isActionLoading ? null : onReschedule,
+                    onPressed: (_isActionLoading || isCancelled)
+                        ? null
+                        : onReschedule,
                     child: Text(
                       "Reschedule",
                       style: TextStyle(color: Colors.blue, fontSize: 12),
@@ -454,9 +461,13 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   SizedBox(width: 8),
                   TextButton(
                     // onPressed: onCancel,
-                    onPressed: _isActionLoading ? null : onCancel,
+                    onPressed: (_isActionLoading || isCancelled)
+                        ? null
+                        : onCancel,
                     child: Text(
-                      "Cancel",
+                      // "Cancel",
+                      isCancelled ? "Cancelled" : "Cancel",
+
                       style: TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
@@ -470,6 +481,16 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
   }
 
   Color _getStatusColor(String status) {
+    String s = status.toLowerCase();
+
+    if (s.contains("confirm")) return Colors.green;
+    if (s.contains("pending")) return Colors.orange;
+    if (s.contains("cancel")) return Colors.red;
+
+    return Colors.grey;
+  }
+
+  Color _getStatusColor1(String status) {
     switch (status.toLowerCase()) {
       case "confirmed":
         return Colors.green;
@@ -724,8 +745,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                       time: appt["time"] ?? "Time not set",
                       status: appt["status"] ?? "Confirmed",
                       type: appt["type"] ?? "Consultation",
-                      image:
-                          appt["image"] ?? "assets/images/default_doctor.png",
+                      image: appt["image"] ?? "audio/images/default_doctor.png",
                       onJoin: () {
                         Navigator.push(
                           context,
@@ -738,9 +758,10 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                               appointmentTime: appointmentDateTime,
                               image:
                                   appt["image"] ??
-                                  "assets/images/default_doctor.png",
+                                  "audio/images/default_doctor.png",
                               appointmentId: appt["id"] ?? "",
                               patientId: appt["patientId"] ?? "",
+                              status: appt["status"],
                             ),
                           ),
                         );
@@ -775,116 +796,220 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
   }
 
   Future<void> _cancelAppointment(Map<String, dynamic> appointment) async {
-    // Show confirmation dialog
+    if (appointment["status"].toString().toLowerCase().contains("cancel")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("This appointment is already cancelled"),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+    TextEditingController reasonController = TextEditingController();
+    String selectedCancelledBy = "patient"; // Default value
+
+    // Show confirmation dialog with reason input
     final bool? confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Expanded(
-              child: Icon(
-                Icons.warning_amber_rounded,
-                color: Colors.red,
-                size: 28,
-              ),
-            ),
-            SizedBox(width: 10),
-            Expanded(child: Text("Cancel Appointment")),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Are you sure you want to cancel this appointment?",
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "👨‍⚕️ ${appointment["doctor"]}",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateDialog) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
+              SizedBox(width: 10),
+              Text("Cancel Appointment"),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Are you sure you want to cancel this appointment?",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  SizedBox(height: 5),
-                  Text("📅 ${appointment["time"]}"),
-                  Text("🏥 ${appointment["hospital"]}"),
-                ],
-              ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "👨‍⚕️ ${appointment["doctor"]}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text("📅 ${appointment["time"]}"),
+                      Text("🏥 ${appointment["hospital"]}"),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  "Reason for cancellation:",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                SizedBox(height: 8),
+                TextField(
+                  controller: reasonController,
+                  decoration: InputDecoration(
+                    hintText:
+                        "Enter reason (e.g., Mind Change, Schedule conflict)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                  ),
+                  maxLines: 2,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "Cancelled by:",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile<String>(
+                        title: Text("Patient"),
+                        value: "patient",
+                        groupValue: selectedCancelledBy,
+                        onChanged: (value) {
+                          setStateDialog(() {
+                            selectedCancelledBy = value!;
+                          });
+                        },
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ),
+                    Expanded(
+                      child: RadioListTile<String>(
+                        title: Text("Doctor"),
+                        value: "doctor",
+                        groupValue: selectedCancelledBy,
+                        onChanged: (value) {
+                          setStateDialog(() {
+                            selectedCancelledBy = value!;
+                          });
+                        },
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "This action cannot be undone.",
+                  style: TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ],
             ),
-            SizedBox(height: 10),
-            Text(
-              "This action cannot be undone.",
-              style: TextStyle(color: Colors.red, fontSize: 12),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text("No, Keep It", style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text("Yes, Cancel", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text("No, Keep It", style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text("Yes, Cancel", style: TextStyle(color: Colors.white)),
-          ),
-        ],
       ),
     );
 
     if (confirmed != true) return;
 
+    // Get reason text
+    String reason = reasonController.text.trim();
+    if (reason.isEmpty) {
+      reason = "Cancelled by $selectedCancelledBy";
+    }
+
     // Show loading
     setState(() => _isActionLoading = true);
 
     try {
-      // Call API to cancel appointment
-      final response = await ApiService().cancelAppointment(appointment["id"]);
+      // Call API to cancel appointment with reason
+      final response = await ApiService().cancelAppointment(
+        appointment["id"],
+        reason: reason,
+        cancelledBy: selectedCancelledBy,
+      );
 
       print("Cancel Response: $response");
 
       if (response["success"] == true) {
-        // Remove from local list
+        // ✅ Update local state - change status to cancelled
         setState(() {
-          String dateKey =
-              appointment["rawDate"] ??
-              DateFormat('yyyy-MM-dd').format(_selectedDay!);
-          if (appointmentsByDate.containsKey(dateKey)) {
-            appointmentsByDate[dateKey]!.removeWhere(
-              (item) =>
-                  item["id"] == appointment["id"] ||
-                  item["_id"] == appointment["id"],
-            );
-            if (appointmentsByDate[dateKey]!.isEmpty) {
-              appointmentsByDate.remove(dateKey);
+          //   // Find and update the appointment status
+          //   appointmentsByDate.forEach((date, appointments) {
+          //     for (var item in appointments) {
+          //       if (item["id"] == appointment["id"]) {
+          //         item["status"] = "cancelled";
+          //         // Also update raw appointment if needed
+          //         if (item["rawAppointment"] != null) {
+          //           item["rawAppointment"]["status"] = "cancelled";
+          //         }
+          //       }
+          //     }
+          //   });
+          //   // Force rebuild
+          //   appointmentsByDate = Map.from(appointmentsByDate);
+          // });
+          // await _loadAppointmentsFromAPI(); // This will fetch fresh data
+          for (var date in appointmentsByDate.keys) {
+            for (var item in appointmentsByDate[date]!) {
+              if (item["id"] == appointment["id"]) {
+                item["status"] = "cancelled";
+                // Also update raw appointment if needed
+                if (item["rawAppointment"] != null) {
+                  item["rawAppointment"]["status"] = "cancelled";
+                }
+                break;
+              }
             }
           }
+          // Force rebuild
+          appointmentsByDate = Map.from(appointmentsByDate);
         });
 
+        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
                 Icon(Icons.check_circle, color: Colors.white),
                 SizedBox(width: 10),
-                Text(
-                  response["message"] ?? "Appointment cancelled successfully",
+                Expanded(
+                  child: Text(
+                    response["message"] ?? "Appointment cancelled successfully",
+                  ),
                 ),
               ],
             ),
@@ -892,6 +1017,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
             duration: Duration(seconds: 2),
           ),
         );
+
+        // Optional: Refresh appointments from API
+        // await _loadAppointmentsFromAPI();
       } else {
         throw Exception(response["message"] ?? "Failed to cancel");
       }
@@ -1231,7 +1359,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //
 //   String _getDoctorImage(String? profilePhoto) {
 //     if (profilePhoto == null || profilePhoto.isEmpty) {
-//       return "assets/images/default_doctor.png";
+//       return "audio/images/default_doctor.png";
 //     }
 //
 //     // If it's a full URL, use it directly
@@ -1317,9 +1445,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //                 radius: 22,
 //                 backgroundImage: image.startsWith("http")
 //                     ? NetworkImage(image) as ImageProvider
-//                     : image.startsWith("assets/")
+//                     : image.startsWith("audio/")
 //                     ? AssetImage(image)
-//                     : AssetImage("assets/images/default_doctor.png"),
+//                     : AssetImage("audio/images/default_doctor.png"),
 //               ),
 //               SizedBox(width: 12),
 //               Expanded(
@@ -1695,7 +1823,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //                       status: appt["status"] ?? "Confirmed",
 //                       type: appt["type"] ?? "Consultation",
 //                       image:
-//                           appt["image"] ?? "assets/images/default_doctor.png",
+//                           appt["image"] ?? "audio/images/default_doctor.png",
 //                       onJoin: () {
 //                         Navigator.push(
 //                           context,
@@ -2004,9 +2132,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //                 radius: 22,
 //                 backgroundImage: image.startsWith("http")
 //                     ? NetworkImage(image) as ImageProvider
-//                     : image.startsWith("assets/")
+//                     : image.startsWith("audio/")
 //                     ? AssetImage(image)
-//                     : AssetImage("assets/images/default_doctor.png"),
+//                     : AssetImage("audio/images/default_doctor.png"),
 //                 // backgroundImage: NetworkImage(appt["image"]),
 //               ),
 //               SizedBox(width: 12),
@@ -2394,7 +2522,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //                       status: appt["status"] ?? "Confirmed",
 //                       type: appt["type"] ?? "Consultation",
 //                       image:
-//                           appt["image"] ?? "assets/images/default_doctor.png",
+//                           appt["image"] ?? "audio/images/default_doctor.png",
 //                       onJoin: () {
 //                         Navigator.push(
 //                           context,

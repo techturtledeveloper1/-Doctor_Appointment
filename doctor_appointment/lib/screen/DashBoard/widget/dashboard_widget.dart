@@ -165,8 +165,8 @@ class _DashBoardWidgetState extends State<DashBoardWidget> {
                               );
                             },
                           ),
-                        if (homeData!["topSpecializations"] != null &&
-                            homeData!["topSpecializations"].length > 1)
+                        if (homeData?["topSpecializations"] != null &&
+                            homeData?["topSpecializations"].length > 1)
                           _serviceCard(
                             AppImages.psychologist,
                             onTap: () {

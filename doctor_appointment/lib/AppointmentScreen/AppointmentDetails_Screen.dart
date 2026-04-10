@@ -36,7 +36,7 @@ class AppointmentDetailScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 45,
-              backgroundImage: image.startsWith("assets/")
+              backgroundImage: image.startsWith("audio/")
                   ? AssetImage(image)
                   : NetworkImage(image) as ImageProvider,
             ),
@@ -44,9 +44,10 @@ class AppointmentDetailScreen extends StatelessWidget {
             Text(
               doctorName,
               style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             Text(
               specialty,
@@ -83,7 +84,10 @@ class AppointmentDetailScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () {},
-              child: Text("Join Video Call", style: TextStyle(color: Colors.white)),
+              child: Text(
+                "Join Video Call",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
             SizedBox(height: 12),
             OutlinedButton(
@@ -128,25 +132,33 @@ class AppointmentDetailScreen extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Reschedule Appointment")));
+                  SnackBar(content: Text("Reschedule Appointment")),
+                );
               },
-              child: Text("Reschedule Appointment",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87)),
+              child: Text(
+                "Reschedule Appointment",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
             ),
             SizedBox(height: 12),
             GestureDetector(
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Cancel Appointment")));
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text("Cancel Appointment")));
               },
-              child: Text("Cancel Appointment",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.redAccent)),
+              child: Text(
+                "Cancel Appointment",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.redAccent,
+                ),
+              ),
             ),
             SizedBox(height: 20),
 
@@ -154,7 +166,7 @@ class AppointmentDetailScreen extends StatelessWidget {
               "You will receive a reminder 15 minutes before your session.",
               style: TextStyle(fontSize: 13, color: Colors.grey[600]),
               textAlign: TextAlign.center,
-            )
+            ),
           ],
         ),
       ),
