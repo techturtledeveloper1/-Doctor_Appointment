@@ -72,7 +72,6 @@ class _ConsultScreenState extends State<ConsultScreen> {
 
     print("📅 ConsultScreen Initialized:");
     print("Patient ID for call listening: ${widget.patientId}");
-    // Debug prints
     print("📅 ConsultScreen Initialized:");
     print("Doctor: ${widget.doctorName}");
     print("Appointment Time: ${widget.appointmentTime}");

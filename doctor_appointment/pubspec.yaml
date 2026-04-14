@@ -60,12 +60,13 @@ dependencies:
 
 dependency_overrides:
   zego_plugin_adapter: 2.14.2
+  zego_zim: 2.26.0
 
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "audio/logo/app_logo.png"
+  image_path: "assets/logo/app_logo.png"
 
 
 
@@ -80,11 +81,12 @@ flutter:
   uses-material-design: true
 
   assets:
-    - audio/images/
-    - audio/icons/
-    - audio/medicine_image/
-    - audio/logo/
-    - audio/svg/
+    - assets/images/
+    - assets/icons/
+    - assets/medicine_image/
+    - assets/logo/
+    - assets/svg/
+    - assets/audio/
 
   fonts:
     - family: HK Bold
