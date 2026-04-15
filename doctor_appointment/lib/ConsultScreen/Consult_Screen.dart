@@ -34,6 +34,7 @@ class ConsultScreen extends StatefulWidget {
   final String appointmentId;
   final String patientId;
   final String status;
+  final String appointmentType;
 
   const ConsultScreen({
     super.key,
@@ -46,6 +47,7 @@ class ConsultScreen extends StatefulWidget {
     required this.appointmentId,
     required this.patientId,
     required this.status,
+    required this.appointmentType,
   });
 
   @override
@@ -382,7 +384,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
     }
   }
 
-  void showTermsDialog(BuildContext context) {
+  void showTermsDialog(BuildContext context, {required bool isVideoCall}) {
     bool isChecked = false;
 
     showDialog(
@@ -457,9 +459,19 @@ class _ConsultScreenState extends State<ConsultScreen> {
                         onPressed: isChecked
                             ? () {
                                 Navigator.pop(context);
-                                startVideoCall(context);
+                                if (isVideoCall) {
+                                  startVideoCall(context);
+                                } else {
+                                  startAudioCall(context);
+                                }
                               }
                             : null,
+                        // onPressed: isChecked
+                        //     ? () {
+                        //         Navigator.pop(context);
+                        //         startVideoCall(context);
+                        //       }
+                        //     : null,
                         text: "Accept",
                         backgroundColor: isChecked
                             ? AppColor.colorPrimary
@@ -660,64 +672,70 @@ class _ConsultScreenState extends State<ConsultScreen> {
 
             /// Action Buttons
             if (canJoin) ...[
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.colorIntroBG,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  showTermsDialog(context);
-                },
-                child: const Text(
-                  "Join Video Call",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  startAudioCall(context);
-                },
-                child: Text(
-                  "Join Audio Call",
-                  style: TextStyle(color: AppColor.colorIntroBG),
-                ),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChatScreen(
-                        myId: widget.patientId,
-                        myName: "Patient",
-                        peerId: "doctor_${widget.appointmentId}",
-                        peerName: widget.doctorName,
-                      ),
+              if (widget.appointmentType.toLowerCase() == "video")
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.colorIntroBG,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  );
-                },
-                child: Text(
-                  "Open Chat",
-                  style: TextStyle(color: AppColor.colorIntroBG),
+                  ),
+                  onPressed: () {
+                    showTermsDialog(context, isVideoCall: true);
+                  },
+                  child: const Text(
+                    "Join Video Call",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-              ),
+              // const SizedBox(height: 12),
+              if (widget.appointmentType.toLowerCase() == "phone")
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    startAudioCall(context);
+                    // showTermsDialog(context, isVideoCall: false);
+                  },
+                  child: Text(
+                    "Join Audio Call",
+                    style: TextStyle(color: AppColor.colorIntroBG),
+                  ),
+                ),
+              if (widget.appointmentType.toLowerCase() == "chat")
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ChatScreen(
+                          // myId: widget.patientId,
+                          myId: widget.patientId.isNotEmpty
+                              ? widget.patientId
+                              : "patient_${DateTime.now().millisecondsSinceEpoch}",
+                          myName: "Patient",
+                          peerId: "doctor_${widget.appointmentId}",
+                          peerName: widget.doctorName,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "Open Chat",
+                    style: TextStyle(color: AppColor.colorIntroBG),
+                  ),
+                ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(

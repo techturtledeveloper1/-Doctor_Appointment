@@ -49,6 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Map<String, dynamic>> messages = [];
   TextEditingController controller = TextEditingController();
   ScrollController scrollController = ScrollController();
+  bool _isZegoReady = false;
 
   @override
   void initState() {
@@ -87,74 +88,36 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  // Future<void> initZego() async {
-  //   ZegoService().init();
-  //   await ZegoService().login(widget.myId, widget.myName);
-  //
-  //   ZIMEventHandler.onReceivePeerMessage =
-  //       (ZIM zim, List<ZIMMessage> messageList, String fromUserID) {
-  //         setState(() {
-  //           for (var msg in messageList) {
-  //             if (msg is ZIMTextMessage) {
-  //               messages.add({
-  //                 "text": msg.message,
-  //                 "image": null,
-  //                 "imageBytes": null,
-  //                 "isMe": false,
-  //                 "time": DateTime.now(),
-  //               });
-  //             } else if (msg is ZIMImageMessage) {
-  //               messages.add({
-  //                 "text": null,
-  //                 "image": msg.fileLocalPath,
-  //                 "imageUrl": msg.fileDownloadUrl,
-  //                 "isMe": false,
-  //                 "time": DateTime.now(),
-  //               });
-  //             }
-  //           }
-  //         });
-  //
-  //         scrollToBottom();
-  //       };
-  // }
   Future<void> initZego() async {
     ZegoService().init();
     await ZegoService().login(widget.myId, widget.myName);
-
+    _isZegoReady = true;
+    print("✅ Zego fully ready");
     ZIMEventHandler.onReceivePeerMessage =
-        (ZIM zim, List<ZIMMessage> messageList, String fromUserID) async {
-          for (var msg in messageList) {
-            /// TEXT
-            if (msg is ZIMTextMessage) {
-              final data = {
-                "text": msg.message,
-                "image": null,
-                "imageUrl": null,
-                "isMe": false,
-                "time": DateTime.now(),
-              };
+        (ZIM zim, List<ZIMMessage> messageList, String fromUserID) {
+          if (fromUserID != widget.peerId) return;
 
-              setState(() => messages.add(data));
-              saveMessage(data);
+          setState(() {
+            for (var msg in messageList) {
+              if (msg is ZIMTextMessage) {
+                messages.add({
+                  "text": msg.message,
+                  "image": null,
+                  "imageBytes": null,
+                  "isMe": false,
+                  "time": DateTime.now(),
+                });
+              } else if (msg is ZIMImageMessage) {
+                messages.add({
+                  "text": null,
+                  "image": msg.fileLocalPath,
+                  "imageUrl": msg.fileDownloadUrl,
+                  "isMe": false,
+                  "time": DateTime.now(),
+                });
+              }
             }
-            /// IMAGE
-            else if (msg is ZIMImageMessage) {
-              // await ZegoService().downloadImage(msg); // MUST
-
-              final data = {
-                "text": null,
-                "image": msg.fileLocalPath,
-                "imageUrl": msg.fileDownloadUrl,
-                "isMe": false,
-                "time": DateTime.now(),
-                "status": "delivered",
-              };
-
-              setState(() => messages.add(data));
-              saveMessage(data);
-            }
-          }
+          });
 
           scrollToBottom();
         };

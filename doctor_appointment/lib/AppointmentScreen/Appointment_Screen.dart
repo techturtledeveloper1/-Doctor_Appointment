@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:doctor_appointment/APIService/ApiService.dart';
 import 'package:doctor_appointment/ConsultScreen/Consult_Screen.dart';
+import 'package:doctor_appointment/HomeScreen/ChatScreen/Chat_Screen.dart';
 import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
 import 'package:doctor_appointment/screen/DashBoard/DashBoard.dart';
@@ -99,7 +100,10 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   appointment["doctor"]?["specialization"] ?? "Specialist",
               "hospital": appointment["hospital"]?["name"] ?? "Virtual Clinic",
               "location": appointment["hospital"]?["location"] ?? "Online",
-              "patientId": appointment["patientId"] ?? "",
+              // "patientId": appointment["patientId"] ?? "",
+              // In Appointment_Screen.dart, when creating the appointment object:
+              "patientId":
+                  appointment["patientId"] ?? appointment["patient_id"] ?? "",
               "time": _formatTime(rawTime),
               "rawTime": rawTime,
               "rawDate": rawDate,
@@ -111,6 +115,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   appointmentDateTime, // Store the actual DateTime
               "rawAppointment": appointment,
             };
+            print("🔍 Patient ID from API: ${appointment["patientId"]}");
+            print("🔍 Patient ID fallback: ${appointment["patient_id"]}");
             appointmentsForDate.add(processedAppointment);
           }
 
@@ -144,7 +150,14 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
           List<Map<String, dynamic>> appointmentsForDate = [];
 
           for (var appointment in dateGroup["appointments"]) {
-            // 🔍 Try multiple possible field names for time
+            String appointmentType =
+                appointment["appointmentType"] ??
+                appointment["consultationType"] ??
+                appointment["callType"] ??
+                appointment["type"] ?? // Add this if your API uses "type"
+                appointment["mode"] ??
+                "video"; // Default to video if not specified
+
             String rawTime =
                 appointment["appointmentTime"] ??
                 appointment["time"] ??
@@ -161,6 +174,15 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                 appointment["slotDate"] ??
                 "";
 
+            print("🔍 APPOINTMENT TYPE DEBUG:");
+            print(
+              "   appointment['appointmentType']: ${appointment["appointmentType"]}",
+            );
+            print(
+              "   appointment['consultationType']: ${appointment["consultationType"]}",
+            );
+            print("   appointment['callType']: ${appointment["callType"]}");
+            print("   Final appointmentType: $appointmentType");
             // 🔍 If date is in the dateKey format (dd-MM-yyyy), use that
             if (rawDate.isEmpty && dateKey.isNotEmpty) {
               // Convert dateKey from "dd-MM-yyyy" to "yyyy-MM-dd"
@@ -209,6 +231,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
               "rawDate": rawDate,
               "status": appointment["status"] ?? "Confirmed",
               "type": "Consultation",
+              "appointmentType": appointmentType,
               "image": _getDoctorImage(
                 appointment["doctor"]?["profile_photo"] ??
                     appointment["doctorImage"] ??
@@ -338,7 +361,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     required String status,
     required String type,
     required String image,
-
+    required String appointmentType,
     required VoidCallback onJoin,
     required VoidCallback onReschedule,
     required VoidCallback onCancel,
@@ -347,6 +370,17 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
     // bool isCancelled = status.toLowerCase() == "cancelled";
     bool isCancelled = status.toLowerCase().contains("cancel");
     bool isConfirmed = status.toLowerCase() == "confirmed";
+    String joinButtonText = "";
+    if (appointmentType.toLowerCase() == "video") {
+      joinButtonText = "Join Video Call";
+    } else if (appointmentType.toLowerCase() == "phone") {
+      joinButtonText = "Join Audio Call";
+    } else if (appointmentType.toLowerCase() == "chat") {
+      joinButtonText = "Open Chat";
+    } else {
+      joinButtonText = "Join Call"; // default
+    }
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: EdgeInsets.all(12),
@@ -420,7 +454,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   ),
                   onPressed: onJoin,
                   child: Text(
-                    "Join Call",
+                    // "Join Call",
+                    joinButtonText,
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ),
@@ -732,7 +767,6 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   itemBuilder: (context, index) {
                     var appt = selectedAppointments[index];
 
-                    // Use the pre-created DateTime
                     DateTime appointmentDateTime =
                         appt["appointmentDateTime"] ?? DateTime.now();
 
@@ -745,26 +779,59 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                       time: appt["time"] ?? "Time not set",
                       status: appt["status"] ?? "Confirmed",
                       type: appt["type"] ?? "Consultation",
-                      image: appt["image"] ?? "assets/images/default_doctor.png",
+                      image:
+                          appt["image"] ?? "assets/images/default_doctor.png",
+                      appointmentType: appt["appointmentType"] ?? "video",
                       onJoin: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ConsultScreen(
-                              doctorName: appt["doctor"] ?? "Doctor",
-                              specialty: appt["specialty"] ?? "Specialist",
-                              hospital: appt["hospital"] ?? "Virtual Hospital",
-                              location: appt["location"] ?? "Online",
-                              appointmentTime: appointmentDateTime,
-                              image:
-                                  appt["image"] ??
-                                  "assets/images/default_doctor.png",
-                              appointmentId: appt["id"] ?? "",
-                              patientId: appt["patientId"] ?? "",
-                              status: appt["status"],
+                        if (appt["appointmentType"] == "chat") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ConsultScreen(
+                                doctorName: appt["doctor"] ?? "Doctor",
+                                specialty: appt["specialty"] ?? "Specialist",
+                                hospital:
+                                    appt["hospital"] ?? "Virtual Hospital",
+                                location: appt["location"] ?? "Online",
+                                appointmentTime: appointmentDateTime,
+                                image:
+                                    appt["image"] ??
+                                    "assets/images/default_doctor.png",
+                                appointmentId: appt["id"] ?? "",
+                                patientId: appt["patientId"] ?? "",
+                                status: appt["status"],
+                                appointmentType:
+                                    appt["appointmentType"] ?? "video",
+                                // myId: appt["patientId"] ?? "",
+                                // myName: "Patient",
+                                // peerId: "doctor_${appt["id"]}",
+                                // peerName: appt["doctor"] ?? "Doctor",
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ConsultScreen(
+                                doctorName: appt["doctor"] ?? "Doctor",
+                                specialty: appt["specialty"] ?? "Specialist",
+                                hospital:
+                                    appt["hospital"] ?? "Virtual Hospital",
+                                location: appt["location"] ?? "Online",
+                                appointmentTime: appointmentDateTime,
+                                image:
+                                    appt["image"] ??
+                                    "assets/images/default_doctor.png",
+                                appointmentId: appt["id"] ?? "",
+                                patientId: appt["patientId"] ?? "",
+                                status: appt["status"],
+                                appointmentType:
+                                    appt["appointmentType"] ?? "video",
+                              ),
+                            ),
+                          );
+                        }
                       },
                       // onReschedule: () {
                       //   ScaffoldMessenger.of(context).showSnackBar(
