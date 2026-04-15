@@ -672,7 +672,7 @@ class _PatientIncomingCallDialogState extends State<PatientIncomingCallDialog>
   Future<void> _startRingingSound() async {
     _audioPlayer = AudioPlayer();
     try {
-      await _audioPlayer!.setSourceAsset('audio/sounds/ringing.mp3');
+      await _audioPlayer!.setSourceAsset('assets/sounds/ringing.mp3');
       await _audioPlayer!.setReleaseMode(ReleaseMode.loop);
       await _audioPlayer!.setVolume(1.0);
       await _audioPlayer!.resume();

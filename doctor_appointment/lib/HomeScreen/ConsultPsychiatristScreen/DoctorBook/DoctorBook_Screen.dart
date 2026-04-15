@@ -366,7 +366,7 @@ class _DoctorBookAppointmentScreenState
                         (doctor["image"] != null &&
                             doctor["image"].toString().isNotEmpty)
                         ? NetworkImage(doctor["image"])
-                        : const AssetImage("audio/images/default_doctor.png")
+                        : const AssetImage("assets/images/default_doctor.png")
                               as ImageProvider,
                   ),
                   const SizedBox(width: 12),

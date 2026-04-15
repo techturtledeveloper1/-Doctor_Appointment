@@ -36,7 +36,7 @@ class AppointmentDetailScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 45,
-              backgroundImage: image.startsWith("audio/")
+              backgroundImage: image.startsWith("assets/")
                   ? AssetImage(image)
                   : NetworkImage(image) as ImageProvider,
             ),

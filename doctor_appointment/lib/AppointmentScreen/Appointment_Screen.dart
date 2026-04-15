@@ -300,7 +300,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 
   String _getDoctorImage(String? profilePhoto) {
     if (profilePhoto == null || profilePhoto.isEmpty) {
-      return "audio/images/default_doctor.png";
+      return "assets/images/default_doctor.png";
     }
     if (profilePhoto.startsWith('http')) {
       return profilePhoto;
@@ -745,7 +745,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                       time: appt["time"] ?? "Time not set",
                       status: appt["status"] ?? "Confirmed",
                       type: appt["type"] ?? "Consultation",
-                      image: appt["image"] ?? "audio/images/default_doctor.png",
+                      image: appt["image"] ?? "assets/images/default_doctor.png",
                       onJoin: () {
                         Navigator.push(
                           context,
@@ -758,7 +758,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                               appointmentTime: appointmentDateTime,
                               image:
                                   appt["image"] ??
-                                  "audio/images/default_doctor.png",
+                                  "assets/images/default_doctor.png",
                               appointmentId: appt["id"] ?? "",
                               patientId: appt["patientId"] ?? "",
                               status: appt["status"],
@@ -1359,7 +1359,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //
 //   String _getDoctorImage(String? profilePhoto) {
 //     if (profilePhoto == null || profilePhoto.isEmpty) {
-//       return "audio/images/default_doctor.png";
+//       return "assets/images/default_doctor.png";
 //     }
 //
 //     // If it's a full URL, use it directly
@@ -1445,9 +1445,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //                 radius: 22,
 //                 backgroundImage: image.startsWith("http")
 //                     ? NetworkImage(image) as ImageProvider
-//                     : image.startsWith("audio/")
+//                     : image.startsWith("assets/")
 //                     ? AssetImage(image)
-//                     : AssetImage("audio/images/default_doctor.png"),
+//                     : AssetImage("assets/images/default_doctor.png"),
 //               ),
 //               SizedBox(width: 12),
 //               Expanded(
@@ -1823,7 +1823,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //                       status: appt["status"] ?? "Confirmed",
 //                       type: appt["type"] ?? "Consultation",
 //                       image:
-//                           appt["image"] ?? "audio/images/default_doctor.png",
+//                           appt["image"] ?? "assets/images/default_doctor.png",
 //                       onJoin: () {
 //                         Navigator.push(
 //                           context,
@@ -2132,9 +2132,9 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
 //                 radius: 22,
 //                 backgroundImage: image.startsWith("http")
 //                     ? NetworkImage(image) as ImageProvider
-//                     : image.startsWith("audio/")
+//                     : image.startsWith("assets/")
 //                     ? AssetImage(image)
-//                     : AssetImage("audio/images/default_doctor.png"),
+//                     : AssetImage("assets/images/default_doctor.png"),
 //                 // backgroundImage: NetworkImage(appt["image"]),
 //               ),
 //               SizedBox(width: 12),

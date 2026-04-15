@@ -303,7 +303,7 @@ class _OtpScreenState extends State<OtpScreen> {
 //                 const SizedBox(height: 40),
 //
 //                 // --- Logo ---
-//                 Image.asset("audio/images/logo.png", height: 150),
+//                 Image.asset("assets/images/logo.png", height: 150),
 //                 const SizedBox(height: 20),
 //
 //                 // --- Heading ---
