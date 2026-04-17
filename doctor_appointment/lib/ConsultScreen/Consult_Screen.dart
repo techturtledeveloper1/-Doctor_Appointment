@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:doctor_appointment/ConsultScreen/active_call_screen.dart';
+import 'package:doctor_appointment/ConsultScreen/call_manager.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/Chat_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/VideoCall_Screen.dart';
 import 'package:doctor_appointment/HomeScreen/ChatScreen/VoiceCall_Screen.dart';
 import 'package:doctor_appointment/Notification/call_notification.dart';
+import 'package:doctor_appointment/Notification/incomming_call.dart';
 import 'package:doctor_appointment/ReusableWidget/app_button.dart';
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
 import 'package:doctor_appointment/ReusableWidget/app_images.dart';
@@ -59,6 +62,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
   Duration _timeLeft = Duration.zero;
   File? selectedFile;
   PatientCallListener? _callListener;
+  CallManager? _callManager;
 
   @override
   void initState() {
@@ -67,7 +71,7 @@ class _ConsultScreenState extends State<ConsultScreen> {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       _updateTimeLeft();
     });
-
+    _initializeCallManager();
     // Start listening for incoming calls
     _callListener = PatientCallListener();
     _callListener!.startListening(widget.patientId, context);
@@ -87,6 +91,65 @@ class _ConsultScreenState extends State<ConsultScreen> {
     print("Current Time (ISO): ${DateTime.now().toIso8601String()}");
     final difference = widget.appointmentTime.difference(DateTime.now());
     print("Time difference: ${difference.inMinutes} minutes");
+  }
+
+  void _initializeCallManager() {
+    _callManager = CallManager();
+    _callManager?.init(
+      userId: widget.patientId,
+      userName: "Patient",
+      userRole: 'patient',
+    );
+
+    // Setup callbacks
+    CallManager.onIncomingCall = _handleIncomingCall;
+    CallManager.onCallConnected = _handleCallConnected;
+  }
+
+  void _handleIncomingCall(Map<String, dynamic> callData) {
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => IncomingCallDialog(
+        callId: callData['callId'],
+
+        callerName: callData['callerName'] ?? 'Doctor',
+        callId: callData['callId'],
+        callType: callData['callType'] ?? widget.appointmentType,
+        onAccept: () async {
+          Navigator.pop(context);
+          await _callManager?.acceptCall(callData['callId']);
+        },
+        onReject: () async {
+          Navigator.pop(context);
+          await _callManager?.rejectCall(callData['callId']);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Call declined"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _handleCallConnected(String callId, String callType) {
+    if (!mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ActiveCallScreen(
+          callId: callId,
+          callType: callType,
+          peerName: widget.doctorName,
+          isCaller: false,
+        ),
+      ),
+    );
   }
 
   bool get isCancelled => widget.status.toLowerCase() == "cancelled";
@@ -459,13 +522,19 @@ class _ConsultScreenState extends State<ConsultScreen> {
                         onPressed: isChecked
                             ? () {
                                 Navigator.pop(context);
-                                if (isVideoCall) {
-                                  startVideoCall(context);
-                                } else {
-                                  startAudioCall(context);
-                                }
+                                _makeCall();
                               }
                             : null,
+                        // onPressed: isChecked
+                        //     ? () {
+                        //         Navigator.pop(context);
+                        //         if (isVideoCall) {
+                        //           startVideoCall(context);
+                        //         } else {
+                        //           startAudioCall(context);
+                        //         }
+                        //       }
+                        //     : null,
                         // onPressed: isChecked
                         //     ? () {
                         //         Navigator.pop(context);
@@ -485,6 +554,72 @@ class _ConsultScreenState extends State<ConsultScreen> {
           },
         );
       },
+    );
+  }
+
+  Future<void> _makeCall() async {
+    var connectivity = await Connectivity().checkConnectivity();
+    if (connectivity == ConnectivityResult.none) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("No Internet Connection")));
+      return;
+    }
+
+    if (widget.appointmentType.toLowerCase() == "video") {
+      var cameraStatus = await Permission.camera.request();
+      var micStatus = await Permission.microphone.request();
+      if (!cameraStatus.isGranted || !micStatus.isGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Camera & Microphone permission required"),
+          ),
+        );
+        return;
+      }
+    } else if (widget.appointmentType.toLowerCase() == "phone") {
+      var micStatus = await Permission.microphone.request();
+      if (!micStatus.isGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Microphone permission required")),
+        );
+        return;
+      }
+    }
+
+    try {
+      await _callManager?.makeCall(
+        peerId: "doctor_${widget.doctorName.replaceAll(' ', '_')}",
+        peerName: widget.doctorName,
+        callType: widget.appointmentType.toLowerCase() == "video"
+            ? "video"
+            : "audio",
+        appointmentId: widget.appointmentId,
+        appointmentTime: widget.appointmentTime,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  void _openChat() {
+    final String myId = widget.patientId.isNotEmpty
+        ? widget.patientId
+        : "patient_${DateTime.now().millisecondsSinceEpoch}";
+    final String peerId = "doctor_${widget.doctorName.replaceAll(' ', '_')}";
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatScreen(
+          myId: myId,
+          myName: "Patient",
+          peerId: peerId,
+          peerName: widget.doctorName,
+        ),
+      ),
     );
   }
 
@@ -699,8 +834,8 @@ class _ConsultScreenState extends State<ConsultScreen> {
                     ),
                   ),
                   onPressed: () {
-                    startAudioCall(context);
-                    // showTermsDialog(context, isVideoCall: false);
+                    // startAudioCall(context);
+                    showTermsDialog(context, isVideoCall: false);
                   },
                   child: Text(
                     "Join Audio Call",
@@ -715,27 +850,68 @@ class _ConsultScreenState extends State<ConsultScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ChatScreen(
-                          // myId: widget.patientId,
-                          myId: widget.patientId.isNotEmpty
-                              ? widget.patientId
-                              : "patient_${DateTime.now().millisecondsSinceEpoch}",
-                          myName: "Patient",
-                          peerId: "doctor_${widget.appointmentId}",
-                          peerName: widget.doctorName,
-                        ),
-                      ),
-                    );
-                  },
+                  // onPressed: () {
+                  //   // Ensure patientId is valid
+                  //   final String myId = widget.patientId.isNotEmpty
+                  //       ? widget.patientId
+                  //       : "patient_${DateTime.now().millisecondsSinceEpoch}";
+                  //
+                  //   // Create a unique peer ID for the doctor
+                  //   final String peerId =
+                  //       "doctor_${widget.doctorName.replaceAll(' ', '_')}";
+                  //
+                  //   print("🔑 Navigating to ChatScreen with:");
+                  //   print("   myId: $myId");
+                  //   print("   peerId: $peerId");
+                  //   print("   peerName: ${widget.doctorName}");
+                  //
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (_) => ChatScreen(
+                  //         myId: "patient_1",
+                  //         myName: "Patient",
+                  //         peerId: peerId,
+                  //         peerName: widget.doctorName,
+                  //       ),
+                  //     ),
+                  //   );
+                  // },
+                  onPressed: _openChat,
                   child: Text(
                     "Open Chat",
                     style: TextStyle(color: AppColor.colorIntroBG),
                   ),
                 ),
+              // if (widget.appointmentType.toLowerCase() == "chat")
+              //   OutlinedButton(
+              //     style: OutlinedButton.styleFrom(
+              //       minimumSize: const Size(double.infinity, 50),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(8),
+              //       ),
+              //     ),
+              //     onPressed: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (_) => ChatScreen(
+              //             // myId: widget.patientId,
+              //             myId: widget.patientId.isNotEmpty
+              //                 ? widget.patientId
+              //                 : "patient_${DateTime.now().millisecondsSinceEpoch}",
+              //             myName: "Patient",
+              //             peerId: "doctor_${widget.appointmentId}",
+              //             peerName: widget.doctorName,
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //     child: Text(
+              //       "Open Chat",
+              //       style: TextStyle(color: AppColor.colorIntroBG),
+              //     ),
+              //   ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(

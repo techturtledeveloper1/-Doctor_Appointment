@@ -54,7 +54,7 @@ class _DoctorBookAppointmentScreenState
     "video": "video",
   };
   late Razorpay _razorpay;
-  static const String razorpayKey = "rzp_test_SYW7mYi7oDe4ec";
+  static const String razorpayKey = "rzp_test_Se8b0VAArhjfp0";
   @override
   void initState() {
     super.initState();

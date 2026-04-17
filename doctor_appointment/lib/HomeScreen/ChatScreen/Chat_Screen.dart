@@ -4,9 +4,6 @@ import 'dart:io';
 import 'package:doctor_appointment/HomeScreen/zego_services.dart'
     show ZegoService;
 import 'package:doctor_appointment/ReusableWidget/app_color.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
@@ -50,6 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController controller = TextEditingController();
   ScrollController scrollController = ScrollController();
   bool _isZegoReady = false;
+  bool _isInitializing = false;
 
   @override
   void initState() {
