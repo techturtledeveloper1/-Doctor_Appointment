@@ -113,8 +113,6 @@ class _ConsultScreenState extends State<ConsultScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => IncomingCallDialog(
-        callId: callData['callId'],
-
         callerName: callData['callerName'] ?? 'Doctor',
         callId: callData['callId'],
         callType: callData['callType'] ?? widget.appointmentType,
